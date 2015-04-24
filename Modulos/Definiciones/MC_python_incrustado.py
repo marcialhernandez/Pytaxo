@@ -6,7 +6,7 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida, nombres
+import nombres, xmlSalida, acceso, ast
 import plantilla
 try:
     import xml.etree.cElementTree as ET
@@ -81,17 +81,22 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     for codigoPython in xmlEntradaObject.codigos:
-                        print codigoPython["codigo"].name
+                        #print codigoPython["codigo"].name
                         nombreTemporal=codigoPython["codigo"].name
                         directorioTemporal=nombreTemporal.split("/")
                         directorioTemporal.pop()
                         directorioTemporal='/'.join(directorioTemporal)
-                        #directorioTemporal=nombres.directorioReal(directorioTemporal)
+                        directorioTemporal=nombres.directorioReal(directorioTemporal)
                         #comando="(cd "+directorioTemporal+" && "+"echo "+"hola)"
                         #print comando
                         #p = subprocess.Popen(["exe"],stdout=subprocess.PIPE, cwd=directorioTemporal)
-                        #p = subprocess.Popen(["python","-m","trace","-t",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
-                        #print p.communicate()
+                        p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
+                        streamTraza=p.communicate()[0]
+                        #streamTraza.replace("\\\\","") ", '{"
+                        #streamTraza.split(", '{")
+                        #print streamTraza
+                        print repr(streamTraza)
+                        #streamTraza.replace('\\','')
                         #obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
 #                         proceso = subprocess.Popen(["python", codigoPython["codigo"].name],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 #                         output, errors = proceso.communicate()
@@ -106,12 +111,14 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
 #                                 #print output
 #                                 print output
                         #acceso.obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
-#                         archivo=open(codigoPython["codigo"].name)
-#                         for line in archivo:
-#                             print line
-                        #archivoTemporal=codigoPython["codigo"].open()
+                        #archivo=open(codigoPython["codigo"].name)
+                        #for line in archivo:
+                        #    print line
+                        #archivoTemporal=open(codigoPython["codigo"].name,'r+')
+                        #archivoTemporal=open(xmlEntradaObject.traceFuntions.name,'r+')
+                        #archivoTemporal=open(codigoPython["codigo"].name,'r+')
                         #for line in archivoTemporal:
-                        #    print line.rstrip()
+                        #    print line
                         #print linecache.getline(codigoPython["codigo"], 1)
                         #if banderaEstado==True:
                         #    xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, identificadorItem+' '+identificadorAlternativas+' '+str(contador), plantillaSalida,'xml')

@@ -1,5 +1,5 @@
 import alternativa, xmlEntrada
-import nombres, acceso
+import nombres, acceso, os
 from os.path import exists
 try:
     import xml.etree.cElementTree as ET
@@ -78,13 +78,23 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             termino=subRaiz.text
     if tipo=='pythonIncrustado':
         listaCodigosPython=list()
-        listaModulos=list()             
+        listaModulos=list()
+        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        funcionTracer = archivo.read()
+        archivo.close()
+        archivo=open("Modulos/Definiciones/testEstandar.py", "r")
+        testEstandar = archivo.read()
+        archivo.close()
+        #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
+        #pondran las demas funciones python
+        #archivoTracer=acceso.make_traceFuntionsFile(contenido)
         for subRaiz in raizXmlEntrada.iter("codigo"):
             for codigoPython in subRaiz:
                 dicCodigoPython=dict()
-                dicCodigoPython["codigo"]=acceso.make_tempfile(codigoPython.text)
-                if exists(dicCodigoPython["codigo"].name):
-                    print "archivoTemporalCreado"
+                #print tempfile.gettempdir()
+                dicCodigoPython["codigo"]=acceso.make_tempPython(codigoPython.text,funcionTracer, testEstandar)
+                #if exists(dicCodigoPython["codigo"].name):
+                #    print "archivoTemporalCreado"
                 dicCodigoPython["codigo"].close()
                 entradasCodigo=list()
                 comentariosCodigo=""

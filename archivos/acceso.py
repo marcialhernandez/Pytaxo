@@ -69,13 +69,29 @@ def CrearDirectorio(rutaNuevoDirectorio):
         # There was an error on creation, so make sure we know about it
             raise
 
-def make_tempfile(datos):
+def make_traceFuntionsFile(datos):
     fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
     try:
         #fd.write("import pdb\n\n") #debug module
         #fd.write("pdb.set_trace()")
         fd.write(datos)
         fd.seek(0)
+    finally:
+        fd.close()
+    return fd
+    pass
+
+def make_tempPython(datos, funcionTracer,testEstandar):
+    fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
+    try:
+        fd.write(funcionTracer)
+        fd.write("\n\n")
+        fd.write(datos)
+        fd.write("\n\n")
+        fd.write(testEstandar)
+        fd.write("\n\n")
+        #No me combiene dejar el puntero al principio, pues seguire agregando informacion en un futuro
+        #fd.seek(0)
     finally:
         fd.close()
     return fd

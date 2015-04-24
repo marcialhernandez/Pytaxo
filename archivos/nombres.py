@@ -35,7 +35,7 @@ def especificDirectoryNames(nombreArchivo):
     listaDirectorios=list()
     for dirname, dirnames, filenames in os.walk(nombreArchivo):
         for filename in filenames:
-            if not "__init__" in filename and not ".DS_Store" in filename:
+            if not "__init__" in filename and not ".DS_Store" in filename and not "traceFuntions" in filename and not "testEstandar" in filename:
                 listaDirectorios.append(filename)
             #print os.path.join(dirname, filename)
     return listaDirectorios
