@@ -1,0 +1,19 @@
+<pregunta puntaje="2" tipo="pythonIncrustado" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
+<codigo>
+<python id="1">
+def funcion(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        z=x+z
+    return z
+x=127
+print funcion(x)
+
+<entrada></entrada>
+<comentario>Comentario Codigo1</comentario>
+</python>
+</codigo>
+</pregunta>
