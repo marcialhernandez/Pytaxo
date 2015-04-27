@@ -6,8 +6,9 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida, acceso, ast
+import nombres, xmlSalida, acceso, ast,json
 import plantilla
+from matplotlib.cbook import Null
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -34,6 +35,41 @@ def obtenerResultadosEntrada(rutaArchivo, lenguaje):
     else:
         #print output
         return formateaResultado(output)
+
+def obtieneTraza(datosSalidaSubproceso):
+    datosSalidaSubproceso=datosSalidaSubproceso.split('\n')
+    largoStream=len(datosSalidaSubproceso)
+    contador=0
+    listaLineasTraza=list()
+    banderaAgregaLinea=True
+    #Ya que al momento de splitear por saltos de linea
+    #el ultimo elemento es un EOF, asi que se recorre hasta el penultimo elemento
+    while contador!=largoStream-1:
+        try:
+            linea=ast.literal_eval(datosSalidaSubproceso[contador])
+        except:
+            linea=None #ignorar los prints
+        contador+=1
+        
+        if type(linea) is dict:
+            linea["numLinea"]=ast.literal_eval(linea["numLinea"])
+            if linea["evento"]=='line':
+                linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
+                linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
+                linea["argumentos"]=ast.literal_eval(linea["argumentos"])
+                if "_run_exitfuncs" in linea["funcionProcedencia"]:
+                    banderaAgregaLinea=False
+                #print type(linea["argumentos"])
+            elif linea["evento"]=='return':
+                linea["retorno"]=ast.literal_eval(linea["retorno"])
+                if "_run_exitfuncs" in linea["funcionProcedencia"]:
+                    banderaAgregaLinea=False
+            elif linea["evento"]=='call':
+                if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
+                    banderaAgregaLinea=False
+            if banderaAgregaLinea==True:
+                listaLineasTraza.append(linea)
+    return listaLineasTraza
 
 #Funcion que analiza la plantilla que corresponde a este tipo de pregunta
 #A esa plantilla se le anaden los datos obtenidos desde la entrada de
@@ -87,15 +123,48 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         directorioTemporal.pop()
                         directorioTemporal='/'.join(directorioTemporal)
                         directorioTemporal=nombres.directorioReal(directorioTemporal)
-                        #comando="(cd "+directorioTemporal+" && "+"echo "+"hola)"
-                        #print comando
-                        #p = subprocess.Popen(["exe"],stdout=subprocess.PIPE, cwd=directorioTemporal)
                         p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
-                        streamTraza=p.communicate()[0]
+                        streamTraza= str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
+                        streamTraza=obtieneTraza(streamTraza)
+                        print len(streamTraza)
+#                         streamTraza=streamTraza.split('\n')
+#                         largoStream=len(streamTraza)
+#                         contador=0
+#                         cuentaEventos=0
+#                         banderaAgregaLinea=True
+#                         while contador!=largoStream-1:
+#                             try:
+#                                 linea=ast.literal_eval(streamTraza[contador])
+#                             except:
+#                                 linea=None #ignorar los prints
+#                                 pass
+#                             contador+=1
+#                             
+#                             if type(linea) is dict:
+#                                 linea["numLinea"]=ast.literal_eval(linea["numLinea"])
+#                                 if linea["evento"]=='line':
+#                                     linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
+#                                     linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
+#                                     linea["argumentos"]=ast.literal_eval(linea["argumentos"])
+#                                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
+#                                         banderaAgregaLinea=False
+#                                     #print type(linea["argumentos"])
+#                                 if linea["evento"]=='return':
+#                                     linea["retorno"]=ast.literal_eval(linea["retorno"])
+#                                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
+#                                         banderaAgregaLinea=False
+#                                 if linea["evento"]=='call':
+#                                     if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
+#                                         banderaAgregaLinea=False
+#                                 if banderaAgregaLinea==True:
+#                                     pass
+                                
+                        #print cuentaEventos
+                        
                         #streamTraza.replace("\\\\","") ", '{"
                         #streamTraza.split(", '{")
                         #print streamTraza
-                        print repr(streamTraza)
+                        #print repr(streamTraza)
                         #streamTraza.replace('\\','')
                         #obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
 #                         proceso = subprocess.Popen(["python", codigoPython["codigo"].name],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
