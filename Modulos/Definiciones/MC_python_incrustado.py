@@ -117,55 +117,22 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     for codigoPython in xmlEntradaObject.codigos:
+                        for archivoTemporal in codigoPython["codigo"]:
                         #print codigoPython["codigo"].name
-                        nombreTemporal=codigoPython["codigo"].name
-                        directorioTemporal=nombreTemporal.split("/")
-                        directorioTemporal.pop()
-                        directorioTemporal='/'.join(directorioTemporal)
-                        directorioTemporal=nombres.directorioReal(directorioTemporal)
-                        p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
-                        streamTraza= str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
-                        streamTraza=obtieneTraza(streamTraza)
-                        print len(streamTraza)
-#                         streamTraza=streamTraza.split('\n')
-#                         largoStream=len(streamTraza)
-#                         contador=0
-#                         cuentaEventos=0
-#                         banderaAgregaLinea=True
-#                         while contador!=largoStream-1:
-#                             try:
-#                                 linea=ast.literal_eval(streamTraza[contador])
-#                             except:
-#                                 linea=None #ignorar los prints
-#                                 pass
-#                             contador+=1
-#                             
-#                             if type(linea) is dict:
-#                                 linea["numLinea"]=ast.literal_eval(linea["numLinea"])
-#                                 if linea["evento"]=='line':
-#                                     linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
-#                                     linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
-#                                     linea["argumentos"]=ast.literal_eval(linea["argumentos"])
-#                                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
-#                                         banderaAgregaLinea=False
-#                                     #print type(linea["argumentos"])
-#                                 if linea["evento"]=='return':
-#                                     linea["retorno"]=ast.literal_eval(linea["retorno"])
-#                                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
-#                                         banderaAgregaLinea=False
-#                                 if linea["evento"]=='call':
-#                                     if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
-#                                         banderaAgregaLinea=False
-#                                 if banderaAgregaLinea==True:
-#                                     pass
-                                
-                        #print cuentaEventos
-                        
-                        #streamTraza.replace("\\\\","") ", '{"
-                        #streamTraza.split(", '{")
-                        #print streamTraza
-                        #print repr(streamTraza)
-                        #streamTraza.replace('\\','')
+                        #nombreTemporal=codigoPython["codigo"].name
+                            nombreTemporal=archivoTemporal.name
+                            #archivo=open(nombreTemporal)
+                            #for line in archivo:
+                            #    print line
+                            directorioTemporal=nombreTemporal.split("/")
+                            directorioTemporal.pop()
+                            directorioTemporal='/'.join(directorioTemporal)
+                            directorioTemporal=nombres.directorioReal(directorioTemporal)
+                            p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
+                            streamTraza= str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
+                            streamTraza=obtieneTraza(streamTraza)
+                            print len(streamTraza) #38 lineas con entradas correctas
+#                         
                         #obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
 #                         proceso = subprocess.Popen(["python", codigoPython["codigo"].name],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 #                         output, errors = proceso.communicate()

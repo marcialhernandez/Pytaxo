@@ -77,13 +77,17 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
     if tipo=='pythonIncrustado':
+        nombreFuncionPrincipal=""
         listaCodigosPython=list()
         listaModulos=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
         funcionTracer = archivo.read()
         archivo.close()
-        archivo=open("Modulos/Definiciones/testEstandar.py", "r")
-        testEstandar = archivo.read()
+        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        testEstandar=list()
+        for linea in archivo:
+            testEstandar.append(linea)
+        #testEstandar = archivo.read()
         archivo.close()
         #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
         #pondran las demas funciones python
@@ -92,18 +96,29 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             for codigoPython in subRaiz:
                 dicCodigoPython=dict()
                 #print tempfile.gettempdir()
-                dicCodigoPython["codigo"]=acceso.make_tempPython(codigoPython.text,funcionTracer, testEstandar)
+                #dicCodigoPython["codigo"]=acceso.make_tempPython(codigoPython.text,funcionTracer, testEstandar)
                 #if exists(dicCodigoPython["codigo"].name):
                 #    print "archivoTemporalCreado"
-                dicCodigoPython["codigo"].close()
+                #dicCodigoPython["codigo"].close()
                 entradasCodigo=list()
                 comentariosCodigo=""
                 for subRaizCodigo in codigoPython:
+                    if subRaizCodigo.tag=='nombreFuncionPrincipal':
+                        nombreFuncionPrincipal=subRaizCodigo.text
                     if subRaizCodigo.tag=='entrada':
                         entradasCodigo.append(subRaizCodigo.text)
                     if subRaizCodigo.tag=='comentario':
                         comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
                 dicCodigoPython["entradas"]=entradasCodigo
+                stringFuncionEntrada=list()
+                listaCodigosATrazar=list()
+                for entrada in dicCodigoPython["entradas"]:
+                    funcionEntrada=nombreFuncionPrincipal+'('+entrada+')'
+                    stringFuncionEntrada.append(funcionEntrada)
+                    codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
+                    listaCodigosATrazar.append(codigoPyConEntrada)
+                dicCodigoPython["codigoBruto"]=codigoPython.text
+                dicCodigoPython["codigo"]=listaCodigosATrazar
                 dicCodigoPython["comentarios"]=comentariosCodigo
                 #Lista de diccionarios que contiene info del codigo python incrustado
                 #cada diccionario contiene:

@@ -1,5 +1,4 @@
 sys.settrace(traceFunctions)
-x=127
 try:
     x=funcion(x)
 except:

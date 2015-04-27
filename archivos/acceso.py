@@ -96,5 +96,28 @@ def make_tempPython(datos, funcionTracer,testEstandar):
         fd.close()
     return fd
 
+def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
+    fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
+    try:
+        fd.write(funcionTracer)
+        fd.write("\n\n")
+        fd.write(datos)
+        fd.write("\n\n")
+        for linea in testEstandar:
+            if "funcion(x)" in linea:
+                linea='    '+funcionEntrada+'\n'
+                fd.write(linea)
+            else:
+                fd.write(linea)
+        #testEstandar.replace("x=funcion(x)","x="+funcionEntrada)
+        #print "bbbbbb    "+testEstandar
+        #fd.write(testEstandar)
+        fd.write("\n\n")
+        #No me combiene dejar el puntero al principio, pues seguire agregando informacion en un futuro
+        #fd.seek(0)
+    finally:
+        fd.close()
+    return fd
+
 def cleanup(filename):
     os.unlink(filename)

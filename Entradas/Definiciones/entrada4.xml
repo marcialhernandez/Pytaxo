@@ -13,7 +13,9 @@ def funcion(dato):
         print "a"
         z=functionSuma(x,z)
     return z
-<entrada></entrada>
+<nombreFuncionPrincipal>funcion</nombreFuncionPrincipal>
+<entrada>127</entrada>
+<entrada>95</entrada>
 <comentario>Comentario Codigo1</comentario>
 </python>
 </codigo>
