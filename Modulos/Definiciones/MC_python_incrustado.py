@@ -15,26 +15,41 @@ except ImportError:
     import xml.etree.ElementTree as ET
 import subprocess
 
-def formateaResultado(resultado):
-    resultado=resultado.split("\n")
-    while "" in resultado:
-        resultado.remove("")
-         
-    return resultado
-    
-def obtenerResultadosEntrada(rutaArchivo, lenguaje):
-    proceso = subprocess.Popen([lenguaje, rutaArchivo],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    output, errors = proceso.communicate()
-    if proceso.returncode:
-        try:
-            raise Exception(errors)
-        except Exception as falla:
-            #print type(falla.args)
-            #print type(falla.args[0])
-            return formateaResultado(falla.args[0])
-    else:
-        #print output
-        return formateaResultado(output)
+def mergeLineas(listaLineasTraza):
+    traza=""
+    for linea in listaLineasTraza:
+        traza=traza+linea+'\n'
+    traza.rstrip('\n').rstrip()
+    return traza
+
+def estandarizaLineas(listaLineasTraza):
+    listaTraza=list()
+    for linea in listaLineasTraza:
+        if linea["evento"]=='call':
+            linea="Linea:"+str(linea["numLinea"])+': '+"Se invoca a funcion:"+linea["invocacion"]
+            listaTraza.append(linea)
+        elif linea["evento"]=='line':
+            stack=""
+            for key in linea['varLocales'].keys():
+                stack=stack+str(key)+':'+str(linea['varLocales'][key])+', '
+            stack.rstrip(',').rstrip() 
+            linea="Linea:"+str(linea["numLinea"])+': '+linea["linea"]+" - Stack: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
+            listaTraza.append(linea)
+        elif linea["evento"]=='return':
+            linea="Linea:"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
+            listaTraza.append(linea)
+        elif linea["evento"]=='exception':
+            linea="Error en linea "+str(linea["numLinea"])+': '+linea["linea"]+', de la funcion: '+linea['funcionProcedencia']+', '+linea["tipo"]+': '+linea['glosa']
+            listaTraza.append(linea)  
+    return listaTraza
+
+def normalizaLineas(listaLineasTraza):
+    offsetNorma=listaLineasTraza[0]["numLinea"]-1
+    for linea in listaLineasTraza:
+        if linea["numLinea"]-1<offsetNorma:
+            offsetNorma=linea["numLinea"]-1
+    for linea in listaLineasTraza:
+        linea["numLinea"]=linea["numLinea"]-offsetNorma
 
 def obtieneTraza(datosSalidaSubproceso):
     datosSalidaSubproceso=datosSalidaSubproceso.split('\n')
@@ -53,20 +68,21 @@ def obtieneTraza(datosSalidaSubproceso):
         
         if type(linea) is dict:
             linea["numLinea"]=ast.literal_eval(linea["numLinea"])
-            if linea["evento"]=='line':
-                linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
-                linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
-                linea["argumentos"]=ast.literal_eval(linea["argumentos"])
-                if "_run_exitfuncs" in linea["funcionProcedencia"]:
-                    banderaAgregaLinea=False
-                #print type(linea["argumentos"])
-            elif linea["evento"]=='return':
-                linea["retorno"]=ast.literal_eval(linea["retorno"])
-                if "_run_exitfuncs" in linea["funcionProcedencia"]:
-                    banderaAgregaLinea=False
-            elif linea["evento"]=='call':
-                if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
-                    banderaAgregaLinea=False
+            if "evento" in linea.keys():
+                if linea["evento"]=='line':
+                    linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
+                    linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
+                    linea["argumentos"]=ast.literal_eval(linea["argumentos"])
+                    if "_run_exitfuncs" in linea["funcionProcedencia"]:
+                        banderaAgregaLinea=False
+                    #print type(linea["argumentos"])
+                elif linea["evento"]=='return':
+                    linea["retorno"]=ast.literal_eval(linea["retorno"])
+                    if "_run_exitfuncs" in linea["funcionProcedencia"]:
+                        banderaAgregaLinea=False
+                elif linea["evento"]=='call':
+                    if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
+                        banderaAgregaLinea=False
             if banderaAgregaLinea==True:
                 listaLineasTraza.append(linea)
     return listaLineasTraza
@@ -99,10 +115,11 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             #plantillasValidas.append(arbolXmlPlantillaEntrada)
             plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip()))
     return plantillasValidas
-    
+
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
     #tipoPregunta=nombres.nombreScript(__file__)
     contador=0
+    idProvisorio=0
     banderaEstado=False
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
@@ -117,13 +134,15 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     for codigoPython in xmlEntradaObject.codigos:
+                        #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
+                        for elem in subRaizSalida.getchildren():
+                            subRaizSalida.remove(elem)
+                        seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+                        seccionCodigo.text=codigoPython["codigoBruto"]
+                        seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
+                        #lista de archivos temporales por entrada anidada al codigo
                         for archivoTemporal in codigoPython["codigo"]:
-                        #print codigoPython["codigo"].name
-                        #nombreTemporal=codigoPython["codigo"].name
                             nombreTemporal=archivoTemporal.name
-                            #archivo=open(nombreTemporal)
-                            #for line in archivo:
-                            #    print line
                             directorioTemporal=nombreTemporal.split("/")
                             directorioTemporal.pop()
                             directorioTemporal='/'.join(directorioTemporal)
@@ -131,38 +150,19 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                             p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
                             streamTraza= str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
                             streamTraza=obtieneTraza(streamTraza)
-                            print len(streamTraza) #38 lineas con entradas correctas
-#                         
-                        #obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
-#                         proceso = subprocess.Popen(["python", codigoPython["codigo"].name],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-#                         output, errors = proceso.communicate()
-#                         if proceso.returncode:
-#                             try:
-#                                 raise Exception(errors)
-#                             except Exception as falla:
-#                                     #print type(falla.args)
-#                                     #print type(falla.args[0])
-#                                     print falla.args[0]
-#                             else:
-#                                 #print output
-#                                 print output
-                        #acceso.obtenerResultadosEntrada(codigoPython["codigo"].name, "python")
-                        #archivo=open(codigoPython["codigo"].name)
-                        #for line in archivo:
-                        #    print line
-                        #archivoTemporal=open(codigoPython["codigo"].name,'r+')
-                        #archivoTemporal=open(xmlEntradaObject.traceFuntions.name,'r+')
-                        #archivoTemporal=open(codigoPython["codigo"].name,'r+')
-                        #for line in archivoTemporal:
-                        #    print line
-                        #print linecache.getline(codigoPython["codigo"], 1)
-                        #if banderaEstado==True:
-                        #    xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, identificadorItem+' '+identificadorAlternativas+' '+str(contador), plantillaSalida,'xml')
-                        #else:
-                        #    print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-    #if banderaEstado==True:
-    #    print str(contador)+' Creados'                            
-                        pass
+                            normalizaLineas(streamTraza)#Normaliza numero de lineas
+                            streamTraza=estandarizaLineas(streamTraza)#Pasa las lineas a formato String
+                            streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
+                            seccionTrazaSolucion.text=streamTraza
+                            if banderaEstado==True:
+                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,str(idProvisorio),plantillaSalida,'xml')
+                                idProvisorio+=1
+                            else:
+                                print ET.tostring(plantillaSalida, 'utf-8', method="xml")
+                                idProvisorio+=1
+    if banderaEstado==True:
+        print str(idProvisorio)+' Creados'                         
+    pass
 
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas/Definiciones"

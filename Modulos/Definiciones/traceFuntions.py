@@ -24,6 +24,15 @@ def traceFunctions(frame, event, arg):
         dicPrint["glosa"]= exc_value
         dicPrint["numLinea"]=str(line_no)
         dicPrint["funcionProcedencia"]=func_name
+        dicPrint["linea"]=''.join(inspect.getframeinfo(frame).code_context).rstrip()
+        cuentaIdentacion=0
+        for caracter in dicPrint["linea"]:
+            if caracter==' ':
+                cuentaIdentacion+=1
+            else:
+                break
+        dicPrint["identacion"]=cuentaIdentacion
+        dicPrint["linea"]=dicPrint["linea"].lstrip()
         try:
             print dicPrint
         except:
@@ -53,7 +62,15 @@ def traceFunctions(frame, event, arg):
         dicPrint["evento"]=event
         dicPrint["scope"]=name
         dicPrint["numLinea"]=str(lineno)
-        dicPrint["linea"]=''.join(inspect.getframeinfo(frame).code_context).rstrip().lstrip()
+        dicPrint["linea"]=''.join(inspect.getframeinfo(frame).code_context).rstrip()
+        cuentaIdentacion=0
+        for caracter in dicPrint["linea"]:
+            if caracter==' ':
+                cuentaIdentacion+=1
+            else:
+                break
+        dicPrint["identacion"]=cuentaIdentacion
+        dicPrint["linea"]=dicPrint["linea"].lstrip()
         dicPrint["argumentos"]=str(inspect.getargvalues(frame).args)
         dicPrint["varLocales"]=str(inspect.getargvalues(frame).locals)
         dicPrint["varGlobales"]=str(variablesGlobales)
