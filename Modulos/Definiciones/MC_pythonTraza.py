@@ -13,7 +13,47 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import subprocess
+import subprocess,hashlib
+
+
+def ejecutaPyTemporal(archivoTemporal):
+    nombreTemporal=archivoTemporal.name
+    directorioTemporal=nombreTemporal.split("/")
+    directorioTemporal.pop()
+    directorioTemporal='/'.join(directorioTemporal)
+    directorioTemporal=nombres.directorioReal(directorioTemporal)
+    p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
+    return str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
+
+#entradas:
+#enunciado: obtenido de la respectiva plantilla
+#contadorEntradasBruto: indica que entrada se esta ejecutando en la actual traza
+#plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
+#codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
+def incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado):
+    idXmlSalida=""
+    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
+    seccionTrazaSolucion.set('id', idEntradaBruta)
+    seccionTrazaSolucion.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
+    for subRaizAux in plantillaSalida.iter():
+        if subRaizAux.tag=='plantilla':
+            idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
+            subRaizAux.set('id',idXmlSalida)
+        if subRaizAux.tag=='enunciado':
+            segundaParteEnunciado="Con "
+            entradasBrutas=codigoPython["entradasBruto"][contadorEntradasBruto].split(';');
+            if len(entradasBrutas)==1:
+                glosaEnunciado=" como entrada."
+            else:
+                glosaEnunciado=" como entradas."    
+            for entradaBruta in entradasBrutas:
+                segundaParteEnunciado=segundaParteEnunciado+entradaBruta+"; "
+            segundaParteEnunciado=segundaParteEnunciado.strip('; ')
+            segundaParteEnunciado=segundaParteEnunciado+glosaEnunciado 
+            subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"])+" "+segundaParteEnunciado
+    seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentarios')
+    seccionComentarios.text=codigoPython["comentarios"]
+    return idXmlSalida
 
 def mergeLineas(listaLineasTraza):
     traza=""
@@ -117,10 +157,9 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
     return plantillasValidas
 
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
-    #tipoPregunta=nombres.nombreScript(__file__)
     contador=0
-    idProvisorio=0
     banderaEstado=False
+    enunciado=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
@@ -131,37 +170,42 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.set('id',xmlEntradaObject.id)
                     subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
                 if subRaizSalida.tag=='enunciado':
-                    subRaizSalida.text=plantilla.enunciado
+                    enunciado=plantilla.enunciado[:]
+                    #subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     for codigoPython in xmlEntradaObject.codigos:
                         #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
                         for elem in subRaizSalida.getchildren():
                             subRaizSalida.remove(elem)
                         seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+                        #seccionCodigo.set('id', hashlib.sha256(codigoPython["codigoBruto"]).hexdigest())
                         seccionCodigo.text=codigoPython["codigoBruto"]
                         seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
                         #lista de archivos temporales por entrada anidada al codigo
+                        contadorEntradasBruto=0
+                        glosaEnunciado=""
                         for archivoTemporal in codigoPython["codigo"]:
-                            nombreTemporal=archivoTemporal.name
-                            directorioTemporal=nombreTemporal.split("/")
-                            directorioTemporal.pop()
-                            directorioTemporal='/'.join(directorioTemporal)
-                            directorioTemporal=nombres.directorioReal(directorioTemporal)
-                            p = subprocess.Popen(["python",nombreTemporal],stdout=subprocess.PIPE, cwd=directorioTemporal)
-                            streamTraza= str(p.communicate()[0]) #obtiene solo los resultados y no los errores 
-                            streamTraza=obtieneTraza(streamTraza)
-                            normalizaLineas(streamTraza)#Normaliza numero de lineas
+                            idXmlSalida=incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado)
+                            streamTraza=obtieneTraza(ejecutaPyTemporal(archivoTemporal))
+                            if len(streamTraza)>0:
+                                normalizaLineas(streamTraza)#Normaliza numero de lineas
+                            else:
+                                banderaEstado="No trazable"
                             streamTraza=estandarizaLineas(streamTraza)#Pasa las lineas a formato String
                             streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
                             seccionTrazaSolucion.text=streamTraza
                             if banderaEstado==True:
-                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,str(idProvisorio),plantillaSalida,'xml')
-                                idProvisorio+=1
-                            else:
+                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,plantillaSalida,'xml')
+                                contador+=1
+                            elif banderaEstado==False:
                                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-                                idProvisorio+=1
+                                contador+=1
+                            else:
+                                print "La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                banderaEstado=True
+                            contadorEntradasBruto+=1
     if banderaEstado==True:
-        print str(idProvisorio)+' Creados'                         
+        print str(contador)+' Creados'                         
     pass
 
 # Declaracion de directorio de entradas
@@ -169,14 +213,8 @@ nombreDirectorioEntradas="./Entradas/Definiciones"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
-tipoPregunta='pythonIncrustado'
+tipoPregunta='pythonTraza'
 listaXmlEntrada=list()
-
-# Almacenamiento usando el parser para este tipo de pregunta
-
-#Ahora la entrada que indica la cantidad de alternativas viene incrustada como atributo en los respectivos
-#XML de entrada
-#cantidadAlternativas=xmlSalida.argParse()
 
 if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)

@@ -1,10 +1,10 @@
-<pregunta puntaje="2" tipo="pythonIncrustado" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
+<pregunta puntaje="2" tipo="pythonTraza" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
 <codigo>
 <python id="1">
 def functionSuma(dato1,dato2):
     return dato1+dato2
     
-def funcion(dato):
+def funcionTest(dato):
     x=0
     z=0
     while dato >0:
@@ -13,10 +13,35 @@ def funcion(dato):
         print "a"
         z=functionSuma(x,z)
     return z
-<nombreFuncionPrincipal>funcion</nombreFuncionPrincipal>
-<entrada>127</entrada>
-<entrada>95</entrada>
+<nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
+<!--- formato -->
+<!--- Las entradas tienen que estar en formato x=VALOR -->
+<!--- si la funcion tiene como entradas mas valores separelos por ; -->
+<!--- x=VALOR;y=VALOR2 -->
+<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
+<!--- en este caso seria dato=VALOR -->
+<entrada>dato=127</entrada>
+<entrada>dato=95</entrada>
 <comentario>Comentario Codigo1</comentario>
+</python>
+<python id="2">
+def functionSuma(x,y):
+    return x+y
+<nombreFuncionPrincipal>functionSuma</nombreFuncionPrincipal>
+<entrada>x=['a,'b'];y=['c','d']</entrada>
+<entrada>x=95;y=96</entrada>
+<entrada>x=['a','b'];y=['c','d']</entrada>
+<comentario>Comentario Codigo2</comentario>
+</python>
+<python id="3">
+import math
+
+def functionAngulo(x,y):
+    dato=math.sin(x)+math.cos(y)
+    return dato
+<nombreFuncionPrincipal>functionAngulo</nombreFuncionPrincipal>
+<entrada>x=0.1;y=0.2</entrada>
+<comentario>Comentario Codigo3</comentario>
 </python>
 </codigo>
 </pregunta>

@@ -1,11 +1,10 @@
 import alternativa, xmlEntrada
-import nombres, acceso, os
-from os.path import exists
+import nombres, acceso
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import hashlib, argparse, tempfile, os, commands, linecache
+import hashlib, argparse
     
 def plantillaGenericaSalida():
     raizXml=ET.Element('plantilla')
@@ -76,10 +75,8 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
-    if tipo=='pythonIncrustado':
-        nombreFuncionPrincipal=""
+    if tipo=='pythonTraza':
         listaCodigosPython=list()
-        listaModulos=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
         funcionTracer = archivo.read()
         archivo.close()
@@ -95,30 +92,31 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         for subRaiz in raizXmlEntrada.iter("codigo"):
             for codigoPython in subRaiz:
                 dicCodigoPython=dict()
-                #print tempfile.gettempdir()
-                #dicCodigoPython["codigo"]=acceso.make_tempPython(codigoPython.text,funcionTracer, testEstandar)
-                #if exists(dicCodigoPython["codigo"].name):
-                #    print "archivoTemporalCreado"
-                #dicCodigoPython["codigo"].close()
-                entradasCodigo=list()
+                if codigoPython.tag=='python':
+                    dicCodigoPython["id"]=codigoPython.attrib['id']
+                dicCodigoPython["entradas"]=list()
+                dicCodigoPython["entradasBruto"]=list()
                 comentariosCodigo=""
                 for subRaizCodigo in codigoPython:
                     if subRaizCodigo.tag=='nombreFuncionPrincipal':
-                        nombreFuncionPrincipal=subRaizCodigo.text
-                    if subRaizCodigo.tag=='entrada':
-                        entradasCodigo.append(subRaizCodigo.text)
-                    if subRaizCodigo.tag=='comentario':
+                        dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
+                    elif subRaizCodigo.tag=='entrada':
+                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                        listaValores=list()
+                        for entradaTemp in subRaizCodigo.text.split(';'):
+                            listaValores.append(entradaTemp.split('=')[-1])
+                        listaValores=','.join(listaValores)
+                        dicCodigoPython["entradas"].append(listaValores)
+                    elif subRaizCodigo.tag=='comentario':
                         comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
-                dicCodigoPython["entradas"]=entradasCodigo
                 stringFuncionEntrada=list()
-                listaCodigosATrazar=list()
+                dicCodigoPython["codigo"]=list()
                 for entrada in dicCodigoPython["entradas"]:
-                    funcionEntrada=nombreFuncionPrincipal+'('+entrada+')'
+                    funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
                     stringFuncionEntrada.append(funcionEntrada)
                     codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
-                    listaCodigosATrazar.append(codigoPyConEntrada)
+                    dicCodigoPython["codigo"].append(codigoPyConEntrada)
                 dicCodigoPython["codigoBruto"]=codigoPython.text
-                dicCodigoPython["codigo"]=listaCodigosATrazar
                 dicCodigoPython["comentarios"]=comentariosCodigo
                 #Lista de diccionarios que contiene info del codigo python incrustado
                 #cada diccionario contiene:
@@ -130,8 +128,6 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
             #Para eliminar el archivo
             #os.unlink(dicCodigoPython["codigo"].name)  
-            #obtener codigo
-            #obtener datos atributos python
     if tipo=='enunciadoIncompleto':
         respuestas=list()
         enunciadoIncompleto=list()

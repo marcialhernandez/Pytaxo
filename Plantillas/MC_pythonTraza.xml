@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plantilla tipo="pythonTraza">
+<enunciado>
+    <glosa>Escriba la traza de la funcion @nombreFuncion.</glosa>
+</enunciado>
+</plantilla>

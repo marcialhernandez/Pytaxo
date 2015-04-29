@@ -23,9 +23,9 @@ class xmlEntrada:
             self.termino=kwargs['termino']
             self.id=hashlib.sha256(self.termino).hexdigest()
             #Lista de alternativas de la forma [distractor,{'ponderacion':ponderacion}]
-        if self.tipo=="pythonIncrustado" and "codigos" in kwargs.keys():
+        if self.tipo=="pythonTraza" and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
-            #self.traceFuntions=kwargs['tracer']
+            #
         if self.tipo=="enunciadoIncompleto":
             #Lista donde cada elemento es parte del enunciado ordenado de forma
             #secuencial
