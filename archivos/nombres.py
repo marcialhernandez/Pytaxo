@@ -49,6 +49,15 @@ def fullEspecificDirectoryNames(nombreArchivo):
             #print os.path.join(dirname, filename)
     return listaDirectorios
 
+def fullEspecificDirectoryNamesXML(nombreArchivo):
+    listaDirectorios=list()
+    for dirname, dirnames, filenames in os.walk(nombreArchivo):
+        for filename in filenames:
+            if ".xml" in filename:
+                listaDirectorios.append(os.path.join(dirname, filename))
+            #print os.path.join(dirname, filename)
+    return listaDirectorios
+
 def validaExistenciaArchivo(nombreArchivo):
     listaDirectorios=currentDirectoryNames()
     estado=False

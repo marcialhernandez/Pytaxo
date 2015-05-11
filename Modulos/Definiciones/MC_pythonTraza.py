@@ -73,7 +73,7 @@ def estandarizaLineas(listaLineasTraza):
             for key in linea['varLocales'].keys():
                 stack=stack+str(key)+':'+str(linea['varLocales'][key])+', '
             stack.rstrip(',').rstrip() 
-            linea="Linea:"+str(linea["numLinea"])+': '+linea["linea"]+" - Stack: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
+            linea="Linea:"+str(linea["numLinea"])+': '+linea["linea"]+" - Mem: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
             listaTraza.append(linea)
         elif linea["evento"]=='return':
             linea="Linea:"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
@@ -154,6 +154,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                     enunciado=enunciado+' @termino'
             #plantillasValidas.append(arbolXmlPlantillaEntrada)
             plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip()))
+            validaPlantilla=False
     return plantillasValidas
 
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):

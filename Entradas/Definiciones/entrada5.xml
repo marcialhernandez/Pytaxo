@@ -1,4 +1,4 @@
-<pregunta puntaje="2" tipo="pythonTraza" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
+<pregunta puntaje="2" tipo="pythonIterativo" idOrigenEntrada="5" cantidadAlternativas="3" cantidadCodigo="2">
 <codigo>
 <python id="1">
 def functionSuma(dato1,dato2):
@@ -14,6 +14,9 @@ def funcionTest(dato):
         z=functionSuma(x,z)
     return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
+<lineaIterativa>while dato >0:</lineaIterativa>
+<cantidadCiclosConsulta>2</cantidadCiclosConsulta>
+<cantidadCiclosConsulta>1</cantidadCiclosConsulta>
 <!--- formato -->
 <!--- Las entradas tienen que estar en formato x=VALOR -->
 <!--- si la funcion tiene como entradas mas valores separelos por ; -->

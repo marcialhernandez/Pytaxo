@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plantilla tipo="pythonIterativo">
+<enunciado>
+    <glosa>Indique cual es el estado de memoria del ciclo "@iteracion" de la funcion @funcionPrincipal con @entrada, cuando realiza @numIteraciones</glosa>
+</enunciado>
+</plantilla>

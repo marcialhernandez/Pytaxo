@@ -4,7 +4,7 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import hashlib, argparse
+import hashlib, argparse, copy
     
 def plantillaGenericaSalida():
     raizXml=ET.Element('plantilla')
@@ -75,6 +75,68 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
+    if tipo=='pythonIterativo':
+        listaCodigosPython=list()
+        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        funcionTracer = archivo.read()
+        archivo.close()
+        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        testEstandar=list()
+        for linea in archivo:
+            testEstandar.append(linea)
+        #testEstandar = archivo.read()
+        archivo.close()
+        #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
+        #pondran las demas funciones python
+        #archivoTracer=acceso.make_traceFuntionsFile(contenido)
+        for subRaiz in raizXmlEntrada.iter("codigo"):
+            for codigoPython in subRaiz:
+                if codigoPython.tag=='python':
+                    dicCodigoPython=dict()
+                    dicCodigoPython["cantidadCiclosConsulta"]=list()
+                    dicCodigoPython["id"]=codigoPython.attrib['id']
+                    dicCodigoPython["entradas"]=list()
+                    dicCodigoPython["entradasBruto"]=list()
+                    comentariosCodigo=""
+                    dicCodigoPython["cantidadCiclosConsulta"]=list()
+                    for subRaizCodigo in codigoPython:
+                        if subRaizCodigo.tag=='nombreFuncionPrincipal':
+                            dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
+                        elif subRaizCodigo.tag=='entrada':
+                            dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                            listaValores=list()
+                            for entradaTemp in subRaizCodigo.text.split(';'):
+                                listaValores.append(entradaTemp.split('=')[-1])
+                            listaValores=','.join(listaValores)
+                            dicCodigoPython["entradas"].append(listaValores)
+                    #No se valida si es numero la entrada
+                        elif subRaizCodigo.tag=='cantidadCiclosConsulta':
+                            dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text)
+                        elif subRaizCodigo.tag=='lineaIterativa':
+                            dicCodigoPython["lineaIterativa"]=subRaizCodigo.text
+                        elif subRaizCodigo.tag=='comentario':
+                            comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
+                    stringFuncionEntrada=list()
+                    dicCodigoPython["codigo"]=list()
+                    for entrada in dicCodigoPython["entradas"]:
+                        funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                        stringFuncionEntrada.append(funcionEntrada)
+                        codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
+                        dicCodigoPython["codigo"].append(codigoPyConEntrada)
+                    dicCodigoPython["codigoBruto"]=codigoPython.text
+                    dicCodigoPython["comentarios"]=comentariosCodigo
+                    #Lista de diccionarios que contiene info del codigo python incrustado
+                    #cada diccionario contiene:
+                    #"codigo": archivo temporal con codigo python,
+                    #"entrada": lista con las entradas que se quieren ingresar al codigo
+                    #"comentario": string que tiene concatenado todos los comentarios
+                    #print dicCodigoPython
+                    listaCodigosPython.append(dicCodigoPython)
+            #print listaCodigosPython
+                #conjunto de alternativas en este caso contiene un dic vacio
+            return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+            #Para eliminar el archivo
+            #os.unlink(dicCodigoPython["codigo"].name) 
     if tipo=='pythonTraza':
         listaCodigosPython=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
@@ -243,7 +305,7 @@ def incrustaAlternativasXml(subRaizOpciones,listaAlternativas):
 #Finalmente retorna esta lista
 def lecturaXmls(nombreDirectorioEntradas,tipo):
     listaXmlFormateadas=list()
-    for xmlEntrada in nombres.fullEspecificDirectoryNames(nombreDirectorioEntradas):
+    for xmlEntrada in nombres.fullEspecificDirectoryNamesXML(nombreDirectorioEntradas):
         arbolXml = ET.ElementTree(file=xmlEntrada)
         raizXml=arbolXml.getroot()
         if raizXml.attrib['tipo']==tipo: #'definicion':

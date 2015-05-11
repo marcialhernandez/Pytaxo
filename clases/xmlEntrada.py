@@ -23,10 +23,10 @@ class xmlEntrada:
             self.termino=kwargs['termino']
             self.id=hashlib.sha256(self.termino).hexdigest()
             #Lista de alternativas de la forma [distractor,{'ponderacion':ponderacion}]
-        if self.tipo=="pythonTraza" and "codigos" in kwargs.keys():
+        elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo") and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
             #
-        if self.tipo=="enunciadoIncompleto":
+        elif self.tipo=="enunciadoIncompleto":
             #Lista donde cada elemento es parte del enunciado ordenado de forma
             #secuencial
             self.enunciado=kwargs['enunciado']
@@ -35,7 +35,7 @@ class xmlEntrada:
             #Lista donde cada elemento son las respuestas del enunciado
             #ordenadas de forma secuencial
             #self.respuestas=kwargs['respuestas']
-        if self.tipo=='definicionPareada':
+        elif self.tipo=='definicionPareada':
             #La id de este tipo de pregunta se genera cuando tambien lo hace el item
             #Debido a que el ordenamiento de las definiciones expuestas en la parte izquierda
             #Cambian de orden
