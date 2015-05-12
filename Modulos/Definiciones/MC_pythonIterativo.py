@@ -64,11 +64,12 @@ def borraHijos(ETObject):
     pass
 
 #dictIteracion es del tipo {numeroIteracion:dict con var locales}
-def agregaAlternativaIteracion(ETObject,dicIteracion,tipo):
+def agregaAlternativaIteracion(ETObject,dicIteracion,tipo,puntaje):
     seccionAlternativa=ET.SubElement(ETObject,'alternativa')
     seccionAlternativa.text=str(mergeKeyValue(dicIteracion.values()[0]))
     seccionAlternativa.set('numeroIteracion',str(dicIteracion.keys()[0]))
     seccionAlternativa.set('tipo',tipo)
+    seccionAlternativa.set('puntaje',puntaje)
     return str(dicIteracion.keys()[0])
 
 def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
@@ -100,15 +101,15 @@ def ejecutaPyTemporal(archivoTemporal):
 #plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
 #codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
 def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa, actualCantidadCiclosConsulta):
-    #idXmlSalida=""
-    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]+numerosIteracion).hexdigest())
+    idXmlSalida=""
+    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
     seccionAlternativas.set('id', idEntradaBruta)
     seccionAlternativas.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
     seccionAlternativas.set('combinacionAlternativas', numerosIteracion)
     for subRaizAux in plantillaSalida.iter():
         if subRaizAux.tag=='plantilla':
-            #idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
-            subRaizAux.set('id',idEntradaBruta)
+            idXmlSalida=idEntradaBruta+'+'+numerosIteracion
+            subRaizAux.set('id',idXmlSalida)
         if subRaizAux.tag=='enunciado':
             enunciado=enunciado.replace("@iteracion",codigoPython["lineaIterativa"])
             enunciado=enunciado.replace("@entrada",generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))
@@ -129,7 +130,7 @@ def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida
         glosaSolucion+=mergeKeyValue2niveles(elem)+"\n"
     glosaSolucion.strip()
     seccionSolucion.text=glosaSolucion
-    return idEntradaBruta
+    return idXmlSalida
 
 def mergeLineas(listaLineasTraza):
     traza=""
@@ -252,21 +253,10 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     #subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     for codigoPython in xmlEntradaObject.codigos:
-                        #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
-                        #for elem in subRaizSalida.getchildren():
-                        #    subRaizSalida.remove(elem)
-                            
-                        #seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-                        #seccionCodigo.set('id', hashlib.sha256(codigoPython["codigoBruto"]).hexdigest())
-                        #seccionCodigo.text=codigoPython["codigoBruto"]
-                        #######seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
-                        #lista de archivos temporales por entrada anidada al codigo
                         contadorEntradasBruto=0
                         glosaEnunciado=""
-                        #print codigoPython["cantidadCiclosConsulta"]
                         for archivoTemporal in codigoPython["codigo"]:
                             idXmlSalida=""
-                            ######idXmlSalida=incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado)
                             streamTraza=obtieneTraza(ejecutaPyTemporal(archivoTemporal))
                             if len(streamTraza)>0:
                                 normalizaLineas(streamTraza)#Normaliza numero de lineas
@@ -276,10 +266,17 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                             #Si fue trazable
                             if banderaEstado==True and "lineaIterativa" in codigoPython.keys() and len(codigoPython["cantidadCiclosConsulta"])>0:
                                 listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
-                                
+                                         
                                 if banderaExisteIteracion==False:
-                                    print "No aparece D:"
-                                    #aumentar el contador bruto y realizar un continue, asi como cambiar el mensaje de error
+                                    print "Error: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
+                                    contadorEntradasBruto+=1
+                                    continue
+                                
+                                if banderaEstado=="No trazable":
+                                    print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                    banderaEstado=False
+                                    contadorEntradasBruto+=1
+                                    continue
                                     
                                 cantidadLineasTrazaIterativa=len(listaTrazasLineaIterativa)
 
@@ -310,31 +307,21 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                             numerosIteracion=""
                                             for distractor in cadaCombinacion:
                                             #se agrega al pozo de alternativas con algun identificador, identificando que son distractores y senalando tambien en el root de la alternativas, con que entrada y que funcion fue hecha
-                                                numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,distractor,"distractor")+"+"
-                                            numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta,"solucion")+"+"
+                                                numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,distractor,"distractor","0")+"+"
+                                            numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta,"solucion",str(xmlEntradaObject.puntaje))+"+"
                                         
                                             idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:],cantidadCiclosConsulta)
                                             
                                             if banderaEstado==True:
-                                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,str(contador)+"-"+idXmlSalida,copy.copy(plantillaSalida),'xml')
-                                            elif banderaEstado==False:
+                                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')
+                                            else:
                                                 pass
                                                 #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
                                                 #contador+=1
-                                            else:
-                                                print "La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
-                                                banderaEstado=False
                                             borraHijos(seccionAlternativas)     
                             
                             #La bandera se setea a False por cada archivo temporal que se comprueba
                             banderaEstado=False
-                                    
-                            #///////////////////////////////////////////////////////////
-                            #Aqui se debe buscar cuales tienen mayor identacion
-                            #streamTraza=estandarizaLineas(streamTraza)#Pasa las lineas a formato String
-                            #streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
-                            #####seccionTrazaSolucion.text=streamTraza
-                
                             contadorEntradasBruto+=1
     #if banderaEstado==True:
     print str(contador)+' Creados'                         
