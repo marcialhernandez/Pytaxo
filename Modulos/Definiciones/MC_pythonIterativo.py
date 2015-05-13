@@ -34,10 +34,10 @@ def generaGlosaEntradas(listaEntradasBrutas):
                 contador+=1
             else:
                 if contador==cantidadEntradas-1:
-                    glosaIntermedia+=glosaIntermedia+" y "+entrada
+                    glosaIntermedia+=" y "+entrada
                     contador+=1
                 else:
-                    glosaIntermedia+=glosaIntermedia+", "+entrada
+                    glosaIntermedia+=", "+entrada
                     contador+=1
         return glosaIntermedia
     else:
@@ -47,10 +47,13 @@ def generaGlosaEntradas(listaEntradasBrutas):
 
 def mergeKeyValue2niveles(dictObject):
     stringFromDict=""
-    for llave in dictObject.values()[0].keys():
-        stringFromDict+=str(llave)+" = " +str( dictObject.values()[0][llave]) + ", "
-    stringFromDict=str(dictObject.keys()[0])+" : "+stringFromDict
-    return stringFromDict.rstrip(", ")
+    if type(dictObject.values()[0])!=type(dict()):
+        return mergeKeyValue(dictObject)
+    else:
+        for llave in dictObject.values()[0].keys():           
+                stringFromDict+=str(llave)+" = " +str( dictObject.values()[0][llave]) + ", "
+        stringFromDict=str(dictObject.keys()[0])+" : "+stringFromDict
+        return stringFromDict.rstrip(", ")
 
 def mergeKeyValue(dictObject):
     stringFromDict=""
