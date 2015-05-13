@@ -1,9 +1,32 @@
 import inspect,types,sys
+contadorCantidadLineasTrazaPython=0
+limiteContadorCantidadLineasTrazaPython=300
 sysenv = globals().copy() 
 EXCLUDED_TYPES = set([types.ModuleType])
 def traceFunctions(frame, event, arg):
+    global contadorCantidadLineasTrazaPython, limiteContadorCantidadLineasTrazaPython
+    try:
+        contadorCantidadLineasTrazaPython=contadorCantidadLineasTrazaPython+1
+    except:
+        pass
+    if contadorCantidadLineasTrazaPython>limiteContadorCantidadLineasTrazaPython:
+        dicPrint=dict()
+        dicPrint["cantidadLineasTraza"]=limiteContadorCantidadLineasTrazaPython
+        dicPrint["evento"]="return"
+        dicPrint["funcionProcedencia"]=frame.f_code.co_name
+        dicPrint["retorno"]="infinito"
+        dicPrint["numLinea"]=str(frame.f_lineno)
+        try:
+            print dicPrint
+        except:
+            pass
+        try:
+            exit()
+        except:
+            exit()
     if event == 'return':
         dicPrint=dict()
+        dicPrint["cantidadLineasTraza"]=contadorCantidadLineasTrazaPython
         dicPrint["evento"]=event
         dicPrint["funcionProcedencia"]=frame.f_code.co_name
         dicPrint["retorno"]=str(arg)
@@ -19,6 +42,7 @@ def traceFunctions(frame, event, arg):
         filename = co.co_filename
         exc_type, exc_value, exc_traceback = arg
         dicPrint=dict()
+        dicPrint["cantidadLineasTraza"]=contadorCantidadLineasTrazaPython
         dicPrint["evento"]=event
         dicPrint["tipo"]=exc_type.__name__
         dicPrint["glosa"]= exc_value
@@ -39,6 +63,7 @@ def traceFunctions(frame, event, arg):
             pass
     elif event == 'call':
         dicPrint=dict()
+        dicPrint["cantidadLineasTraza"]=contadorCantidadLineasTrazaPython
         dicPrint["evento"]=event
         dicPrint["invocacion"]=frame.f_code.co_name
         dicPrint["numLinea"]=str(frame.f_lineno)
@@ -59,6 +84,7 @@ def traceFunctions(frame, event, arg):
             if not key.startswith('__') and not key.startswith('_') and type(value) not in EXCLUDED_TYPES and not key=='EXCLUDED_TYPES' and not key=='traceit' and not key=='traceFunctions' and not key=='sysenv' and type(value) is not type(traceFunctions):
                 variablesGlobales[key] = value
         dicPrint=dict()
+        dicPrint["cantidadLineasTraza"]=contadorCantidadLineasTrazaPython
         dicPrint["evento"]=event
         dicPrint["scope"]=name
         dicPrint["numLinea"]=str(lineno)

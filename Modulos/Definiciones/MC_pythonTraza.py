@@ -97,6 +97,7 @@ def obtieneTraza(datosSalidaSubproceso):
     contador=0
     listaLineasTraza=list()
     banderaAgregaLinea=True
+    banderaBreak=False
     #Ya que al momento de splitear por saltos de linea
     #el ultimo elemento es un EOF, asi que se recorre hasta el penultimo elemento
     while contador!=largoStream-1:
@@ -105,11 +106,11 @@ def obtieneTraza(datosSalidaSubproceso):
         except:
             linea=None #ignorar los prints
         contador+=1
-        
         if type(linea) is dict:
             linea["numLinea"]=ast.literal_eval(linea["numLinea"])
             if "evento" in linea.keys():
                 if linea["evento"]=='line':
+                    linea["identacion"]=int(linea["identacion"])
                     linea["varLocales"]=ast.literal_eval(linea["varLocales"]) #listo!
                     linea["varGlobales"]=ast.literal_eval(linea["varGlobales"])
                     linea["argumentos"]=ast.literal_eval(linea["argumentos"])
@@ -117,14 +118,21 @@ def obtieneTraza(datosSalidaSubproceso):
                         banderaAgregaLinea=False
                     #print type(linea["argumentos"])
                 elif linea["evento"]=='return':
-                    linea["retorno"]=ast.literal_eval(linea["retorno"])
+                    try:
+                        linea["retorno"]=ast.literal_eval(linea["retorno"])
+                    except:
+                        pass
                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
                         banderaAgregaLinea=False
+                    if linea["retorno"]=="infinito":
+                        banderaBreak==True
                 elif linea["evento"]=='call':
                     if "_run_exitfuncs" in linea["invocacion"] or "_remove" in linea["invocacion"]:
                         banderaAgregaLinea=False
             if banderaAgregaLinea==True:
                 listaLineasTraza.append(linea)
+            if banderaBreak==True:
+                break;
     return listaLineasTraza
 
 #Funcion que analiza la plantilla que corresponde a este tipo de pregunta

@@ -9,11 +9,69 @@ Created on 16-04-2015
 import nombres, xmlSalida, acceso, ast,json
 import plantilla
 from matplotlib.cbook import Null
+from alternativa import alternativa
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
 import subprocess,hashlib,copy, itertools
+
+def generaAlternativaCorrecta(alternativaCorrecta,puntaje):
+    #xmlEntradaObject.puntaje
+    #Si genera 8 iteraciones
+    if alternativaCorrecta.keys()[0]<9:
+        #entonces
+        if alternativaCorrecta.keys()[0]==8:
+            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            
+        elif alternativaCorrecta.keys()[0]<8 and alternativaCorrecta.keys()[0]>2:
+            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+           
+        elif alternativaCorrecta.keys()[0]==2:
+            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            #para el caso en que solo se haga 1 iteracion
+        else:
+            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+    elif alternativaCorrecta.keys()[0]==9:
+        return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+        #Para el caso que realice mas de 9 iteraciones
+    else:
+        return alternativa("10 iteraciones o mas","solucion", puntaje,"alternativa Incorrecta. Desfase de 2 o mas iteraciones")
+
+def generaPozoAlternativas(alternativaCorrecta):
+    pozoDistractores=list()
+    #Si genera 8 iteraciones
+    if alternativaCorrecta.keys()[0]<9:
+        #entonces
+        if alternativaCorrecta.keys()[0]==8:
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        elif alternativaCorrecta.keys()[0]<8 and alternativaCorrecta.keys()[0]>2:
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        elif alternativaCorrecta.keys()[0]==2:
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            #para el caso en que solo se haga 1 iteracion
+        else:
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
+    elif alternativaCorrecta.keys()[0]==9:
+        pozoDistractores.append(alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
+        pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+        pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        #Para el caso que realice mas de 9 iteraciones
+    else:
+        pozoDistractores.append(alternativa("9","distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+        pozoDistractores.append(alternativa("8","distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        pozoDistractores.append(alternativa("7","distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
+    return pozoDistractores
 
 def generaGlosaIteraciones(stringIteraciones):
     if int(stringIteraciones)>1:
@@ -34,10 +92,10 @@ def generaGlosaEntradas(listaEntradasBrutas):
                 contador+=1
             else:
                 if contador==cantidadEntradas-1:
-                    glosaIntermedia+=glosaIntermedia+" y "+entrada
+                    glosaIntermedia+=" y "+entrada
                     contador+=1
                 else:
-                    glosaIntermedia+=glosaIntermedia+", "+entrada
+                    glosaIntermedia+=", "+entrada
                     contador+=1
         return glosaIntermedia
     else:
@@ -47,10 +105,13 @@ def generaGlosaEntradas(listaEntradasBrutas):
 
 def mergeKeyValue2niveles(dictObject):
     stringFromDict=""
-    for llave in dictObject.values()[0].keys():
-        stringFromDict+=str(llave)+" = " +str( dictObject.values()[0][llave]) + ", "
-    stringFromDict=str(dictObject.keys()[0])+" : "+stringFromDict
-    return stringFromDict.rstrip(", ")
+    if type(dictObject.values()[0])!=type(dict()):
+        return mergeKeyValue(dictObject)
+    else:
+        for llave in dictObject.values()[0].keys():           
+                stringFromDict+=str(llave)+" = " +str( dictObject.values()[0][llave]) + ", "
+        stringFromDict=str(dictObject.keys()[0])+" : "+stringFromDict
+        return stringFromDict.rstrip(", ")
 
 def mergeKeyValue(dictObject):
     stringFromDict=""
@@ -63,14 +124,15 @@ def borraHijos(ETObject):
         ETObject.remove(elem)
     pass
 
-#dictIteracion es del tipo {numeroIteracion:dict con var locales}
-def agregaAlternativaIteracion(ETObject,dicIteracion,tipo,puntaje):
+def agregaAlternativaIteracion(ETObject,alternativaObject):
     seccionAlternativa=ET.SubElement(ETObject,'alternativa')
-    seccionAlternativa.text=str(mergeKeyValue(dicIteracion.values()[0]))
-    seccionAlternativa.set('numeroIteracion',str(dicIteracion.keys()[0]))
-    seccionAlternativa.set('tipo',tipo)
-    seccionAlternativa.set('puntaje',puntaje)
-    return str(dicIteracion.keys()[0])
+    seccionAlternativa.text=alternativaObject.llave
+    seccionAlternativa.set('numeroIteracion', alternativaObject.llave)
+    seccionAlternativa.set('tipo',alternativaObject.tipo)
+    seccionAlternativa.set('puntaje',str(alternativaObject.puntaje))
+    seccionAlternativaComentario=ET.SubElement(seccionAlternativa,'comentario')
+    seccionAlternativaComentario.text=alternativaObject.glosa
+    return alternativaObject.llave
 
 def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
     listaTrazasLineaIterativa=list()
@@ -84,6 +146,11 @@ def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
                 cuentaIteraciones+=1
                 if banderaExisteIteracion==False:
                     banderaExisteIteracion=True
+        #Para saber si la funcion tiende a infinito con la entrada
+        #Aunque esto no quiere decir que el ciclo actual que se busca sea el que produce la divergencia en la funcion
+        elif diccionarioLinea["evento"]=="return":
+            if diccionarioLinea["retorno"]=="infinito":
+                listaTrazasLineaIterativa.append(dict({cuentaIteraciones:diccionarioLinea["retorno"]}))        
     return listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones
 
 def ejecutaPyTemporal(archivoTemporal):
@@ -100,7 +167,7 @@ def ejecutaPyTemporal(archivoTemporal):
 #contadorEntradasBruto: indica que entrada se esta ejecutando en la actual traza
 #plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
 #codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
-def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa, actualCantidadCiclosConsulta):
+def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa):
     idXmlSalida=""
     idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
     seccionAlternativas.set('id', idEntradaBruta)
@@ -108,26 +175,36 @@ def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida
     seccionAlternativas.set('combinacionAlternativas', numerosIteracion)
     for subRaizAux in plantillaSalida.iter():
         if subRaizAux.tag=='plantilla':
-            idXmlSalida=idEntradaBruta+'+'+numerosIteracion
+            idXmlSalida=str(codigoPython["id"])+'-'+idEntradaBruta+'-'+numerosIteracion
             subRaizAux.set('id',idXmlSalida)
         if subRaizAux.tag=='enunciado':
             enunciado=enunciado.replace("@iteracion",codigoPython["lineaIterativa"])
             enunciado=enunciado.replace("@entrada",generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))
             enunciado=enunciado.replace("@funcionPrincipal",codigoPython["nombreFuncionPrincipal"])
-            enunciado=enunciado.replace("@numIteraciones",generaGlosaIteraciones(actualCantidadCiclosConsulta))
             subRaizAux.text=enunciado
     borraHijos(seccionSolucion)
     seccionComentarios=ET.SubElement(seccionSolucion,'comentarios')
     seccionComentarios.text=codigoPython["comentarios"]
     glosaSolucion=""
-    indicaPrimero=True
+    indica10=False
+    largoListaTrazasLineaIterativa=len(listaTrazasLineaIterativa)
+    contador=0
     for elem in listaTrazasLineaIterativa:
-        if indicaPrimero==True:
-            
-            glosaSolucion+="Traza\nNumero de iteracion: Memoria\n"
-            indicaPrimero=False
-            
+        if contador==0:
+            glosaSolucion+="Traza\nNumero de iteracion: Memoria\n"             
         glosaSolucion+=mergeKeyValue2niveles(elem)+"\n"
+        contador+=1
+        if contador==largoListaTrazasLineaIterativa-1:
+            glosaSolucion+="------------------------Solucion------------------------"+"\n"
+        elif contador==largoListaTrazasLineaIterativa:
+            glosaSolucion+="--------------------------------------------------------"+"\n"
+        elif contador>9:
+            indica10=True
+            break
+    if indica10==True:
+        glosaSolucion+="------------------------Solucion------------------------"+"\n"
+        glosaSolucion+="mas de 10 iteraciones\n"
+        glosaSolucion+="--------------------------------------------------------"+"\n"
     glosaSolucion.strip()
     seccionSolucion.text=glosaSolucion
     return idXmlSalida
@@ -270,68 +347,62 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 normalizaLineas(streamTraza)#Normaliza numero de lineas
                                 banderaEstado=True
                             else:
-                                banderaEstado="No trazable"
+                                print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                banderaEstado=False
+                                contadorEntradasBruto+=1
+                                continue
+                            
                             #Si fue trazable
-                            if banderaEstado==True and "lineaIterativa" in codigoPython.keys() and len(codigoPython["cantidadCiclosConsulta"])>0:
+                            if banderaEstado==True and "lineaIterativa" in codigoPython.keys():
                                 listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
                                          
                                 if banderaExisteIteracion==False:
                                     print "Error: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
                                     contadorEntradasBruto+=1
                                     continue
+                                    
+                                #Se quita el primer elemento pues es cuando entra a la iteracion (iteracion 0)
+                                listaTrazasLineaIterativa=listaTrazasLineaIterativa[1:]
+                                cantidadLineasTrazaIterativa=len(listaTrazasLineaIterativa)
                                 
-                                if banderaEstado=="No trazable":
-                                    print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
-                                    banderaEstado=False
+                                #esta cantidad no sirve para generar alternativas distractoras fiables
+                                #este criterio me asegura generar alternativas con una vecindad de -2 y +2
+                                if cantidadLineasTrazaIterativa==0 or cantidadLineasTrazaIterativa+2<xmlEntradaObject.cantidadAlternativas:
+                                    print "Error: La entrada '"+codigoPython["entradasBruto"][contadorEntradasBruto]+"' genera "+str(cantidadLineasTrazaIterativa)+" iteraciones. Cantidad Insuficiente para generar preguntas de "+str(xmlEntradaObject.cantidadAlternativas) +" alternativas"
                                     contadorEntradasBruto+=1
                                     continue
+                                
+                                alternativaCorrecta=copy.copy(listaTrazasLineaIterativa[-1])
+                                pozoDistractores=generaPozoAlternativas(alternativaCorrecta)
+                                
+                                alternativaCorrecta=generaAlternativaCorrecta(alternativaCorrecta,xmlEntradaObject.puntaje)
+                                
+                                borraHijos(subRaizSalida)
+                                seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+                                seccionCodigo.text=codigoPython["codigoBruto"]
+                                seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
+                                trazaIteraciones=ET.SubElement(subRaizSalida,'solucion')
+                                
+                                for cadaCombinacion in list(itertools.combinations(pozoDistractores,int(xmlEntradaObject.cantidadAlternativas)-1)):
+                                    contador+=1
+#                                   #menciona las iteraciones de cada alternativa separados por una +
+                                    numerosIteracion=""
+                                    for distractor in cadaCombinacion:
+#                                     #se agrega al pozo de alternativas con algun identificador, identificando que son distractores y senalando tambien en el root de la alternativas, con que entrada y que funcion fue hecha
+                                        numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,distractor)+"+"
+                                    numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta)+"+"
+                                    idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
                                     
-                                cantidadLineasTrazaIterativa=len(listaTrazasLineaIterativa)
-
-                                for cantidadCiclosConsulta in codigoPython["cantidadCiclosConsulta"]:
-                                    
-                                    if cantidadLineasTrazaIterativa<int(cantidadCiclosConsulta):
-                                        print "No se pueden crear preguntas indicando memoria de la iteracion "+str(cantidadCiclosConsulta)+" cuando solo se generan "+str(cantidadLineasTrazaIterativa-1)+" iteraciones"
-                                    elif cantidadLineasTrazaIterativa-2<int(xmlEntradaObject.cantidadAlternativas):
-                                        print "No se pueden crear preguntas con la entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" - No genera las suficentes iteraciones para crear distractores"
+                                    if banderaEstado==True:
+                                        #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
+                                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')
                                     else:
-                                        copiaListaTrazasLineaIterativa=listaTrazasLineaIterativa[:]
-                                        alternativaCorrecta=copy.copy(copiaListaTrazasLineaIterativa[int(cantidadCiclosConsulta)])
-                                        del copiaListaTrazasLineaIterativa[int(cantidadCiclosConsulta)]
-                                        #Se quita el primero pues es de la iteracion 0
-                                        copiaListaTrazasLineaIterativa=copiaListaTrazasLineaIterativa[1:]
-                                        
-                                        borraHijos(subRaizSalida)
-                                        seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-                                        seccionCodigo.text=codigoPython["codigoBruto"]
-                                        seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
-                                        trazaIteraciones=ET.SubElement(subRaizSalida,'solucion')
-                                        
-                                        #-1 pues la alternativa correcta se agrega de forma posterior
-                                        for cadaCombinacion in list(itertools.combinations(copiaListaTrazasLineaIterativa,int(xmlEntradaObject.cantidadAlternativas)-1)):
-                                            #contador de cantidad de archivos de salida
-                                            contador+=1
-                                            #menciona las iteraciones de cada alternativa separados por una +
-                                            numerosIteracion=""
-                                            for distractor in cadaCombinacion:
-                                            #se agrega al pozo de alternativas con algun identificador, identificando que son distractores y senalando tambien en el root de la alternativas, con que entrada y que funcion fue hecha
-                                                numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,distractor,"distractor","0")+"+"
-                                            numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta,"solucion",str(xmlEntradaObject.puntaje))+"+"
-                                        
-                                            idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:],cantidadCiclosConsulta)
-                                            
-                                            if banderaEstado==True:
-                                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')
-                                            else:
-                                                pass
-                                                #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-                                                #contador+=1
-                                            borraHijos(seccionAlternativas)     
-                            
+                                        pass
+                                    borraHijos(seccionAlternativas)                                          
+
                             #La bandera se setea a False por cada archivo temporal que se comprueba
                             banderaEstado=False
                             contadorEntradasBruto+=1
-    #if banderaEstado==True:
     print str(contador)+' Creados'                         
     pass
 
@@ -340,7 +411,7 @@ nombreDirectorioEntradas="./Entradas/Definiciones"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
-tipoPregunta='pythonIterativo'
+tipoPregunta='pythonIterativoInvertido'
 listaXmlEntrada=list()
 
 if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:

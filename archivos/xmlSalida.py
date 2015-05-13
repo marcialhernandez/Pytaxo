@@ -4,7 +4,7 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import hashlib, argparse, copy
+import hashlib, argparse
     
 def plantillaGenericaSalida():
     raizXml=ET.Element('plantilla')
@@ -75,7 +75,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
-    if tipo=='pythonIterativo':
+    elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
         listaCodigosPython=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
         funcionTracer = archivo.read()
@@ -137,7 +137,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
             #Para eliminar el archivo
             #os.unlink(dicCodigoPython["codigo"].name) 
-    if tipo=='pythonTraza':
+    elif tipo=='pythonTraza':
         listaCodigosPython=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
         funcionTracer = archivo.read()
@@ -190,7 +190,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
             #Para eliminar el archivo
             #os.unlink(dicCodigoPython["codigo"].name)  
-    if tipo=='enunciadoIncompleto':
+    elif tipo=='enunciadoIncompleto':
         respuestas=list()
         enunciadoIncompleto=list()
         for subRaiz in raizXmlEntrada.iter('enunciado'):
@@ -204,7 +204,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         alternativaSolucion=list()
         alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
         conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion
-    if tipo=='definicionPareada':
+    elif tipo=='definicionPareada':
         #Valores por default
         composicionDistractores="1+2"
         criterioOrdenDistractores="None"

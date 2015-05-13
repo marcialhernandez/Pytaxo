@@ -23,7 +23,7 @@ class xmlEntrada:
             self.termino=kwargs['termino']
             self.id=hashlib.sha256(self.termino).hexdigest()
             #Lista de alternativas de la forma [distractor,{'ponderacion':ponderacion}]
-        elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo") and "codigos" in kwargs.keys():
+        elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo" or self.tipo=="pythonIterativoInvertido") and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
             #
         elif self.tipo=="enunciadoIncompleto":
