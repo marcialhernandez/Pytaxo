@@ -75,6 +75,61 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
+    elif tipo=='pythonCompara':
+        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        funcionTracer = archivo.read()
+        archivo.close()
+        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        testEstandar=list()
+        for linea in archivo:
+            testEstandar.append(linea)
+        archivo.close()
+        listaCodigos=[]
+        listaEntradas=[]
+        comentarios=[]
+        for subRaiz in raizXmlEntrada.iter("codigo"):
+            for seccion in subRaiz:
+                if seccion.tag=='python':
+                    codigo={}
+                    codigo["id"]=seccion.attrib['id']
+                    codigo["codigoBruto"]=seccion.text
+                    for subSeccion in seccion:
+                        if subSeccion.tag=='nombreFuncionPrincipal':
+                            codigo["nombreFuncionPrincipal"]=subSeccion.text
+                    listaCodigos.append(codigo)
+                if seccion.tag=='entrada':
+                    entrada={}
+                    entrada["entradaBruta"]=seccion.text
+                    listaValores=[]
+                    for entradaTemp in entrada["entradaBruta"].split(';'):
+                        listaValores.append(entradaTemp.split('=')[-1])
+                    listaValores=','.join(listaValores)
+                    entrada["entrada"]=listaValores
+                    listaEntradas.append(entrada)
+                if seccion.tag=='comentario':
+                    comentarios.append(seccion.text)
+        comentarios='\n'.join(comentarios)
+        listaCodigosPorEntrada=[]
+        for entrada in listaEntradas:
+            codigoPorEntrada={}
+            codigoPorEntrada["entrada"]=entrada["entrada"]
+            codigoPorEntrada["entradaBruta"]=entrada["entradaBruta"]
+            codigoPorEntrada["codigos"]=[]
+            for codigo in listaCodigos:
+                #codigoPorEntrada["nombreFuncionPrincipal"]=codigo["nombreFuncionPrincipal"]
+                funcionEntrada=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+                #codigoPorEntrada["codigoBruto"]=codigo["codigoBruto"]
+                codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar, funcionEntrada)
+                codigoPorEntrada["codigos"].append(codigo)
+            listaCodigosPorEntrada.append(codigoPorEntrada)
+# Valida correcto guardado
+#         for entrada in listaCodigosPorEntrada:
+#             print entrada["entradaBruta"]
+#             for codigo in entrada["codigos"]:
+#                 print codigo["codigo"]
+
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
+
     elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
         listaCodigosPython=list()
         archivo=open("Modulos/Definiciones/traceFuntions.py", "r")

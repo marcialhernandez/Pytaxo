@@ -26,6 +26,10 @@ class xmlEntrada:
         elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo" or self.tipo=="pythonIterativoInvertido") and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
             #
+        elif self.tipo=="pythonCompara":
+            self.codigos=kwargs['codigos']
+            self.comentarios=kwargs['comentarios']
+
         elif self.tipo=="enunciadoIncompleto":
             #Lista donde cada elemento es parte del enunciado ordenado de forma
             #secuencial
