@@ -7,13 +7,18 @@ Created on 16-04-2015
 # -*- coding: utf-8 -*-
 #import sys
 import nombres, xmlSalida, acceso, ast,json
-import plantilla
+import plantilla, alternativa
 from matplotlib.cbook import Null
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
 import subprocess,hashlib, itertools
+
+def borraHijos(ETObject):
+    for elem in ETObject.getchildren():
+        ETObject.remove(elem)
+    pass
 
 def ejecutaPyTemporal(archivoTemporal):
     nombreTemporal=archivoTemporal.name
@@ -53,6 +58,17 @@ def incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntrad
     seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentarios')
     seccionComentarios.text=codigoPython["comentarios"]
     return idXmlSalida
+
+def agregaAlternativaIteracion(ETObject,alternativaObject):
+    seccionAlternativa=ET.SubElement(ETObject,'alternativa')
+    seccionAlternativa.text=alternativaObject.glosa
+    seccionAlternativa.set('id', alternativaObject.llave)
+    seccionAlternativa.set('tipo',alternativaObject.tipo)
+    seccionAlternativa.set('puntaje',str(alternativaObject.puntaje))
+    seccionAlternativaComentario=ET.SubElement(seccionAlternativa,'comentario')
+    if hasattr(alternativaObject, 'comentario'):
+        seccionAlternativaComentario.text=alternativaObject.comentario
+    return alternativaObject.llave
 
 def mergeLineas(listaLineasTraza):
     traza=""
@@ -165,6 +181,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
     return plantillasValidas
 
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
+    #Cuenta la cantidad de items generados
     contador=0
     banderaEstado=False
     enunciado=""
@@ -193,47 +210,119 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 print "El codigo id = "+codigoAsociado["id"]+" no admite la entrada '"+entrada["entrada"]
                                 del codigoAsociado
                     
-                    cantidadFuncionesAComparar=3
+                    cantidadFuncionesAComparar=3 #Siempre son 3, pues si fuesen 2 no se generarian alternativas suficientes
                     for entrada in xmlEntradaObject.codigos:
                         #Aqui es donde se empiezan a crear las formas de los diferentes tipos de preguntas
                         
                          #cantidadFuncionesAComparar debe ser una entrada!!! del xml!!
                         for funcionesComparadas in list(itertools.combinations(entrada["codigos"],cantidadFuncionesAComparar)):
-                            
+                            #Antes de agregar nueva informacion, se eliminan los hijos
+                            borraHijos(subRaizSalida)
+                            seccionesCodigo=[]
+                            contadorFunciones=0
+                            #Tabla hashNombres creada para asociar cada funcion a un numero
+                            hashNombres={}
+                            comentarioItem=""  
+                            for funcion in funcionesComparadas:
+                                seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+                                seccionCodigo.set('id', funcion["id"])
+                                seccionCodigo.set('nombreFuncion',funcion["nombreFuncionPrincipal"])
+                                seccionesCodigo.append(seccionCodigo)
+                                contadorFunciones+=1
+                                hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
+                                seccionCodigo.text="Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+":\n"+funcion["codigoBruto"]
+                                comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"                              
+                            seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
+                            #Se agrega comentario del item, que menciona el valor de retorno de cada funcion
+                            seccionComentario=ET.SubElement(subRaizSalida,'comentario')
+                            seccionComentario.text=comentarioItem.rstrip()
                             pozoOpciones=[]
                             #Bandera que indica si todas las funciones comparadas son iguales o no, son iguales si es mayor que 1
+                            #Si la banderaTodas es 0, ninguna es igual
+                            #Si la banderaTodas es 1, hay por lo menos una igualdad
+                            #Si la banderaTodas es 2, todas las funciones son iguales entre si
                             banderaTodas=0 
                             #Tabla hashNombres creada para asociar cada funcion a un numero
-                            hashNombres={}                            
+                            #hashNombres={}                            
                             for comparaConsulta in list(itertools.combinations(funcionesComparadas,2)):
                                 consulta={}
                                 consulta["consulta"]=comparaConsulta
+                                consulta["glosaAlternativa"]=[] #=comparaConsulta[0]["nombreFuncionPrincipal"]+" y "+comparaConsulta[1]["nombreFuncionPrincipal"]
+                                consulta["glosaAlternativa"].append(comparaConsulta[0]["nombreFuncionPrincipal"])
+                                consulta["glosaAlternativa"].append(comparaConsulta[1]["nombreFuncionPrincipal"])
+                                consulta["idAlternativa"]=[]
+                                consulta["idAlternativa"].append(comparaConsulta[0]["id"])
+                                consulta["idAlternativa"].append(comparaConsulta[1]["id"])
+                                consulta["retorno"]=[]
+                                consulta["retorno"].append(comparaConsulta[0]["retorno"])
+                                consulta["retorno"].append(comparaConsulta[1]["retorno"])
                                 if comparaConsulta[0]["retorno"]==comparaConsulta[1]["retorno"]:
                                     consulta["igualdad"]=True
                                     banderaTodas+=1
-                                    consulta["glosaAlternativa"]=comparaConsulta[0]["nombreFuncionPrincipal"]+" y "+comparaConsulta[1]["nombreFuncionPrincipal"]
-                                    hashNombres[comparaConsulta[0]["nombreFuncionPrincipal"]]=""
-                                    hashNombres[comparaConsulta[1]["nombreFuncionPrincipal"]]=""
+                                    
                                 else:
                                     consulta["igualdad"]=False
-                                    consulta["glosaAlternativa"]=comparaConsulta[0]["nombreFuncionPrincipal"]+" y "+comparaConsulta[1]["nombreFuncionPrincipal"]
-                                    hashNombres[comparaConsulta[0]["nombreFuncionPrincipal"]]=""
-                                    hashNombres[comparaConsulta[1]["nombreFuncionPrincipal"]]=""
+ 
                                 #print comparaConsulta[0]["nombreFuncionPrincipal"]+"-"+comparaConsulta[1]["nombreFuncionPrincipal"]+"-"+str(consulta["igualdad"])
                                 pozoOpciones.append(consulta)
-                            contador=1
-                            for key in hashNombres.keys():
-                                hashNombres[key]="I"*contador
+        
+                            #reemplazar los nombres de las funciones principales por sus numeros segun la tabla hash
+                            for opcion in pozoOpciones:
+                                nuevosNombres=[]
+                                for nombreFuncion in opcion["glosaAlternativa"]:
+                                    nuevosNombres.append(nombreFuncion.replace(nombreFuncion,hashNombres[nombreFuncion]))
+                                #Estos son los nombres traducidos segun la tabla hash local creada
+                                opcion["glosaAlternativaNumerica"]=nuevosNombres
+                                #print " y ".join(opcion["glosaAlternativaNumerica"])
+                                #print "+".join(opcion["idAlternativa"])
+                            
+                            #Aqui es donde se generan las alternativas tipo alternativa
+                            #Se generan el pozo de alternativas distractoras y la alternativa solucion
+                            listaAlternativasDistractoras=[]
+                            alternativaSolucion=""
+                            if banderaTodas==0:
+                                alternativaSolucion=alternativa("Ninguna", "solucion", xmlEntradaObject.puntaje,"Ninguna")
+                                listaAlternativasDistractoras.append(alternativa.alternativa("Todas", "distractor", xmlEntradaObject.puntaje,"I, II y III"))                  
+                                for opcion in pozoOpciones:
+                                    comentario="La funcion "+opcion["glosaAlternativaNumerica"][0]+ " retorna "+ str(opcion["retorno"][0]) + " y la funcion " +opcion["glosaAlternativaNumerica"][1]+ " retorna "+ str(opcion["retorno"][1])+"."
+                                    listaAlternativasDistractoras.append(alternativa.alternativa("+".join(opcion["idAlternativa"]),"distractor",0," y ".join(opcion["glosaAlternativaNumerica"]),comentario=comentario))                  
+                                #La alternativa correcta es "ninguna"
+                            elif banderaTodas==1:
+                                #La alternativa correcta es la consulta contenida en pozoOpciones que tiene el atributo "igualdad"==True
+                                listaAlternativasDistractoras.append(alternativa.alternativa("Ninguna", "distractor", xmlEntradaObject.puntaje,"Ninguna"))                  
+                                listaAlternativasDistractoras.append(alternativa.alternativa("Todas", "distractor", xmlEntradaObject.puntaje,"I, II y III"))                  
+                                for opcion in pozoOpciones:
+                                    if opcion["igualdad"]==False:
+                                        comentario="La funcion "+opcion["glosaAlternativaNumerica"][0]+ " retorna "+ str(opcion["retorno"][0]) + " y la funcion " +opcion["glosaAlternativaNumerica"][1]+ " retorna "+ str(opcion["retorno"][1])+"."
+                                        listaAlternativasDistractoras.append(alternativa.alternativa("+".join(opcion["idAlternativa"]),"distractor",0," y ".join(opcion["glosaAlternativaNumerica"]),comentario=comentario))
+                                    else:
+                                        alternativaSolucion=alternativa.alternativa("+".join(opcion["idAlternativa"]),"solucion",0," y ".join(opcion["glosaAlternativaNumerica"]))
+                            elif banderaTodas==2:
+                                #La alternativa correcta es "Todas"
+                                alternativaSolucion=alternativa.alternativa("Todas", "solucion", xmlEntradaObject.puntaje,"I, II y III")
+                                listaAlternativasDistractoras.append(alternativa.alternativa("Ninguna", "distractor", xmlEntradaObject.puntaje,"Ninguna"))                  
+                                for opcion in pozoOpciones:
+                                    comentario="La funcion "+opcion["glosaAlternativaNumerica"][0]+ " retorna "+ str(opcion["retorno"][0]) + " y la funcion " +opcion["glosaAlternativaNumerica"][1]+ " retorna "+ str(opcion["retorno"][1])+"."
+                                    listaAlternativasDistractoras.append(alternativa.alternativa("+".join(opcion["idAlternativa"]),"distractor",0," y ".join(opcion["glosaAlternativaNumerica"]),comentario=comentario))
+                            
+                            #Ahora se tiene que hacer la combinatoria del pozo de alternativas distractoras (combinaciones de cantidad de alternativas-1) y a cada una de estas, se le agrega la alternativa correcta al principio
+                            #Cada grupo generado es una forma distinta
+                            for combinacionAlternativas in list(itertools.combinations(listaAlternativasDistractoras,xmlEntradaObject.cantidadAlternativas-1)):
+                                #test=""
+                                #Antes de agregar nueva informacion, se eliminan los hijos
+                                borraHijos(seccionAlternativas)
+                                for cadaAlternativa in combinacionAlternativas:
+                                    #Se agregan los distractores al xml
+                                    agregaAlternativaIteracion(seccionAlternativas,cadaAlternativa)
+                                #Se agrega la alternativa solucion 
+                                agregaAlternativaIteracion(seccionAlternativas,alternativaSolucion)
+                                #Genero el xml
                                 contador+=1
-                            #generaAlternativas(pozoOpciones)
-                            #print hashNombres
-                            
+                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,str(contador),plantillaSalida,'xml')
+    print str(contador)+' Creados'
                                     
-                                    
-                            
-                             #Acondicionamiento sentencias
-                             #ejemplo: funcion 1 y 2 son iguales?
-                             #funcion 2 y 3 son iguales?                        
+                                #    test+=cadaAlternativa.glosa+" - "   
+                                #print test                     
                             
 #                     for codigoPython in xmlEntradaObject.codigos:
 #                         #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
