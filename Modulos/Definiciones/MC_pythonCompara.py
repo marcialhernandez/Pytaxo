@@ -20,6 +20,76 @@ def borraHijos(ETObject):
         ETObject.remove(elem)
     pass
 
+def generaGlosaEntradas(listaEntradasBrutas):
+    glosaIntermedia=""
+    #listaEntradas=codigoPython["entradasBruto"][contadorEntradasBruto].split(";")
+    listaEntradas=listaEntradasBrutas.split(";")
+    cantidadEntradas=len(listaEntradas)
+    if cantidadEntradas>1:
+        contador=0
+        for entrada in listaEntradas:
+            if contador==0:
+                glosaIntermedia+="las entradas "+entrada
+                contador+=1
+            else:
+                if contador==cantidadEntradas-1:
+                    glosaIntermedia+=" y "+entrada
+                    contador+=1
+                else:
+                    glosaIntermedia+=", "+entrada
+                    contador+=1
+        return glosaIntermedia
+    else:
+        glosaIntermedia="la entrada "+listaEntradas[0]
+        return glosaIntermedia
+
+#entradas:
+#enunciado: obtenido de la respectiva plantilla
+#contadorEntradasBruto: indica que entrada se esta ejecutando en la actual traza
+#plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
+#codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
+def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa):
+    idXmlSalida=""
+    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
+    seccionAlternativas.set('id', idEntradaBruta)
+    seccionAlternativas.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
+    seccionAlternativas.set('combinacionAlternativas', numerosIteracion)
+    for subRaizAux in plantillaSalida.iter():
+        if subRaizAux.tag=='plantilla':
+            idXmlSalida=str(codigoPython["id"])+'-'+idEntradaBruta+'-'+numerosIteracion
+            subRaizAux.set('id',idXmlSalida)
+        if subRaizAux.tag=='enunciado':
+            enunciado=enunciado.replace("@iteracion",codigoPython["lineaIterativa"])
+            enunciado=enunciado.replace("@entrada",generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))
+            enunciado=enunciado.replace("@funcionPrincipal",codigoPython["nombreFuncionPrincipal"])
+            subRaizAux.text=enunciado
+    borraHijos(seccionSolucion)
+    seccionComentarios=ET.SubElement(seccionSolucion,'comentarios')
+    seccionComentarios.text=codigoPython["comentarios"]
+    glosaSolucion=""
+    indica10=False
+    largoListaTrazasLineaIterativa=len(listaTrazasLineaIterativa)
+    contador=0
+    for elem in listaTrazasLineaIterativa:
+        if contador==0:
+            glosaSolucion+="Traza\nNumero de iteracion: Memoria\n"             
+        glosaSolucion+=mergeKeyValue2niveles(elem)+"\n"
+        contador+=1
+        if contador==largoListaTrazasLineaIterativa-1:
+            glosaSolucion+="------------------------Solucion------------------------"+"\n"
+        elif contador==largoListaTrazasLineaIterativa:
+            glosaSolucion+="--------------------------------------------------------"+"\n"
+        elif contador>9:
+            indica10=True
+            break
+    if indica10==True:
+        glosaSolucion+="------------------------Solucion------------------------"+"\n"
+        glosaSolucion+="mas de 10 iteraciones\n"
+        glosaSolucion+="--------------------------------------------------------"+"\n"
+    glosaSolucion.strip()
+    seccionSolucion.text=glosaSolucion
+    return idXmlSalida
+
 def ejecutaPyTemporal(archivoTemporal):
     nombreTemporal=archivoTemporal.name
     directorioTemporal=nombreTemporal.split("/")
@@ -190,12 +260,13 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         plantillaSalida=xmlSalida.plantillaGenericaSalida()
         for subRaizSalida in plantillaSalida.iter():
+                enunciado=plantilla.enunciado[:]
                 if subRaizSalida.tag=='plantilla':
                     subRaizSalida.set('tipo',xmlEntradaObject.tipo)
-                    subRaizSalida.set('id',xmlEntradaObject.id)
+                    #subRaizSalida.set('id',xmlEntradaObject.id)
                     subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
-                if subRaizSalida.tag=='enunciado':
-                    enunciado=plantilla.enunciado[:]
+                #if subRaizSalida.tag=='enunciado':
+                #    enunciado=plantilla.enunciado[:]
                     #subRaizSalida.text=plantilla.enunciado
                 if subRaizSalida.tag=='opciones':
                     pass
@@ -218,20 +289,33 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         for funcionesComparadas in list(itertools.combinations(entrada["codigos"],cantidadFuncionesAComparar)):
                             #Antes de agregar nueva informacion, se eliminan los hijos
                             borraHijos(subRaizSalida)
-                            seccionesCodigo=[]
                             contadorFunciones=0
                             #Tabla hashNombres creada para asociar cada funcion a un numero
                             hashNombres={}
-                            comentarioItem=""  
+                            comentarioItem=""
+                            #id unico identificador del item, entre los demas items
+                            idItem=""
+                            seccionesCodigo=[]
+                            #Agrego la informacion respecto a las funciones en la glosa del item
                             for funcion in funcionesComparadas:
                                 seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
                                 seccionCodigo.set('id', funcion["id"])
                                 seccionCodigo.set('nombreFuncion',funcion["nombreFuncionPrincipal"])
                                 seccionesCodigo.append(seccionCodigo)
                                 contadorFunciones+=1
+                                idItem+=funcion["codigoBruto"]
                                 hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
                                 seccionCodigo.text="Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+":\n"+funcion["codigoBruto"]
-                                comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"                              
+                                comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"
+                            #falta agregar el valor de las entradas al final de la ID
+                            idItem=str(hashlib.sha256(idItem).hexdigest())+"@"+entrada["entradaBruta"]  
+                            #Luego se agrega este atributo al tag plantilla, es necesario el for, pues SubRaiz actual es del tag opciones 
+                            for subSeccion in plantillaSalida.iter():
+                                if subSeccion.tag=='plantilla':
+                                    subSeccion.set('id',idItem)
+                                #Se aprovecha de agregar el enunciado
+                                if subSeccion.tag=='enunciado':
+                                    subSeccion.text=enunciado.replace("@entrada",generaGlosaEntradas(entrada["entradaBruta"]))                                   
                             seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
                             #Se agrega comentario del item, que menciona el valor de retorno de cada funcion
                             seccionComentario=ET.SubElement(subRaizSalida,'comentario')
@@ -311,53 +395,16 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 #test=""
                                 #Antes de agregar nueva informacion, se eliminan los hijos
                                 borraHijos(seccionAlternativas)
+                                idAlternativas=""
                                 for cadaAlternativa in combinacionAlternativas:
                                     #Se agregan los distractores al xml
-                                    agregaAlternativaIteracion(seccionAlternativas,cadaAlternativa)
+                                    idAlternativas+=agregaAlternativaIteracion(seccionAlternativas,cadaAlternativa)+" "
                                 #Se agrega la alternativa solucion 
-                                agregaAlternativaIteracion(seccionAlternativas,alternativaSolucion)
+                                idAlternativas+=agregaAlternativaIteracion(seccionAlternativas,alternativaSolucion)
                                 #Genero el xml
                                 contador+=1
-                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,str(contador),plantillaSalida,'xml')
+                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem+"@"+idAlternativas,plantillaSalida,'xml')
     print str(contador)+' Creados'
-                                    
-                                #    test+=cadaAlternativa.glosa+" - "   
-                                #print test                     
-                            
-#                     for codigoPython in xmlEntradaObject.codigos:
-#                         #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
-#                         for elem in subRaizSalida.getchildren():
-#                             subRaizSalida.remove(elem)
-#                         seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-#                         #seccionCodigo.set('id', hashlib.sha256(codigoPython["codigoBruto"]).hexdigest())
-#                         seccionCodigo.text=codigoPython["codigoBruto"]
-#                         seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
-#                         #lista de archivos temporales por entrada anidada al codigo
-#                         contadorEntradasBruto=0
-#                         glosaEnunciado=""
-#                         for archivoTemporal in codigoPython["codigo"]:
-#                             idXmlSalida=incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado)
-#                             streamTraza=obtieneTraza(ejecutaPyTemporal(archivoTemporal))
-#                             if len(streamTraza)>0:
-#                                 normalizaLineas(streamTraza)#Normaliza numero de lineas
-#                             else:
-#                                 banderaEstado="No trazable"
-#                             streamTraza=estandarizaLineas(streamTraza)#Pasa las lineas a formato String
-#                             streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
-#                             seccionTrazaSolucion.text=streamTraza
-#                             if banderaEstado==True:
-#                                 xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,plantillaSalida,'xml')
-#                                 contador+=1
-#                             elif banderaEstado==False:
-#                                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-#                                 contador+=1
-#                             else:
-#                                 print "La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
-#                                 banderaEstado=True
-#                             contadorEntradasBruto+=1
-#     if banderaEstado==True:
-#         print str(contador)+' Creados'                         
-#     pass
 
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas/Definiciones"

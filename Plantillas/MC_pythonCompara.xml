@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plantilla tipo="pythonCompara">
 <enunciado>
-    <glosa>Escriba la traza de la funcion @nombreFuncion.</glosa>
+    <glosa>Indique cuales de las siguientes funciones retornan el mismo resultado con @entrada.</glosa>
 </enunciado>
 </plantilla>
