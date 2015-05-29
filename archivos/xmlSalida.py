@@ -53,167 +53,85 @@ def validaConjuntoAlternativas(conjuntoAlternativas):
     else:
         return False
 
-def analizaTipoDefinicion(subRaiz):
-    pass
+def analizadorComparacion(raizXmlEntrada):
+    archivo=open("Modulos/v1/traceFuntions.py", "r")
+    funcionTracer = archivo.read()
+    archivo.close()
+    archivo=open("Modulos/v1/testEstandar.py", "r+")
+    testEstandar=list()
+    for linea in archivo:
+        testEstandar.append(linea)
+    archivo.close()
+    listaCodigos=[]
+    listaEntradas=[]
+    comentarios=[]
+    for subRaiz in raizXmlEntrada.iter("codigo"):
+        for seccion in subRaiz:
+            #Cada codigo incrustado y su informacion se agrega a la listaCodigos
+            if seccion.tag=='python':
+                codigo={}
+                codigo["id"]=seccion.attrib['id']
+                codigo["codigoBruto"]=seccion.text
+                for subSeccion in seccion:
+                    if subSeccion.tag=='nombreFuncionPrincipal':
+                        codigo["nombreFuncionPrincipal"]=subSeccion.text
+                listaCodigos.append(codigo)
+            #Cada entrada para los codigos y agrega a la listaDeEntradas
+            if seccion.tag=='entrada':
+                entrada={}
+                entrada["entradaBruta"]=seccion.text
+                listaValores=[]
+                for entradaTemp in entrada["entradaBruta"].split(';'):
+                    listaValores.append(entradaTemp.split('=')[-1])
+                listaValores=','.join(listaValores)
+                entrada["entrada"]=listaValores
+                listaEntradas.append(entrada)
+            #Se anidan los comentarios en uno solo
+            if seccion.tag=='comentario':
+                comentarios.append(seccion.text)
+    comentarios='\n'.join(comentarios)
+    listaCodigosPorEntrada=[]
+    #Luego para cada entrada
+    for entrada in listaEntradas:
+        codigoPorEntrada={}
+        codigoPorEntrada["entrada"]=entrada["entrada"]
+        codigoPorEntrada["entradaBruta"]=entrada["entradaBruta"]
+        codigoPorEntrada["codigos"]=[]
+        #Se genera un archivo temporal con cada codigo y la entrada actual
+        for codigo in listaCodigos:
+            #codigoPorEntrada["nombreFuncionPrincipal"]=codigo["nombreFuncionPrincipal"]
+            funcionEntrada=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+            #codigoPorEntrada["codigoBruto"]=codigo["codigoBruto"]
+            codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar, funcionEntrada)
+            codigoPorEntrada["codigos"].append(codigo)
+        #Resultando en un codigoPorEntrada de la forma {entradaActual:Lista de archivos temporales con la entrada actual evaluada}
+        listaCodigosPorEntrada.append(codigoPorEntrada)
+    return listaCodigosPorEntrada, comentarios
 
-def analizaTipoEnunciadoIncompleto(subRaiz):
-    pass
-
-def preguntaParser(raizXmlEntrada,nombreArchivo):
-    puntaje=0
-    tipo=""
-    cantidadAlternativas=0
-    conjuntoAlternativas=dict()
-    comentarioAlternativa=""
-    termino="" #Para el tipo pregunta definicion
-    enunciado="" #Para el tipo pregunta enunciadoIncompleto
-    for subRaiz in raizXmlEntrada.iter('pregunta'):
-        puntaje=int((subRaiz.attrib['puntaje']))
-        tipo=str(subRaiz.attrib['tipo'])
-        cantidadAlternativas=int(subRaiz.attrib['cantidadAlternativas'])
-        idOrigenEntrada=str(subRaiz.attrib['idOrigenEntrada'])
-    if tipo=='definicion':
-        for subRaiz in raizXmlEntrada.iter('termino'):
-            termino=subRaiz.text
-    elif tipo=='pythonCompara':
-        archivo=open("Modulos/v1/traceFuntions.py", "r")
-        funcionTracer = archivo.read()
-        archivo.close()
-        archivo=open("Modulos/v1/testEstandar.py", "r+")
-        testEstandar=list()
-        for linea in archivo:
-            testEstandar.append(linea)
-        archivo.close()
-        listaCodigos=[]
-        listaEntradas=[]
-        comentarios=[]
-        for subRaiz in raizXmlEntrada.iter("codigo"):
-            for seccion in subRaiz:
-                if seccion.tag=='python':
-                    codigo={}
-                    codigo["id"]=seccion.attrib['id']
-                    codigo["codigoBruto"]=seccion.text
-                    for subSeccion in seccion:
-                        if subSeccion.tag=='nombreFuncionPrincipal':
-                            codigo["nombreFuncionPrincipal"]=subSeccion.text
-                    listaCodigos.append(codigo)
-                if seccion.tag=='entrada':
-                    entrada={}
-                    entrada["entradaBruta"]=seccion.text
-                    listaValores=[]
-                    for entradaTemp in entrada["entradaBruta"].split(';'):
-                        listaValores.append(entradaTemp.split('=')[-1])
-                    listaValores=','.join(listaValores)
-                    entrada["entrada"]=listaValores
-                    listaEntradas.append(entrada)
-                if seccion.tag=='comentario':
-                    comentarios.append(seccion.text)
-        comentarios='\n'.join(comentarios)
-        listaCodigosPorEntrada=[]
-        for entrada in listaEntradas:
-            codigoPorEntrada={}
-            codigoPorEntrada["entrada"]=entrada["entrada"]
-            codigoPorEntrada["entradaBruta"]=entrada["entradaBruta"]
-            codigoPorEntrada["codigos"]=[]
-            for codigo in listaCodigos:
-                #codigoPorEntrada["nombreFuncionPrincipal"]=codigo["nombreFuncionPrincipal"]
-                funcionEntrada=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
-                #codigoPorEntrada["codigoBruto"]=codigo["codigoBruto"]
-                codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar, funcionEntrada)
-                codigoPorEntrada["codigos"].append(codigo)
-            listaCodigosPorEntrada.append(codigoPorEntrada)
-# Valida correcto guardado
-#         for entrada in listaCodigosPorEntrada:
-#             print entrada["entradaBruta"]
-#             for codigo in entrada["codigos"]:
-#                 print codigo["codigo"]
-
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
-
-    elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
-        listaCodigosPython=list()
-        archivo=open("Modulos/v1/traceFuntions.py", "r")
-        funcionTracer = archivo.read()
-        archivo.close()
-        archivo=open("Modulos/v1/testEstandar.py", "r+")
-        testEstandar=list()
-        for linea in archivo:
-            testEstandar.append(linea)
-        #testEstandar = archivo.read()
-        archivo.close()
-        #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
-        #pondran las demas funciones python
-        #archivoTracer=acceso.make_traceFuntionsFile(contenido)
-        for subRaiz in raizXmlEntrada.iter("codigo"):
-            for codigoPython in subRaiz:
-                if codigoPython.tag=='python':
-                    dicCodigoPython=dict()
-                    dicCodigoPython["cantidadCiclosConsulta"]=list()
-                    dicCodigoPython["id"]=codigoPython.attrib['id']
-                    dicCodigoPython["entradas"]=list()
-                    dicCodigoPython["entradasBruto"]=list()
-                    comentariosCodigo=""
-                    dicCodigoPython["cantidadCiclosConsulta"]=list()
-                    for subRaizCodigo in codigoPython:
-                        if subRaizCodigo.tag=='nombreFuncionPrincipal':
-                            dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
-                        elif subRaizCodigo.tag=='entrada':
-                            dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
-                            listaValores=list()
-                            for entradaTemp in subRaizCodigo.text.split(';'):
-                                listaValores.append(entradaTemp.split('=')[-1])
-                            listaValores=','.join(listaValores)
-                            dicCodigoPython["entradas"].append(listaValores)
-                    #No se valida si es numero la entrada
-                        elif subRaizCodigo.tag=='cantidadCiclosConsulta':
-                            dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text)
-                        elif subRaizCodigo.tag=='lineaIterativa':
-                            dicCodigoPython["lineaIterativa"]=subRaizCodigo.text
-                        elif subRaizCodigo.tag=='comentario':
-                            comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
-                    stringFuncionEntrada=list()
-                    dicCodigoPython["codigo"]=list()
-                    for entrada in dicCodigoPython["entradas"]:
-                        funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
-                        stringFuncionEntrada.append(funcionEntrada)
-                        codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
-                        dicCodigoPython["codigo"].append(codigoPyConEntrada)
-                    dicCodigoPython["codigoBruto"]=codigoPython.text
-                    dicCodigoPython["comentarios"]=comentariosCodigo
-                    #Lista de diccionarios que contiene info del codigo python incrustado
-                    #cada diccionario contiene:
-                    #"codigo": archivo temporal con codigo python,
-                    #"entrada": lista con las entradas que se quieren ingresar al codigo
-                    #"comentario": string que tiene concatenado todos los comentarios
-                    #print dicCodigoPython
-                    listaCodigosPython.append(dicCodigoPython)
-            #print listaCodigosPython
-                #conjunto de alternativas en este caso contiene un dic vacio
-            return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
-            #Para eliminar el archivo
-            #os.unlink(dicCodigoPython["codigo"].name) 
-    elif tipo=='pythonTraza':
-        listaCodigosPython=list()
-        archivo=open("Modulos/v1/traceFuntions.py", "r")
-        funcionTracer = archivo.read()
-        archivo.close()
-        archivo=open("Modulos/v1/testEstandar.py", "r+")
-        testEstandar=list()
-        for linea in archivo:
-            testEstandar.append(linea)
-        #testEstandar = archivo.read()
-        archivo.close()
-        #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
-        #pondran las demas funciones python
-        #archivoTracer=acceso.make_traceFuntionsFile(contenido)
-        for subRaiz in raizXmlEntrada.iter("codigo"):
-            for codigoPython in subRaiz:
+def analizadorIteracion(raizXmlEntrada):
+    listaCodigosPython=list()
+    archivo=open("Modulos/v1/traceFuntions.py", "r")
+    funcionTracer = archivo.read()
+    archivo.close()
+    archivo=open("Modulos/v1/testEstandar.py", "r+")
+    testEstandar=list()
+    for linea in archivo:
+        testEstandar.append(linea)
+    #testEstandar = archivo.read()
+    archivo.close()
+    #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
+    #pondran las demas funciones python
+    #archivoTracer=acceso.make_traceFuntionsFile(contenido)
+    for subRaiz in raizXmlEntrada.iter("codigo"):
+        for codigoPython in subRaiz:
+            if codigoPython.tag=='python':
                 dicCodigoPython=dict()
-                if codigoPython.tag=='python':
-                    dicCodigoPython["id"]=codigoPython.attrib['id']
+                dicCodigoPython["cantidadCiclosConsulta"]=list()
+                dicCodigoPython["id"]=codigoPython.attrib['id']
                 dicCodigoPython["entradas"]=list()
                 dicCodigoPython["entradasBruto"]=list()
                 comentariosCodigo=""
+                dicCodigoPython["cantidadCiclosConsulta"]=list()
                 for subRaizCodigo in codigoPython:
                     if subRaizCodigo.tag=='nombreFuncionPrincipal':
                         dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
@@ -224,6 +142,11 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                             listaValores.append(entradaTemp.split('=')[-1])
                         listaValores=','.join(listaValores)
                         dicCodigoPython["entradas"].append(listaValores)
+                #No se valida si es numero la entrada
+                    elif subRaizCodigo.tag=='cantidadCiclosConsulta':
+                        dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text)
+                    elif subRaizCodigo.tag=='lineaIterativa':
+                        dicCodigoPython["lineaIterativa"]=subRaizCodigo.text
                     elif subRaizCodigo.tag=='comentario':
                         comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
                 stringFuncionEntrada=list()
@@ -240,11 +163,96 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 #"codigo": archivo temporal con codigo python,
                 #"entrada": lista con las entradas que se quieren ingresar al codigo
                 #"comentario": string que tiene concatenado todos los comentarios
+                #print dicCodigoPython
                 listaCodigosPython.append(dicCodigoPython)
-                #conjunto de alternativas en este caso contiene un dic vacio
-            return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
-            #Para eliminar el archivo
-            #os.unlink(dicCodigoPython["codigo"].name)  
+    #Para eliminar el archivo temporal
+    #os.unlink(dicCodigoPython["codigo"].name) 
+    return listaCodigosPython
+
+def analizadorTraza(raizXmlEntrada):
+    listaCodigosPython=list()
+    archivo=open("Modulos/v1/traceFuntions.py", "r")
+    funcionTracer = archivo.read()
+    archivo.close()
+    archivo=open("Modulos/v1/testEstandar.py", "r+")
+    testEstandar=list()
+    for linea in archivo:
+        testEstandar.append(linea)
+    #testEstandar = archivo.read()
+    archivo.close()
+    #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
+    #pondran las demas funciones python
+    #archivoTracer=acceso.make_traceFuntionsFile(contenido)
+    for subRaiz in raizXmlEntrada.iter("codigo"):
+        for codigoPython in subRaiz:
+            dicCodigoPython=dict()
+            if codigoPython.tag=='python':
+                dicCodigoPython["id"]=codigoPython.attrib['id']
+            dicCodigoPython["entradas"]=list()
+            dicCodigoPython["entradasBruto"]=list()
+            comentariosCodigo=""
+            for subRaizCodigo in codigoPython:
+                if subRaizCodigo.tag=='nombreFuncionPrincipal':
+                    dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
+                elif subRaizCodigo.tag=='entrada':
+                    dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                    listaValores=list()
+                    for entradaTemp in subRaizCodigo.text.split(';'):
+                        listaValores.append(entradaTemp.split('=')[-1])
+                    listaValores=','.join(listaValores)
+                    dicCodigoPython["entradas"].append(listaValores)
+                elif subRaizCodigo.tag=='comentario':
+                    comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
+            stringFuncionEntrada=list()
+            dicCodigoPython["codigo"]=list()
+            for entrada in dicCodigoPython["entradas"]:
+                funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                stringFuncionEntrada.append(funcionEntrada)
+                codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
+                dicCodigoPython["codigo"].append(codigoPyConEntrada)
+            dicCodigoPython["codigoBruto"]=codigoPython.text
+            dicCodigoPython["comentarios"]=comentariosCodigo
+            #Lista de diccionarios que contiene info del codigo python incrustado
+            #cada diccionario contiene:
+            #"codigo": archivo temporal con codigo python,
+            #"entrada": lista con las entradas que se quieren ingresar al codigo
+            #"comentario": string que tiene concatenado todos los comentarios
+            listaCodigosPython.append(dicCodigoPython)
+    return listaCodigosPython
+
+def analizadorEnunciadoIncompleto(raizXmlEntrada):
+    
+    pass
+
+def preguntaParser(raizXmlEntrada,nombreArchivo):
+    puntaje=0
+    tipo=""
+    cantidadAlternativas=0
+    conjuntoAlternativas=dict()
+    comentarioAlternativa=""
+    termino="" #Para el tipo pregunta definicion
+    enunciado="" #Para el tipo pregunta enunciadoIncompleto
+    for subRaiz in raizXmlEntrada.iter('pregunta'):
+        puntaje=int((subRaiz.attrib['puntaje']))
+        tipo=str(subRaiz.attrib['tipo'])
+        cantidadAlternativas=int(subRaiz.attrib['cantidadAlternativas'])
+        idOrigenEntrada=str(subRaiz.attrib['idOrigenEntrada'])
+        
+    if tipo=='definicion':
+        for subRaiz in raizXmlEntrada.iter('termino'):
+            termino=subRaiz.text
+    elif tipo=='pythonCompara':
+        listaCodigosPorEntrada, comentarios=analizadorComparacion(raizXmlEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
+
+    elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
+        listaCodigosPython=analizadorIteracion(raizXmlEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+
+    elif tipo=='pythonTraza':
+        listaCodigosPython=analizadorTraza(raizXmlEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+
     elif tipo=='enunciadoIncompleto':
         respuestas=list()
         enunciadoIncompleto=list()
