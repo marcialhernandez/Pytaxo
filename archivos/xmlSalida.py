@@ -76,10 +76,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text
     elif tipo=='pythonCompara':
-        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        archivo=open("Modulos/v1/traceFuntions.py", "r")
         funcionTracer = archivo.read()
         archivo.close()
-        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        archivo=open("Modulos/v1/testEstandar.py", "r+")
         testEstandar=list()
         for linea in archivo:
             testEstandar.append(linea)
@@ -132,10 +132,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
 
     elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
         listaCodigosPython=list()
-        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        archivo=open("Modulos/v1/traceFuntions.py", "r")
         funcionTracer = archivo.read()
         archivo.close()
-        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        archivo=open("Modulos/v1/testEstandar.py", "r+")
         testEstandar=list()
         for linea in archivo:
             testEstandar.append(linea)
@@ -194,10 +194,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             #os.unlink(dicCodigoPython["codigo"].name) 
     elif tipo=='pythonTraza':
         listaCodigosPython=list()
-        archivo=open("Modulos/Definiciones/traceFuntions.py", "r")
+        archivo=open("Modulos/v1/traceFuntions.py", "r")
         funcionTracer = archivo.read()
         archivo.close()
-        archivo=open("Modulos/Definiciones/testEstandar.py", "r+")
+        archivo=open("Modulos/v1/testEstandar.py", "r+")
         testEstandar=list()
         for linea in archivo:
             testEstandar.append(linea)
