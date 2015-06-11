@@ -6,12 +6,9 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-from matplotlib.cbook import Null
-import subprocess, hashlib, copy, itertools
-
-from alternativa import alternativa
-import nombres, xmlSalida, acceso, ast, json
-import plantilla
+from clases import alternativa,  plantilla
+from archivos import nombres, xmlSalida, acceso
+import subprocess, hashlib, copy, itertools, ast
 
 
 try:
@@ -25,21 +22,21 @@ def generaAlternativaCorrecta(alternativaCorrecta,puntaje):
     if alternativaCorrecta.keys()[0]<9:
         #entonces
         if alternativaCorrecta.keys()[0]==8:
-            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            return alternativa.alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
             
         elif alternativaCorrecta.keys()[0]<8 and alternativaCorrecta.keys()[0]>2:
-            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            return alternativa.alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
            
         elif alternativaCorrecta.keys()[0]==2:
-            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            return alternativa.alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
             #para el caso en que solo se haga 1 iteracion
         else:
-            return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+            return alternativa.alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
     elif alternativaCorrecta.keys()[0]==9:
-        return alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
+        return alternativa.alternativa(str(alternativaCorrecta.keys()[0]),"solucion", puntaje,"alternativa correcta")
         #Para el caso que realice mas de 9 iteraciones
     else:
-        return alternativa("10 iteraciones o mas","solucion", puntaje,"alternativa Incorrecta. Desfase de 2 o mas iteraciones")
+        return alternativa.alternativa("10 iteraciones o mas","solucion", puntaje,"alternativa Incorrecta. Desfase de 2 o mas iteraciones")
 
 def generaPozoAlternativas(alternativaCorrecta):
     pozoDistractores=list()
@@ -47,33 +44,33 @@ def generaPozoAlternativas(alternativaCorrecta):
     if alternativaCorrecta.keys()[0]<9:
         #entonces
         if alternativaCorrecta.keys()[0]==8:
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
         elif alternativaCorrecta.keys()[0]<8 and alternativaCorrecta.keys()[0]>2:
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
         elif alternativaCorrecta.keys()[0]==2:
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
             #para el caso en que solo se haga 1 iteracion
         else:
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
-            pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+            pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]+2),"distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
     elif alternativaCorrecta.keys()[0]==9:
-        pozoDistractores.append(alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
-        pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-        pozoDistractores.append(alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        pozoDistractores.append(alternativa.alternativa("10 iteraciones o mas","distractor", 0,"alternativa Incorrecta. Desfase de 2 o mas iteraciones"))
+        pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-1),"distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+        pozoDistractores.append(alternativa.alternativa(str(alternativaCorrecta.keys()[0]-2),"distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
         #Para el caso que realice mas de 9 iteraciones
     else:
-        pozoDistractores.append(alternativa("9","distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
-        pozoDistractores.append(alternativa("8","distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
-        pozoDistractores.append(alternativa("7","distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
+        pozoDistractores.append(alternativa.alternativa("9","distractor", 0,"alternativa Incorrecta. Desfase de 1 iteracion"))
+        pozoDistractores.append(alternativa.alternativa("8","distractor", 0,"alternativa Incorrecta. Desfase de 2 iteraciones"))
+        pozoDistractores.append(alternativa.alternativa("7","distractor", 0,"alternativa Incorrecta. Desfase de 3 iteraciones"))
     return pozoDistractores
 
 def generaGlosaIteraciones(stringIteraciones):

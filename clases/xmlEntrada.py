@@ -1,6 +1,5 @@
 import itertools, hashlib
-
-import nombres
+from archivos import nombres
 
 
 class xmlEntrada:

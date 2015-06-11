@@ -6,12 +6,10 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-from matplotlib.cbook import Null
-import subprocess, hashlib
 
-import nombres, xmlSalida, acceso, ast, json
-import plantilla
-
+from archivos import nombres, xmlSalida
+from clases import plantilla
+import subprocess, hashlib, ast
 
 try:
     import xml.etree.cElementTree as ET

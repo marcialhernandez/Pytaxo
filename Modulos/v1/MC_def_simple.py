@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida
-import plantilla
+from archivos import nombres
+import archivos.xmlSalida as xmlSalida
+import clases.plantilla as plantilla
 
 
 try:

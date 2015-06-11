@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 #import sys
 import itertools, hashlib, threading, copy, logging
-
-import nombres, xmlSalida
-import plantilla, alternativa
+from archivos import nombres, xmlSalida
+from clases import plantilla, alternativa
 
 
 try:

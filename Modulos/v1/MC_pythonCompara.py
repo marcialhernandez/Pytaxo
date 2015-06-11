@@ -6,11 +6,11 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-from matplotlib.cbook import Null
-import subprocess, hashlib, itertools
 
-import nombres, xmlSalida, acceso, ast, json
-import plantilla, alternativa
+from matplotlib.cbook import Null
+from archivos import nombres, xmlSalida, acceso 
+from clases import plantilla, alternativa
+import subprocess, hashlib, itertools, ast, json
 
 
 try:

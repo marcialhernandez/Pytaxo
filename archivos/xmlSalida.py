@@ -1,10 +1,14 @@
-import alternativa, xmlEntrada
+import hashlib, argparse
+
+import clases.alternativa as alternativa
+import clases.xmlEntrada as xmlEntrada
 import nombres, acceso
+
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import hashlib, argparse
     
 def plantillaGenericaSalida():
     raizXml=ET.Element('plantilla')
