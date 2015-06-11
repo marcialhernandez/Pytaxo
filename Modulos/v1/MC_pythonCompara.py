@@ -6,14 +6,17 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida, acceso, ast,json
-import plantilla, alternativa
 from matplotlib.cbook import Null
+import subprocess, hashlib, itertools
+
+import nombres, xmlSalida, acceso, ast, json
+import plantilla, alternativa
+
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import subprocess,hashlib, itertools
 
 def borraHijos(ETObject):
     for elem in ETObject.getchildren():

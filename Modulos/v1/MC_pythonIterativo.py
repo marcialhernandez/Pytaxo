@@ -6,14 +6,17 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida, acceso, ast,json
-import plantilla
 from matplotlib.cbook import Null
+import subprocess, hashlib, copy, itertools
+
+import nombres, xmlSalida, acceso, ast, json
+import plantilla
+
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import subprocess,hashlib,copy, itertools
 
 def generaGlosaIteraciones(stringIteraciones):
     if int(stringIteraciones)>1:

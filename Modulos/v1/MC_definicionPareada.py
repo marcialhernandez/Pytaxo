@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import itertools, hashlib, threading,copy, logging
+import itertools, hashlib, threading, copy, logging
+
 import nombres, xmlSalida
-import plantilla,alternativa
+import plantilla, alternativa
+
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:

@@ -1,5 +1,7 @@
-import nombres
 import itertools, hashlib
+
+import nombres
+
 
 class xmlEntrada:
     #atributos estaticos

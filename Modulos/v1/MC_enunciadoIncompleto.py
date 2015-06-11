@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import nombres, xmlSalida
+import hashlib
+
 import alternativa
+import nombres, xmlSalida
+
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-import hashlib
 
 #Funcion que crea una nueva plantilla que corresponde a este tipo de pregunta
 #añadiendo los datos obtenidos desde la entrada de
