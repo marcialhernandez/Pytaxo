@@ -14,12 +14,12 @@ nombreTipoAGenerar=""
 parser = argparse.ArgumentParser(description='Tipo de pregunta a crear')
 
 parser.add_argument('-v', required=True,choices=nombreCarpetaTipos,
-                    help='Especifica el tipo de pregunta a crear: Esta disponible los argumentos "def","exp" y "cod"',
-                    metavar="TipoDePregunta")
+                    help='Especifica la version de Pytaxo a ejecutar : Esta disponible el argumento "v1"',
+                    metavar="TipoPregunta")
 
 parser.add_argument('-m', required=False,choices=nombreModulosDisponibles,
-                    help='Especifica el tipo de pregunta a crear: Esta disponible los argumentos "def","exp" y "cod"',
-                    metavar="TipoDePregunta")
+                    help='Especifica el tipo de pregunta a crear: Esta disponible los argumentos'+ " "+" ".join(nombreModulosDisponibles),
+                    metavar="TipoModulo")
 
 #Analizo que tipo de pregunta quiere generar
 if parser.parse_args().v=="v1":
