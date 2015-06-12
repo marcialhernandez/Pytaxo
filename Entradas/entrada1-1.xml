@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<pregunta puntaje="2" tipo="definicion" idOrigenEntrada="1" cantidadAlternativas="m"> 
+  <termino>flotante</termino>
+  <opciones>
+    <alternativa id="1" tipo="solucion">
+    <glosa>tipo de dato que soporta decimales
+    <comentario>alternativa correcta</comentario></glosa>
+    <glosa>tipo de numero que soporta decimales
+    <comentario>alternativa correcta</comentario></glosa>    
+    </alternativa>
+    <alternativa id="2" tipo="distractor">
+    <glosa>tipo de funcion que soporta decimales
+     <comentario></comentario></glosa>
+    <glosa>tipo de juego que soporta decimales
+    <comentario>alternativa incorrecta</comentario></glosa>
+    </alternativa>
+    <alternativa id="3" tipo="distractor">
+    <glosa>tipo de estructura que soporta decimales
+    <comentario></comentario></glosa>
+    <glosa>tipo de formato que soporta decimales
+    <comentario></comentario></glosa>
+    <comentario>alternativa incorrecta</comentario>
+    </alternativa>
+    <alternativa id="4" tipo="distractor">
+    <glosa>tipo de numero que soporta decimales
+    <comentario>alternativa incorrecta</comentario></glosa>
+    <glosa>tipo de comando que soporta decimales
+    <comentario></comentario></glosa>
+    </alternativa>
+  </opciones>
+</pregunta>

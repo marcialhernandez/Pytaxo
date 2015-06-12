@@ -1,9 +1,10 @@
-import hashlib, argparse
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#import sys
 
 import clases.alternativa as alternativa
 import clases.xmlEntrada as xmlEntrada
-import nombres, acceso, sys
-
+import nombres, acceso, sys,hashlib, argparse
 
 try:
     import xml.etree.cElementTree as ET
@@ -237,10 +238,20 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     termino="" #Para el tipo pregunta definicion
     enunciado="" #Para el tipo pregunta enunciadoIncompleto
     for subRaiz in raizXmlEntrada.iter('pregunta'):
-        puntaje=int((subRaiz.attrib['puntaje']))
+        try:
+            puntaje=int((subRaiz.attrib['puntaje']))
+        except:
+            puntaje=2
         tipo=str(subRaiz.attrib['tipo'])
-        cantidadAlternativas=int(subRaiz.attrib['cantidadAlternativas'])
-        idOrigenEntrada=str(subRaiz.attrib['idOrigenEntrada'])
+        try:
+            cantidadAlternativas=int(subRaiz.attrib['cantidadAlternativas'])
+        except:
+            cantidadAlternativas=4
+        try:
+            idOrigenEntrada=str(subRaiz.attrib['idOrigenEntrada'])
+        except:
+            print "Precaucion 1: el atributo 'idOrigenEntrada' no existe en el documento '"+nombreArchivo+"'.\nY se ha asignado idOrigenEntrada=null"
+            idOrigenEntrada="null"
         
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
@@ -279,23 +290,33 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         cantidadCombinacionesDefiniciones=1
         #Se obtienen especificaciones para formar los distractores
         for subRaiz in raizXmlEntrada.iter('pregunta'):
-            if bool(str(subRaiz.attrib['composicionDistractores']).rstrip())==True:
-                composicionDistractores=str(subRaiz.attrib['composicionDistractores'])
+            try:
+                if bool(str(subRaiz.attrib['composicionDistractores']).rstrip())==True:
+                    composicionDistractores=str(subRaiz.attrib['composicionDistractores'])
+                if bool(str(subRaiz.attrib['ordenDistractores']).rstrip())==True:
+                    criterioOrdenDistractores=str(subRaiz.attrib['ordenDistractores'])
+                if bool(str(subRaiz.attrib['ordenTerminos']).rstrip())==True:
+                    ordenTerminos=str(subRaiz.attrib['ordenTerminos'])
+            except:
+                #valor por defecto "1+2"
+                pass
             #Si existe el atributo en la entrada xml
-            if bool(str(subRaiz.attrib['ordenDistractores']).rstrip())==True:
-                criterioOrdenDistractores=str(subRaiz.attrib['ordenDistractores'])
-            if bool(str(subRaiz.attrib['ordenTerminos']).rstrip())==True:
-                ordenTerminos=str(subRaiz.attrib['ordenTerminos'])
             if bool(str(subRaiz.attrib['cantidadCombinacionesDefiniciones']).rstrip())==True:
                 cantidadCombinacionesDefiniciones=int(subRaiz.attrib['cantidadCombinacionesDefiniciones'])
-        conjuntoTerminosPareados=dict()
-        conjuntoTerminosImpares=dict()
+        conjuntoTerminosPareados={}
+        conjuntoTerminosImpares={}
+        ##validar que la id no haya sido procesada con anterioridad
+        listaIDs=[]
         for subRaiz in raizXmlEntrada.iter('definiciones'):
             for glosa in subRaiz.iter('glosa'):
                 definicion=glosa.text
                 llaveTermino=glosa.attrib['id']
-                pozoPares=list()
-                pozoImpares=list()
+                if llaveTermino in listaIDs:
+                    continue
+                else:
+                    listaIDs.append(llaveTermino)
+                pozoPares=[]
+                pozoImpares=[]
                 for par in glosa.iter('par'):
                     pozoPares.append(alternativa.alternativa(llaveTermino,'solucion',str(puntaje),par.text.rstrip()))
                 for inpar in glosa.iter('inpar'):
@@ -385,7 +406,8 @@ def lecturaXmls(nombreDirectorioEntradas,tipo):
         except Exception,e:
             #e = sys.exc_info()[0]
             print "Error 2: El documento '"+xmlEntrada+"' presenta una falla en"+str(e).split(":")[1]
-            exit()
+            continue
+            #exit()
         if raizXml.attrib['tipo']==tipo: #'definicion':
             listaXmlFormateadas.append(preguntaParser(raizXml,nombres.obtieneNombreArchivo(xmlEntrada)))
     return listaXmlFormateadas

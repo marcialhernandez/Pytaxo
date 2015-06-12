@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<pregunta puntaje="2" tipo="definicion" idOrigenEntrada="1" cantidadAlternativas="4"> 
+<pregunta puntaje="2" tipo="definicion" idOrigenEntrada="2" cantidadAlternativas="4"> 
   <termino>flotante</termino>
   <opciones>
     <alternativa id="1" tipo="solucion">

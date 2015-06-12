@@ -328,7 +328,7 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
 #                                     return 0      
             if banderaEstado==True:
                 #Se instancia la plantilla como un elemento de element tree
-                xmlSalida.escribePlantilla(directorioSalida,xmlEntradaObject.tipo,threading.currentThread().getName()+ idPreguntaGenerada+' '+idAlternativas.rstrip()+' '+str(ordenamientoDiferente) +' '+str(contador), plantillaSalida,'xml')
+                xmlSalida.escribePlantilla(directorioSalida,xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+idPreguntaGenerada+' '+idAlternativas.rstrip()+' '+str(ordenamientoDiferente) +' '+str(contador), plantillaSalida,'xml')
                 
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
@@ -412,11 +412,11 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         cantidadCombinacionesDefiniciones+=1
     #Se imprime solo si se especifica directorio de salida
     if banderaEstado==True:
-        print str(total.valor)+' Creados' 
+        print xmlEntradaObject.idOrigenEntrada+"->"+str(total.valor)+' Creados' 
     return 0                          
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
@@ -429,7 +429,7 @@ listaXmlEntrada=list()
 #XML de entrada
 #cantidadAlternativas=xmlSalida.argParse()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
     
 for cadaXmlEntrada in listaXmlEntrada:

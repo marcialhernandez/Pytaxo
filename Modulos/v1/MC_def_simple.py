@@ -64,15 +64,15 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         contador+=1
                         identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(subRaizSalida, conjuntoAlternativas)
                         if banderaEstado==True:
-                            xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, identificadorItem+' '+identificadorAlternativas+' '+str(contador), plantillaSalida,'xml')
+                            xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas+' '+str(contador), plantillaSalida,'xml')
                         else:
                             print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
-        print str(contador)+' Creados'                            
+        print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
@@ -85,7 +85,7 @@ listaXmlEntrada=list()
 #XML de entrada
 #cantidadAlternativas=xmlSalida.argParse()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
