@@ -7,10 +7,12 @@ Created on 16-04-2015
 # -*- coding: utf-8 -*-
 #import sys
 
+import os, sys,subprocess, hashlib, itertools, ast, json
+sys.path.insert(0, os.getcwd())
 from matplotlib.cbook import Null
+
 from archivos import nombres, xmlSalida, acceso 
 from clases import plantilla, alternativa
-import subprocess, hashlib, itertools, ast, json
 
 
 try:

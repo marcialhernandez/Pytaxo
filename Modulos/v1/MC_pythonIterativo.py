@@ -7,10 +7,11 @@ Created on 16-04-2015
 # -*- coding: utf-8 -*-
 #import sys
 
+import os, sys,subprocess, hashlib, copy, itertools, ast
+sys.path.insert(0, os.getcwd())
+
 from archivos import nombres, xmlSalida
 from clases import plantilla
-import subprocess, hashlib, copy, itertools,ast
-
 
 try:
     import xml.etree.cElementTree as ET

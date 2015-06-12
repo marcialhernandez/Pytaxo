@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-import itertools, hashlib, threading, copy, logging
+
+import os, sys, itertools, hashlib, threading, copy, logging
+sys.path.insert(0, os.getcwd())
 from archivos import nombres, xmlSalida
 from clases import plantilla, alternativa
-
 
 try:
     import xml.etree.cElementTree as ET

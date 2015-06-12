@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
-
+import os, sys
+sys.path.insert(0, os.getcwd())
 import archivos.acceso as acceso
 import archivos.nombres as nombres
 from clases import item

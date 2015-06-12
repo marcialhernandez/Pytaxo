@@ -6,9 +6,12 @@ Created on 16-04-2015
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-from clases import alternativa,  plantilla
+
+import os, sys,subprocess, hashlib, copy, itertools, ast
+sys.path.insert(0, os.getcwd())
+
 from archivos import nombres, xmlSalida, acceso
-import subprocess, hashlib, copy, itertools, ast
+from clases import alternativa, plantilla
 
 
 try:

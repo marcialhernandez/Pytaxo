@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
-from clases import alternativa
+
+import os, sys
+sys.path.insert(0, os.getcwd())
 import hashlib
 from archivos import nombres, xmlSalida
+from clases import alternativa
 
 try:
     import xml.etree.cElementTree as ET

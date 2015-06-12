@@ -1,4 +1,5 @@
 import itertools, hashlib
+
 from archivos import nombres
 
 

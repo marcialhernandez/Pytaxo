@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import subprocess, stat, os, tempfile
+
 import clases.entrada as entrada
 import clases.item as item
 from nombres import obtieneNombreArchivo
-import subprocess, stat, os, tempfile
 
 
 #Funcion que otorga permisos de acceso a un archivo

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #import sys
+
+import os, sys
+sys.path.insert(0, os.getcwd())
 from archivos import nombres
 import archivos.xmlSalida as xmlSalida
 import clases.plantilla as plantilla
