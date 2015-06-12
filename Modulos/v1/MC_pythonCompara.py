@@ -9,8 +9,6 @@ Created on 16-04-2015
 
 import os, sys,subprocess, hashlib, itertools, ast, json
 sys.path.insert(0, os.getcwd())
-from matplotlib.cbook import Null
-
 from archivos import nombres, xmlSalida, acceso 
 from clases import plantilla, alternativa
 
