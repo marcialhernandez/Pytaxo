@@ -9,36 +9,25 @@ from clases import item
 
 
 nombreCarpetaModulo="Modulos"
-nombreCarpetaTipos=['v1','v2','v3'] # v4, v5, v6, ....... n
-nombreModulosDisponibles=["MC_def_simple","MC_definicionPareada","MC_enunciadoIncompleto","MC_pythonCompara","MC_pythonIterativo","MC_pythonIterativoInvertido","MC_pythonTraza"]
+diccionarioTiposVersusModulos={}
+diccionarioTiposVersusModulos["v1"]=["MC_def_simple","MC_definicionPareada","MC_enunciadoIncompleto","MC_pythonCompara","MC_pythonIterativo","MC_pythonIterativoInvertido","MC_pythonTraza"]
 nombreCompilador="python"
+opcionesModulos=[]
 nombreTipoAGenerar=""
+for key in diccionarioTiposVersusModulos.keys():
+    opcionesModulos.append(key+": "+" ".join(diccionarioTiposVersusModulos[key]))
 
-parser = argparse.ArgumentParser(description='Tipo de pregunta a crear')
+parser = argparse.ArgumentParser(description='Argumentos de entrada de Pytaxo')
 
-parser.add_argument('-v', required=True,choices=nombreCarpetaTipos,
-                    help='Especifica la version de Pytaxo a ejecutar : Esta disponible el argumento "v1"',
+parser.add_argument('-v', required=True,choices=" ".join(diccionarioTiposVersusModulos.keys()),
+                    help='Especifica la versión de Pytaxo a ejecutar. Estan disponibles los argumentos: '+" ".join(diccionarioTiposVersusModulos.keys()),
+                    metavar="VersiónConjuntoPreguntas")
+
+parser.add_argument('-m', required=False,choices="\n".join(opcionesModulos),
+                    help='Especifica el tipo de pregunta a crear. Estan disponible los argumentos'+ "\n"+"\n".join(opcionesModulos),
                     metavar="TipoPregunta")
 
-parser.add_argument('-m', required=False,choices=nombreModulosDisponibles,
-                    help='Especifica el tipo de pregunta a crear: Esta disponible los argumentos'+ " "+" ".join(nombreModulosDisponibles),
-                    metavar="TipoModulo")
-
-#Analizo que tipo de pregunta quiere generar
-if parser.parse_args().v=="v1":
-    nombreTipoAGenerar=nombreCarpetaModulo+'/'+nombreCarpetaTipos[0]
-elif parser.parse_args().v=="v2":
-    nombreTipoAGenerar=nombreCarpetaModulo+'/'+nombreCarpetaTipos[1]
-elif parser.parse_args().v=="v3":
-    nombreTipoAGenerar=nombreCarpetaModulo+'/'+nombreCarpetaTipos[2]
-    
-#elif parser.parse_args().t=="v4"
-#elif parser.parse_args().t=="v5"
-#elif parser.parse_args().t=="v6"
-#...
-#...
-#...
-#elif parser.parse_args().t=="n"
+nombreTipoAGenerar=nombreCarpetaModulo+'/'+parser.parse_args().v
 
 banderaModuloEspecifico=False
     

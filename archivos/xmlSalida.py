@@ -2,7 +2,7 @@ import hashlib, argparse
 
 import clases.alternativa as alternativa
 import clases.xmlEntrada as xmlEntrada
-import nombres, acceso
+import nombres, acceso, sys
 
 
 try:
@@ -327,10 +327,16 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     comentarioAlternativa=comentarioAlternativa+" "+str(comentarioGlosa.text)
                 if opcion.attrib['id'] in conjuntoAlternativas.keys():
                     largoLista=len(conjuntoAlternativas[opcion.attrib['id']])
-                    conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],opcion.attrib['puntaje'],glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
+                    if opcion.attrib['tipo']=="solucion":
+                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
+                    else:
+                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
                 else:
                     conjuntoAlternativas[opcion.attrib['id']]=list()
-                    conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],opcion.attrib['puntaje'],glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
+                    if opcion.attrib['tipo']=="solucion":
+                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
+                    else:
+                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))                        
     return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
 
 #Funcion que analiza argumentos ingresados por comando al ejecutar la funcion
@@ -373,8 +379,13 @@ def incrustaAlternativasXml(subRaizOpciones,listaAlternativas):
 def lecturaXmls(nombreDirectorioEntradas,tipo):
     listaXmlFormateadas=list()
     for xmlEntrada in nombres.fullEspecificDirectoryNamesXML(nombreDirectorioEntradas):
-        arbolXml = ET.ElementTree(file=xmlEntrada)
-        raizXml=arbolXml.getroot()
+        try:
+            arbolXml = ET.ElementTree(file=xmlEntrada)
+            raizXml=arbolXml.getroot()
+        except Exception,e:
+            #e = sys.exc_info()[0]
+            print "Error 2: El documento '"+xmlEntrada+"' presenta una falla en"+str(e).split(":")[1]
+            exit()
         if raizXml.attrib['tipo']==tipo: #'definicion':
             listaXmlFormateadas.append(preguntaParser(raizXml,nombres.obtieneNombreArchivo(xmlEntrada)))
     return listaXmlFormateadas

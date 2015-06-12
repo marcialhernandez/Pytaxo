@@ -113,8 +113,13 @@ class xmlEntrada:
         for posiblesCombinacionesAlternativas in list(itertools.combinations(listaDeListaDeAlternativas,cantidadAlternativas-1)): 
             posiblesCombinacionesAlternativas=list(posiblesCombinacionesAlternativas)
             posiblesCombinacionesAlternativas.append(listaDeSoluciones)
-            for posiblesConjuntos in list(itertools.product(*posiblesCombinacionesAlternativas)):
-                listaDeAlternativasValidas.append(posiblesConjuntos)
+            try:
+                for posiblesConjuntos in list(itertools.product(*posiblesCombinacionesAlternativas)):
+                    listaDeAlternativasValidas.append(posiblesConjuntos)
+            #Esta falla es producida por un mal nombramiento del atributo tipo en el tag alternativa
+            except:
+                print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
+                exit()
         #print len(listaDeAlternativasValidas)
         return listaDeAlternativasValidas
     
