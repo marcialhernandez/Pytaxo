@@ -114,13 +114,17 @@ def analizadorComparacion(raizXmlEntrada):
     comentarios='\n'.join(comentarios)
     listaCodigosPorEntrada=[]
     #Luego para cada entrada
-    #codigoPorEntrada={}
+    codigo={}
     for codigoPorEntrada in listaEntradas:
         codigoPorEntrada["codigos"]=[]
         codigo["funcionEntrada"]=""
         #Se genera un archivo temporal con cada codigo y la entrada actual
-        for codigo in listaCodigos: 
-            codigoPorEntrada["funcionEntrada"]=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+        for codigo in listaCodigos:
+            try:
+                codigoPorEntrada["funcionEntrada"]=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+            except:
+                print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
+                exit()
             #El siguiente print muestra las funciones evaluadas disponibles por entrada y codigo
             #print codigoPorEntrada["funcionEntrada"]
             codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar,codigoPorEntrada["funcionEntrada"][:])

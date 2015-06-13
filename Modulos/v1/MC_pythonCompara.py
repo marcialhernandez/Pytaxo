@@ -87,15 +87,19 @@ def agregaGlosaFunciones(funcionesComparadas,subRaizSalida):
     hashNombres={}
     comentarioItem=""
     for funcion in funcionesComparadas:
-       seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-       seccionCodigo.set('id', funcion["id"])
-       seccionCodigo.set('nombreFuncion',funcion["nombreFuncionPrincipal"])
-       seccionesCodigo.append(seccionCodigo)
-       contadorFunciones+=1
-       idItem+=funcion["codigoBruto"]
-       hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
-       seccionCodigo.text="Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+":\n"+funcion["codigoBruto"]
-       comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"
+        seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+        seccionCodigo.set('id', funcion["id"])
+        seccionCodigo.set('nombreFuncion',funcion["nombreFuncionPrincipal"])
+        seccionesCodigo.append(seccionCodigo)
+        contadorFunciones+=1
+        idItem+=funcion["codigoBruto"]
+        hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
+        seccionCodigo.text="Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+":\n"+funcion["codigoBruto"]
+        try:
+            comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"
+        except:
+            #--->Con esto muestra mensaje de Error 5 y termina su ejecucion
+            exit()
     return seccionesCodigo,idItem,hashNombres,comentarioItem
 
 def generaGlosaEntradas(listaEntradasBrutas):
@@ -287,7 +291,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                        if len(streamTraza)>0:
                            codigoAsociado["retorno"]=streamTraza[-1]['retorno']
                        else:
-                           print "El codigo id = "+codigoAsociado["id"]+" no admite la entrada '"+entrada["entrada"]
+                           print "Error 5: La funcion '"+codigoAsociado["nombreFuncionPrincipal"]+"' no admite la entrada '"+entrada["entrada"]+"'"
                            del codigoAsociado
                #print xmlEntradaObject.codigos
                cantidadFuncionesAComparar=3 #Siempre son 3, pues si fuesen 2 no se generarian alternativas suficientes
