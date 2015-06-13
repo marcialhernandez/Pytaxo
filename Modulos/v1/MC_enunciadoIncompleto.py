@@ -55,11 +55,11 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.set('idPreguntaGenerada',identificadorPregunta.rstrip())
                     contador+=1
                     if banderaEstado==True:
-                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, identificadorItem+' '+identificadorPregunta.rstrip()+' '+str(contador), plantillaSalida,'xml')
+                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip(), plantillaSalida,'xml')
                     else:
                         print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
-        print str(contador)+' Creados'                            
+        print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass
 
 # Declaracion de directorio de entradas

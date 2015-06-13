@@ -98,6 +98,7 @@ def make_tempPython(datos, funcionTracer,testEstandar):
     return fd
 
 def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
+    
     fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
     try:
         fd.write(funcionTracer)

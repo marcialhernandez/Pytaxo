@@ -4,7 +4,7 @@
 
 import clases.alternativa as alternativa
 import clases.xmlEntrada as xmlEntrada
-import nombres, acceso, sys,hashlib, argparse
+import nombres, acceso, sys,hashlib, argparse, copy
 
 try:
     import xml.etree.cElementTree as ET
@@ -59,6 +59,7 @@ def validaConjuntoAlternativas(conjuntoAlternativas):
         return False
 
 def analizadorComparacion(raizXmlEntrada):
+    contadorIDprovisorio=0
     archivo=open("Modulos/v1/traceFuntions.py", "r")
     funcionTracer = archivo.read()
     archivo.close()
@@ -70,12 +71,28 @@ def analizadorComparacion(raizXmlEntrada):
     listaCodigos=[]
     listaEntradas=[]
     comentarios=[]
+    listaIDOcupadas=[]
     for subRaiz in raizXmlEntrada.iter("codigo"):
         for seccion in subRaiz:
             #Cada codigo incrustado y su informacion se agrega a la listaCodigos
             if seccion.tag=='python':
                 codigo={}
-                codigo["id"]=seccion.attrib['id']
+                try:
+                    if not seccion.attrib['id'] in listaIDOcupadas:
+                        codigo["id"]=seccion.attrib['id']
+                        listaIDOcupadas.append(codigo["id"])
+                    else:
+                        temp=""
+                        codigo["id"]=seccion.attrib['id']
+                        while codigo["id"] in listaIDOcupadas:
+                            temp=codigo["id"]
+                            codigo["id"]="D_"+codigo["id"]
+                        print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+codigo["id"]                    
+                        listaIDOcupadas.append(codigo["id"])
+                except:
+                    codigo["id"]="null_"+str(contadorIDprovisorio)
+                    print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+codigo["id"]
+                    contadorIDprovisorio+=1
                 codigo["codigoBruto"]=seccion.text
                 for subSeccion in seccion:
                     if subSeccion.tag=='nombreFuncionPrincipal':
@@ -97,20 +114,20 @@ def analizadorComparacion(raizXmlEntrada):
     comentarios='\n'.join(comentarios)
     listaCodigosPorEntrada=[]
     #Luego para cada entrada
-    for entrada in listaEntradas:
-        codigoPorEntrada={}
-        codigoPorEntrada["entrada"]=entrada["entrada"]
-        codigoPorEntrada["entradaBruta"]=entrada["entradaBruta"]
+    #codigoPorEntrada={}
+    for codigoPorEntrada in listaEntradas:
         codigoPorEntrada["codigos"]=[]
+        codigo["funcionEntrada"]=""
         #Se genera un archivo temporal con cada codigo y la entrada actual
-        for codigo in listaCodigos:
-            #codigoPorEntrada["nombreFuncionPrincipal"]=codigo["nombreFuncionPrincipal"]
-            funcionEntrada=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
-            #codigoPorEntrada["codigoBruto"]=codigo["codigoBruto"]
-            codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar, funcionEntrada)
-            codigoPorEntrada["codigos"].append(codigo)
+        for codigo in listaCodigos: 
+            codigoPorEntrada["funcionEntrada"]=codigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+            #El siguiente print muestra las funciones evaluadas disponibles por entrada y codigo
+            #print codigoPorEntrada["funcionEntrada"]
+            codigo["codigo"]=acceso.make_tempPython2(codigo["codigoBruto"], funcionTracer, testEstandar,codigoPorEntrada["funcionEntrada"][:])
+            codigoPorEntrada["codigos"].append(copy.copy(codigo))
         #Resultando en un codigoPorEntrada de la forma {entradaActual:Lista de archivos temporales con la entrada actual evaluada}
         listaCodigosPorEntrada.append(codigoPorEntrada)
+    #print listaCodigosPorEntrada
     return listaCodigosPorEntrada, comentarios
 
 def analizadorIteracion(raizXmlEntrada):
@@ -270,6 +287,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
 
     elif tipo=='enunciadoIncompleto':
         respuestas=list()
+        presenciaBlank=False
         enunciadoIncompleto=list()
         for subRaiz in raizXmlEntrada.iter('enunciado'):
             for elem in subRaiz:
@@ -278,6 +296,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 if elem.tag=='blank':
                     enunciadoIncompleto.append('_'*len(elem.text))
                     respuestas.append(elem.text)
+                    presenciaBlank=True
+        if presenciaBlank==False:
+            print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
+            exit()
         enunciado=' '.join(enunciadoIncompleto)
         alternativaSolucion=list()
         alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
@@ -297,12 +319,12 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     criterioOrdenDistractores=str(subRaiz.attrib['ordenDistractores'])
                 if bool(str(subRaiz.attrib['ordenTerminos']).rstrip())==True:
                     ordenTerminos=str(subRaiz.attrib['ordenTerminos'])
+                if bool(str(subRaiz.attrib['cantidadCombinacionesDefiniciones']).rstrip())==True:
+                    cantidadCombinacionesDefiniciones=int(subRaiz.attrib['cantidadCombinacionesDefiniciones'])
             except:
                 #valor por defecto "1+2"
                 pass
             #Si existe el atributo en la entrada xml
-            if bool(str(subRaiz.attrib['cantidadCombinacionesDefiniciones']).rstrip())==True:
-                cantidadCombinacionesDefiniciones=int(subRaiz.attrib['cantidadCombinacionesDefiniciones'])
         conjuntoTerminosPareados={}
         conjuntoTerminosImpares={}
         ##validar que la id no haya sido procesada con anterioridad
@@ -346,7 +368,12 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 comentarioAlternativa=""
                 for comentarioGlosa in glosaOpcion.iter('comentario'):
                     comentarioAlternativa=comentarioAlternativa+" "+str(comentarioGlosa.text)
-                if opcion.attrib['id'] in conjuntoAlternativas.keys():
+                try:
+                    idAlternativa=opcion.attrib['id']
+                except:
+                    print "Precaucion 2: una alternativa carece de Id y se ha omitido"
+                    continue
+                if idAlternativa in conjuntoAlternativas.keys():
                     largoLista=len(conjuntoAlternativas[opcion.attrib['id']])
                     if opcion.attrib['tipo']=="solucion":
                         conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
@@ -354,10 +381,14 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                         conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
                 else:
                     conjuntoAlternativas[opcion.attrib['id']]=list()
-                    if opcion.attrib['tipo']=="solucion":
-                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
-                    else:
-                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))                        
+                    try:
+                        if opcion.attrib['tipo']=="solucion":
+                            conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
+                        else:
+                            conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1)) 
+                    except:
+                        print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
+                        exit()                    
     return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
 
 #Funcion que analiza argumentos ingresados por comando al ejecutar la funcion

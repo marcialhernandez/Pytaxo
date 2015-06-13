@@ -289,12 +289,13 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                        else:
                            print "El codigo id = "+codigoAsociado["id"]+" no admite la entrada '"+entrada["entrada"]
                            del codigoAsociado
-               
+               #print xmlEntradaObject.codigos
                cantidadFuncionesAComparar=3 #Siempre son 3, pues si fuesen 2 no se generarian alternativas suficientes
                for entrada in xmlEntradaObject.codigos:
                    #Aqui es donde se empiezan a crear las formas de los diferentes tipos de preguntas
                    
                     #cantidadFuncionesAComparar debe ser una entrada!!! del xml!!
+                    #Aqui ya se ha duplicado la info
                    for funcionesComparadas in list(itertools.combinations(entrada["codigos"],cantidadFuncionesAComparar)):
                        #Antes de agregar nueva informacion, se eliminan los hijos
                        borraHijos(subRaizSalida)
@@ -334,8 +335,12 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                            
                        #Ahora se tiene que hacer la combinatoria del pozo de alternativas distractoras (combinaciones de cantidad de alternativas-1) y a cada una de estas, se le agrega la alternativa correcta al final
                        #Cada grupo generado es una forma distinta
-                       
-                       for combinacionAlternativas in list(itertools.combinations(listaAlternativasDistractoras,xmlEntradaObject.cantidadAlternativas-1)):
+                       try:
+                           listaCombinacionesAlternativas=list(itertools.combinations(listaAlternativasDistractoras,xmlEntradaObject.cantidadAlternativas-1))
+                       except:
+                           print "Error 4: Este tipo de item no soporta 0 alternativas como argumento de entrada"
+                           exit() 
+                       for combinacionAlternativas in listaCombinacionesAlternativas:
                            #test=""
                            #Antes de agregar nueva informacion, se eliminan los hijos
                            borraHijos(seccionAlternativas)
@@ -347,18 +352,18 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                            idAlternativas+=agregaAlternativa(seccionAlternativas,alternativaSolucion)
                            #Genero el xml
                            contador+=1
-                           xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem+"@"+idAlternativas,plantillaSalida,'xml')
-    print str(contador)+' Creados'
+                           xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+idItem+" "+idAlternativas,plantillaSalida,'xml')
+    print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta='pythonCompara'
 listaXmlEntrada=list()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:

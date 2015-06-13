@@ -5,15 +5,15 @@
   <blank>flotantes</blank>
   </enunciado>
   <opciones>
-    <alternativa id="2" puntaje="0" tipo="distractor">
+    <alternativa id="2" tipo="distractor">
     <glosa>Strings<comentario>alternativa incorrecta</comentario></glosa>
     <glosa>Cadena de Texto<comentario>alternativa incorrecta</comentario></glosa>
     </alternativa>
-    <alternativa id="3" puntaje="0" tipo="distractor">
+    <alternativa id="3" tipo="distractor">
     <glosa>Ints<comentario>alternativa incorrecta</comentario></glosa>
     <glosa>Numeros enteros<comentario>alternativa incorrecta</comentario></glosa>
     </alternativa>
-    <alternativa id="4" puntaje="0" tipo="distractor">
+    <alternativa id="4" tipo="distractor">
     <glosa>Listas<comentario>alternativa incorrecta</comentario></glosa>
     </alternativa>
     </opciones>
