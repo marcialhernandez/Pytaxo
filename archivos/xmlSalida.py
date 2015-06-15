@@ -92,6 +92,7 @@ def analizadorComparacion(raizXmlEntrada):
                 except:
                     codigo["id"]="null_"+str(contadorIDprovisorio)
                     print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+codigo["id"]
+                    listaIDOcupadas.append(codigo["id"])
                     contadorIDprovisorio+=1
                 codigo["codigoBruto"]=seccion.text
                 for subSeccion in seccion:
@@ -135,6 +136,8 @@ def analizadorComparacion(raizXmlEntrada):
     return listaCodigosPorEntrada, comentarios
 
 def analizadorIteracion(raizXmlEntrada):
+    contadorIDprovisorio=0
+    listaIDOcupadas=[]
     listaCodigosPython=list()
     archivo=open("Modulos/v1/traceFuntions.py", "r")
     funcionTracer = archivo.read()
@@ -153,7 +156,23 @@ def analizadorIteracion(raizXmlEntrada):
             if codigoPython.tag=='python':
                 dicCodigoPython=dict()
                 dicCodigoPython["cantidadCiclosConsulta"]=list()
-                dicCodigoPython["id"]=codigoPython.attrib['id']
+                try:
+                    if not codigoPython.attrib["id"] in listaIDOcupadas:
+                        dicCodigoPython["id"]=codigoPython.attrib['id']
+                        listaIDOcupadas.append(dicCodigoPython["id"])
+                    else:
+                        temp=""
+                        dicCodigoPython["id"]=codigoPython.attrib['id']
+                        while dicCodigoPython["id"] in listaIDOcupadas:
+                            temp=dicCodigoPython["id"]
+                            dicCodigoPython["id"]="D_"+dicCodigoPython["id"]
+                        print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+dicCodigoPython["id"]
+                        listaIDOcupadas.append(dicCodigoPython["id"])   
+                except:
+                    dicCodigoPython["id"]="null_"+str(contadorIDprovisorio)
+                    print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+dicCodigoPython["id"]
+                    listaIDOcupadas.append(dicCodigoPython["id"])
+                    contadorIDprovisorio+=1
                 dicCodigoPython["entradas"]=list()
                 dicCodigoPython["entradasBruto"]=list()
                 comentariosCodigo=""
@@ -164,7 +183,12 @@ def analizadorIteracion(raizXmlEntrada):
                     elif subRaizCodigo.tag=='entrada':
                         dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
                         listaValores=list()
-                        for entradaTemp in subRaizCodigo.text.split(';'):
+                        try:
+                            entradaParseada=subRaizCodigo.text.split(';')
+                        except:
+                            print "Error 10: Una o mas entradas son invalidas en una de las entradas de la funciones Python adjuntas"
+                            entradaParseada=""
+                        for entradaTemp in entradaParseada:
                             listaValores.append(entradaTemp.split('=')[-1])
                         listaValores=','.join(listaValores)
                         dicCodigoPython["entradas"].append(listaValores)
@@ -178,7 +202,11 @@ def analizadorIteracion(raizXmlEntrada):
                 stringFuncionEntrada=list()
                 dicCodigoPython["codigo"]=list()
                 for entrada in dicCodigoPython["entradas"]:
-                    funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                    try:
+                        funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                    except:
+                        print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
+                        exit()
                     stringFuncionEntrada.append(funcionEntrada)
                     codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
                     dicCodigoPython["codigo"].append(codigoPyConEntrada)

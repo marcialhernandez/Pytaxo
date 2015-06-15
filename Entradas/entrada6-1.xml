@@ -1,6 +1,6 @@
-<pregunta puntaje="2" tipo="pythonIterativo" idOrigenEntrada="5" cantidadAlternativas="3" cantidadCodigo="2">
+<pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6">
 <codigo>
-<python id="1">
+python id="1">
 def functionSuma(dato1,dato2):
     return dato1+dato2
     
@@ -15,8 +15,6 @@ def funcionTest(dato):
     return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
 <lineaIterativa>while dato >0:</lineaIterativa>
-<cantidadCiclosConsulta>2</cantidadCiclosConsulta>
-<cantidadCiclosConsulta>1</cantidadCiclosConsulta>
 <!--- formato -->
 <!--- Las entradas tienen que estar en formato x=VALOR -->
 <!--- si la funcion tiene como entradas mas valores separelos por ; -->
@@ -28,23 +26,29 @@ def funcionTest(dato):
 <comentario>Comentario Codigo1</comentario>
 </python>
 <python id="2">
-def functionSuma(x,y):
-    return x+y
-<nombreFuncionPrincipal>functionSuma</nombreFuncionPrincipal>
-<entrada>x=['a,'b'];y=['c','d']</entrada>
-<entrada>x=95;y=96</entrada>
-<entrada>x=['a','b'];y=['c','d']</entrada>
+def functionSuma(dato1,dato2):
+    return dato1+dato2
+    
+def funcionTest2(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        print "a"
+        z=functionSuma(x,z)
+    return z
+<nombreFuncionPrincipal>funcionTest2</nombreFuncionPrincipal>
+<lineaIterativa>while dato >0:</lineaIterativa>
+<!--- formato -->
+<!--- Las entradas tienen que estar en formato x=VALOR -->
+<!--- si la funcion tiene como entradas mas valores separelos por ; -->
+<!--- x=VALOR;y=VALOR2 -->
+<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
+<!--- en este caso seria dato=VALOR -->
+<entrada>valor=127</entrada>
+<entrada>valor=95</entrada>
 <comentario>Comentario Codigo2</comentario>
-</python>
-<python id="3">
-import math
-
-def functionAngulo(x,y):
-    dato=math.sin(x)+math.cos(y)
-    return dato
-<nombreFuncionPrincipal>functionAngulo</nombreFuncionPrincipal>
-<entrada>x=0.1;y=0.2</entrada>
-<comentario>Comentario Codigo3</comentario>
 </python>
 </codigo>
 </pregunta>

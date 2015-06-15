@@ -410,14 +410,14 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     pass
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta='pythonIterativoInvertido'
 listaXmlEntrada=list()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:

@@ -1,0 +1,46 @@
+<pregunta puntaje="4" tipo="pythonIterativo" idOrigenEntrada="5" cantidadAlternativas="3" vecindadDistractores="4">
+<codigo>
+<python id="1">
+<nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
+<lineaIterativa>while h==0:</lineaIterativa>
+<cantidadCiclosConsulta>2</cantidadCiclosConsulta>
+<cantidadCiclosConsulta>1</cantidadCiclosConsulta>
+<!--- formato -->
+<!--- Las entradas tienen que estar en formato x=VALOR -->
+<!--- si la funcion tiene como entradas mas valores separelos por ; -->
+<!--- x=VALOR;y=VALOR2 -->
+<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
+<!--- en este caso seria dato=VALOR -->
+<entrada>dato=300</entrada>
+<entrada>dato=250</entrada>
+<comentario>Comentario Codigo1</comentario>
+</python>
+<python id="2">
+def functionSuma(dato1,dato2):
+    return dato1+dato2
+    
+def funcionTest2(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        print "a"
+        z=functionSuma(x,z)
+    return z
+<nombreFuncionPrincipal>funcionTest2</nombreFuncionPrincipal>
+<lineaIterativa>while dato >0:</lineaIterativa>
+<cantidadCiclosConsulta>2</cantidadCiclosConsulta>
+<cantidadCiclosConsulta>1</cantidadCiclosConsulta>
+<!--- formato -->
+<!--- Las entradas tienen que estar en formato x=VALOR -->
+<!--- si la funcion tiene como entradas mas valores separelos por ; -->
+<!--- x=VALOR;y=VALOR2 -->
+<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
+<!--- en este caso seria dato=VALOR -->
+<entrada>dato=600</entrada>
+<entrada>dato=300</entrada>
+<comentario>Comentario Codigo2</comentario>
+</python>
+</codigo>
+</pregunta>

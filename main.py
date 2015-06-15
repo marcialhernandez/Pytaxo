@@ -23,7 +23,7 @@ parser.add_argument('-v', required=True,choices=" ".join(diccionarioTiposVersusM
                     help='Especifica la versión de Pytaxo a ejecutar. Estan disponibles los argumentos: '+" ".join(diccionarioTiposVersusModulos.keys()),
                     metavar="VersiónConjuntoPreguntas")
 
-parser.add_argument('-m', required=False,choices="\n".join(opcionesModulos),
+parser.add_argument('-m', required=False,choices=diccionarioTiposVersusModulos["v1"],
                     help='Especifica el tipo de pregunta a crear. Estan disponible los argumentos'+ "\n"+"\n".join(opcionesModulos),
                     metavar="TipoPregunta")
 

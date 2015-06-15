@@ -78,6 +78,7 @@ def agregaAlternativaIteracion(ETObject,dicIteracion,tipo,puntaje):
     seccionAlternativa.set('puntaje',puntaje)
     return str(dicIteracion.keys()[0])
 
+#Reparar pues mal funciona para ciclos infinitos
 def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
     listaTrazasLineaIterativa=list()
     banderaExisteIteracion=False
@@ -90,6 +91,8 @@ def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
                 cuentaIteraciones+=1
                 if banderaExisteIteracion==False:
                     banderaExisteIteracion=True
+        if cuentaIteraciones>15: #MAX VECINDAD
+            break
     return listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones
 
 def ejecutaPyTemporal(archivoTemporal):
@@ -279,10 +282,14 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 banderaEstado="No trazable"
                             #Si fue trazable
                             if banderaEstado==True and "lineaIterativa" in codigoPython.keys() and len(codigoPython["cantidadCiclosConsulta"])>0:
-                                listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
+                                try:
+                                    listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
+                                except:
+                                    print "Error 8: No se ha especificado linea iterativa para la funcion '"+str(codigoPython["nombreFuncionPrincipal"])+"'" 
+                                    continue
                                          
                                 if banderaExisteIteracion==False:
-                                    print "Error: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
+                                    print "Error 9: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
                                     contadorEntradasBruto+=1
                                     continue
                                 
@@ -291,15 +298,16 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                     banderaEstado=False
                                     contadorEntradasBruto+=1
                                     continue
-                                    
+                                
+                                #print listaTrazasLineaIterativa
                                 cantidadLineasTrazaIterativa=len(listaTrazasLineaIterativa)
 
                                 for cantidadCiclosConsulta in codigoPython["cantidadCiclosConsulta"]:
                                     
                                     if cantidadLineasTrazaIterativa<int(cantidadCiclosConsulta):
-                                        print "No se pueden crear preguntas indicando memoria de la iteracion "+str(cantidadCiclosConsulta)+" cuando solo se generan "+str(cantidadLineasTrazaIterativa-1)+" iteraciones"
+                                        print "Error 11: No se pueden crear preguntas indicando memoria de la iteracion "+str(cantidadCiclosConsulta)+" cuando solo se generan "+str(cantidadLineasTrazaIterativa-1)+" iteraciones"
                                     elif cantidadLineasTrazaIterativa-2<int(xmlEntradaObject.cantidadAlternativas):
-                                        print "No se pueden crear preguntas con la entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" - No genera las suficentes iteraciones para crear distractores"
+                                        print "Error 7: No se pueden crear preguntas con la entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" - No genera las suficentes iteraciones para crear distractores"
                                     else:
                                         copiaListaTrazasLineaIterativa=listaTrazasLineaIterativa[:]
                                         alternativaCorrecta=copy.copy(copiaListaTrazasLineaIterativa[int(cantidadCiclosConsulta)])
@@ -314,7 +322,12 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                         trazaIteraciones=ET.SubElement(subRaizSalida,'solucion')
                                         
                                         #-1 pues la alternativa correcta se agrega de forma posterior
-                                        for cadaCombinacion in list(itertools.combinations(copiaListaTrazasLineaIterativa,int(xmlEntradaObject.cantidadAlternativas)-1)):
+                                        try:
+                                            listaCombinacionesAlternativas=list(itertools.combinations(copiaListaTrazasLineaIterativa,int(xmlEntradaObject.cantidadAlternativas)-1))
+                                        except:
+                                            print "Error 4: Este tipo de item no soporta 0 alternativas como argumento de entrada"
+                                            exit() 
+                                        for cadaCombinacion in listaCombinacionesAlternativas:
                                             #contador de cantidad de archivos de salida
                                             contador+=1
                                             #menciona las iteraciones de cada alternativa separados por una +
@@ -327,7 +340,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                             idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:],cantidadCiclosConsulta)
                                             
                                             if banderaEstado==True:
-                                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')
+                                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+codigoPython["nombreFuncionPrincipal"]+"-"+idXmlSalida,copy.copy(plantillaSalida),'xml')
                                             else:
                                                 pass
                                                 #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
@@ -338,18 +351,18 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                             banderaEstado=False
                             contadorEntradasBruto+=1
     #if banderaEstado==True:
-    print str(contador)+' Creados'                         
+    print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                         
     pass
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta='pythonIterativo'
 listaXmlEntrada=list()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:

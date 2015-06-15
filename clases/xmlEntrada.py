@@ -27,7 +27,7 @@ class xmlEntrada:
             #Lista de alternativas de la forma [distractor,{'ponderacion':ponderacion}]
         elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo" or self.tipo=="pythonIterativoInvertido") and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
-            #
+
         elif self.tipo=="pythonCompara":
             self.codigos=kwargs['codigos']
             self.comentarios=kwargs['comentarios']
