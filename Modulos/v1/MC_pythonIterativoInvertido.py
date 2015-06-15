@@ -350,17 +350,21 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 normalizaLineas(streamTraza)#Normaliza numero de lineas
                                 banderaEstado=True
                             else:
-                                print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                print "Error 11: La entrada: "+str(codigoPython["entradasBruto"][contadorEntradasBruto])+" presenta una falla y no se puede Trazar"
                                 banderaEstado=False
                                 contadorEntradasBruto+=1
                                 continue
                             
                             #Si fue trazable
                             if banderaEstado==True and "lineaIterativa" in codigoPython.keys():
-                                listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
-                                         
+                                try:
+                                    listaTrazasLineaIterativa,banderaExisteIteracion,cuentaIteraciones=buscaIteracionAAnalizar(streamTraza,codigoPython["lineaIterativa"])
+                                except:
+                                    print "Error 8: No se ha especificado linea iterativa para la funcion '"+codigoPython["nombreFuncionPrincipal"]+"'"
+                                    contadorEntradasBruto+=1
+                                    continue     
                                 if banderaExisteIteracion==False:
-                                    print "Error: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
+                                    print "Error 9: La sentencia '"+codigoPython["lineaIterativa"]+"' no aparece en la funcion "+codigoPython["nombreFuncionPrincipal"]
                                     contadorEntradasBruto+=1
                                     continue
                                     
@@ -396,17 +400,16 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                     numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta)+"+"
                                     idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
                                     
+                                    
                                     if banderaEstado==True:
                                         #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-                                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')
-                                    else:
-                                        pass
-                                    borraHijos(seccionAlternativas)                                          
+                                        borraHijos(seccionAlternativas)
+                                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')                                      
 
                             #La bandera se setea a False por cada archivo temporal que se comprueba
                             banderaEstado=False
                             contadorEntradasBruto+=1
-    print str(contador)+' Creados'                         
+    print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                         
     pass
 
 # Declaracion de directorio de entradas

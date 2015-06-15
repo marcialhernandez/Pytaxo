@@ -211,6 +211,9 @@ def analizadorIteracion(raizXmlEntrada):
                     codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
                     dicCodigoPython["codigo"].append(codigoPyConEntrada)
                 dicCodigoPython["codigoBruto"]=codigoPython.text
+                if len(dicCodigoPython["codigoBruto"])<5:
+                    print "Error 12: Una o mas entradas no contienen codigo python adjunto y se han omitido"
+                    continue
                 dicCodigoPython["comentarios"]=comentariosCodigo
                 #Lista de diccionarios que contiene info del codigo python incrustado
                 #cada diccionario contiene:
