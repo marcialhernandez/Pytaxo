@@ -16,7 +16,29 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-
+    
+def generaGlosaEntradas(listaEntradasBrutas):
+    glosaIntermedia=""
+    #listaEntradas=codigoPython["entradasBruto"][contadorEntradasBruto].split(";")
+    listaEntradas=listaEntradasBrutas.split(";")
+    cantidadEntradas=len(listaEntradas)
+    if cantidadEntradas>1:
+        contador=0
+        for entrada in listaEntradas:
+            if contador==0:
+                glosaIntermedia+="las entradas "+entrada
+                contador+=1
+            else:
+                if contador==cantidadEntradas-1:
+                    glosaIntermedia+=" y "+entrada
+                    contador+=1
+                else:
+                    glosaIntermedia+=", "+entrada
+                    contador+=1
+        return glosaIntermedia
+    else:
+        glosaIntermedia="la entrada "+listaEntradas[0]
+        return glosaIntermedia
 
 def ejecutaPyTemporal(archivoTemporal):
     nombreTemporal=archivoTemporal.name
@@ -42,16 +64,7 @@ def incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntrad
             idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
             subRaizAux.set('id',idXmlSalida)
         if subRaizAux.tag=='enunciado':
-            segundaParteEnunciado="Con "
-            entradasBrutas=codigoPython["entradasBruto"][contadorEntradasBruto].split(';');
-            if len(entradasBrutas)==1:
-                glosaEnunciado=" como entrada."
-            else:
-                glosaEnunciado=" como entradas."    
-            for entradaBruta in entradasBrutas:
-                segundaParteEnunciado=segundaParteEnunciado+entradaBruta+"; "
-            segundaParteEnunciado=segundaParteEnunciado.strip('; ')
-            segundaParteEnunciado=segundaParteEnunciado+glosaEnunciado 
+            segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto])+"."
             subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"])+" "+segundaParteEnunciado
     seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentarios')
     seccionComentarios.text=codigoPython["comentarios"]
@@ -64,21 +77,24 @@ def mergeLineas(listaLineasTraza):
     traza.rstrip('\n').rstrip()
     return traza
 
-def estandarizaLineas(listaLineasTraza):
+def estandarizaLineas(listaLineasTraza,nombreFuncionPrincipal):
     listaTraza=list()
     for linea in listaLineasTraza:
         if linea["evento"]=='call':
-            linea="Linea:"+str(linea["numLinea"])+': '+"Se invoca a funcion:"+linea["invocacion"]
+            linea="L"+str(linea["numLinea"])+': '+"Se llama a la funcion:"+linea["invocacion"]
             listaTraza.append(linea)
         elif linea["evento"]=='line':
             stack=""
             for key in linea['varLocales'].keys():
                 stack=stack+str(key)+':'+str(linea['varLocales'][key])+', '
-            stack.rstrip(',').rstrip() 
-            linea="Linea:"+str(linea["numLinea"])+': '+linea["linea"]+" - Mem: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
+            stack.rstrip(',').rstrip()
+            if nombreFuncionPrincipal in linea['funcionProcedencia']:
+                linea="L"+str(linea["numLinea"])+': '+linea["linea"]+" - Mem: "+stack
+            else:
+                linea="L"+str(linea["numLinea"])+': '+linea["linea"]+" - Mem: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
             listaTraza.append(linea)
         elif linea["evento"]=='return':
-            linea="Linea:"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
+            linea="L:"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
             listaTraza.append(linea)
         elif linea["evento"]=='exception':
             linea="Error en linea "+str(linea["numLinea"])+': '+linea["linea"]+', de la funcion: '+linea['funcionProcedencia']+', '+linea["tipo"]+': '+linea['glosa']
@@ -202,11 +218,11 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 normalizaLineas(streamTraza)#Normaliza numero de lineas
                             else:
                                 banderaEstado="No trazable"
-                            streamTraza=estandarizaLineas(streamTraza)#Pasa las lineas a formato String
+                            streamTraza=estandarizaLineas(streamTraza,codigoPython["nombreFuncionPrincipal"])#Pasa las lineas a formato String
                             streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
                             seccionTrazaSolucion.text=streamTraza
                             if banderaEstado==True:
-                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,plantillaSalida,'xml')
+                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'], xmlEntradaObject.tipo,str(xmlEntradaObject.idOrigenEntrada)+"."+idXmlSalida,plantillaSalida,'xml')
                                 contador+=1
                             elif banderaEstado==False:
                                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
@@ -216,18 +232,18 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 banderaEstado=True
                             contadorEntradasBruto+=1
     if banderaEstado==True:
-        print str(contador)+' Creados'                         
+        print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                         
     pass
 
 # Declaracion de directorio de entradas
-nombreDirectorioEntradas="./Entradas/Definiciones"
+nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
 nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta='pythonTraza'
 listaXmlEntrada=list()
 
-if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
+if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:

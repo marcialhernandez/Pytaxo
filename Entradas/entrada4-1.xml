@@ -5,7 +5,7 @@ def functionSuma(dato1,dato2):
     return dato1+dato2
     
 def funcionTest(dato):
-    x=0
+    x=
     z=0
     while dato >0:
         x=dato -dato/3
@@ -29,7 +29,7 @@ def functionSuma(x,y):
     return x+y
 <nombreFuncionPrincipal>functionSuma</nombreFuncionPrincipal>
 <entrada>x=['a,'b'];y=['c','d']</entrada>
-<entrada>x=95;y=96</entrada>
+<entrada>95;96</entrada>
 <entrada>x=['a','b'];y=['c','d']</entrada>
 <comentario>Comentario Codigo2</comentario>
 </python>

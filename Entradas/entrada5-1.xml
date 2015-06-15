@@ -1,8 +1,20 @@
 <pregunta puntaje="4" tipo="pythonIterativo" idOrigenEntrada="5" cantidadAlternativas="3" vecindadDistractores="4">
 <codigo>
 <python id="1">
+def functionSuma(dato1,dato2):
+    return dato1+dato2
+    
+def funcionTest(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        print "a"
+        z=functionSuma(x,z)
+    return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
-<lineaIterativa>while h==0:</lineaIterativa>
+<lineaIterativa>while dato >0:</lineaIterativa>
 <cantidadCiclosConsulta>2</cantidadCiclosConsulta>
 <cantidadCiclosConsulta>1</cantidadCiclosConsulta>
 <!--- formato -->

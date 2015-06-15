@@ -1,6 +1,18 @@
-<pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6">
+<pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6" cantidadAlternativas="4">
 <codigo>
 <python id="1">
+def functionSuma(dato1,dato2):
+    return dato1+dato2
+    
+def funcionTest(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        print "a"
+        z=functionSuma(x,z)
+    return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
 <lineaIterativa>while dato >0:</lineaIterativa>
 <!--- formato -->

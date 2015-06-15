@@ -211,7 +211,7 @@ def analizadorIteracion(raizXmlEntrada):
                     codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
                     dicCodigoPython["codigo"].append(codigoPyConEntrada)
                 dicCodigoPython["codigoBruto"]=codigoPython.text
-                if len(dicCodigoPython["codigoBruto"])<5:
+                if len(str(dicCodigoPython["codigoBruto"]))<5:
                     print "Error 12: Una o mas entradas no contienen codigo python adjunto y se han omitido"
                     continue
                 dicCodigoPython["comentarios"]=comentariosCodigo
@@ -240,11 +240,29 @@ def analizadorTraza(raizXmlEntrada):
     #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
     #pondran las demas funciones python
     #archivoTracer=acceso.make_traceFuntionsFile(contenido)
+    contadorIDprovisorio=0
+    listaIDOcupadas=[]
     for subRaiz in raizXmlEntrada.iter("codigo"):
         for codigoPython in subRaiz:
             dicCodigoPython=dict()
             if codigoPython.tag=='python':
-                dicCodigoPython["id"]=codigoPython.attrib['id']
+                try:
+                    if not codigoPython.attrib['id'] in listaIDOcupadas:
+                        dicCodigoPython["id"]=codigoPython.attrib['id']
+                        listaIDOcupadas.append(dicCodigoPython["id"])
+                    else:
+                        temp=""
+                        dicCodigoPython["id"]=codigoPython.attrib['id']
+                        while dicCodigoPython["id"] in listaIDOcupadas:
+                            temp=dicCodigoPython["id"]
+                            dicCodigoPython["id"]="D_"+dicCodigoPython["id"]
+                        print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+dicCodigoPython["id"]                    
+                        listaIDOcupadas.append(dicCodigoPython["id"])
+                except:
+                    dicCodigoPython["id"]="null_"+str(contadorIDprovisorio)
+                    print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+dicCodigoPython["id"]
+                    listaIDOcupadas.append(dicCodigoPython["id"])
+                    contadorIDprovisorio+=1                  
             dicCodigoPython["entradas"]=list()
             dicCodigoPython["entradasBruto"]=list()
             comentariosCodigo=""
@@ -252,9 +270,14 @@ def analizadorTraza(raizXmlEntrada):
                 if subRaizCodigo.tag=='nombreFuncionPrincipal':
                     dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
                 elif subRaizCodigo.tag=='entrada':
-                    dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
                     listaValores=list()
-                    for entradaTemp in subRaizCodigo.text.split(';'):
+                    try:
+                        desgloseEntrada=subRaizCodigo.text.split(';')
+                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                    except:
+                        print "Error 11: La entrada: 'None' presenta una falla y no se puede Trazar"
+                        continue
+                    for entradaTemp in desgloseEntrada:
                         listaValores.append(entradaTemp.split('=')[-1])
                     listaValores=','.join(listaValores)
                     dicCodigoPython["entradas"].append(listaValores)
@@ -263,7 +286,11 @@ def analizadorTraza(raizXmlEntrada):
             stringFuncionEntrada=list()
             dicCodigoPython["codigo"]=list()
             for entrada in dicCodigoPython["entradas"]:
-                funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                try:
+                    funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                except:
+                    print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
+                    continue
                 stringFuncionEntrada.append(funcionEntrada)
                 codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
                 dicCodigoPython["codigo"].append(codigoPyConEntrada)
@@ -278,7 +305,6 @@ def analizadorTraza(raizXmlEntrada):
     return listaCodigosPython
 
 def analizadorEnunciadoIncompleto(raizXmlEntrada):
-    
     pass
 
 def preguntaParser(raizXmlEntrada,nombreArchivo):
