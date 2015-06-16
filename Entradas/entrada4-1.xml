@@ -1,18 +1,6 @@
 <pregunta puntaje="2" tipo="pythonTraza" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
 <codigo>
 <python id="1">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
-    
-def funcionTest(dato):
-    x=
-    z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
-    return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
 <!--- formato -->
 <!--- Las entradas tienen que estar en formato x=VALOR -->

@@ -1,11 +1,22 @@
-'''
-Created on 16-04-2015
-
-@author: Marcial
-'''
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#import sys
+
+"""Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
+
+Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use. 
+
+NonCommercial — You may not use the material for commercial purposes.
+
+NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material. 
+
+No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits. 
+
+https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode#languages
+
+Copyright (C)
+@author: Marcial Hernandez Sanchez
+@date: 16/6/2015
+University of Santiago, Chile (Usach)"""
 
 import os, sys,subprocess, hashlib, copy, itertools, ast
 sys.path.insert(0, os.getcwd())
@@ -294,7 +305,8 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                     continue
                                 
                                 if banderaEstado=="No trazable":
-                                    print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                    #print "Error: La entrada: "+codigoPython["entradasBruto"][contadorEntradasBruto]+" presenta una falla y no se puede Trazar"
+                                    print "Error 13: La funcion '"+codigoPython["nombreFuncionPrincipal"] +"' o su entrada: '"+codigoPython["entradasBruto"][contadorEntradasBruto]+"' presenta una falla y no se puede Trazar"
                                     banderaEstado=False
                                     contadorEntradasBruto+=1
                                     continue

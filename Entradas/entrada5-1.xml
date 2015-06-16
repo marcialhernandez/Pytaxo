@@ -12,7 +12,7 @@ def funcionTest(dato):
         dato=dato/4
         print "a"
         z=functionSuma(x,z)
-    return z
+
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
 <lineaIterativa>while dato >0:</lineaIterativa>
 <cantidadCiclosConsulta>2</cantidadCiclosConsulta>
