@@ -1,20 +1,48 @@
-<?xml version='1.0' encoding='utf-8'?>
-<pregunta puntaje="2" tipo="enunciadoIncompleto" idOrigenEntrada="2" cantidadAlternativas="3"> 
+<pregunta cantidadAlternativas="3" tipo="enunciadoIncompleto" idOrigenEntrada="2" puntaje="2">
   <enunciado>
-  <glosa>Los datos que soportan decimales son conocidos como</glosa>
-  <blank>flotantes</blank>
+    <glosa>
+      Los datos que soportan decimales son conocidos como
+    </glosa>
+    <blank>
+      flotantes
+    </blank>
   </enunciado>
   <opciones>
     <alternativa id="2" tipo="distractor">
-    <glosa>Strings<comentario>alternativa incorrecta</comentario></glosa>
-    <glosa>Cadena de Texto<comentario>alternativa incorrecta</comentario></glosa>
+      <glosa>
+        Strings
+        <comentario>
+          alternativa incorrecta
+        </comentario>
+      </glosa>
+      <glosa>
+        Cadena de Texto
+        <comentario>
+          alternativa incorrecta
+        </comentario>
+      </glosa>
     </alternativa>
     <alternativa id="3" tipo="distractor">
-    <glosa>Ints<comentario>alternativa incorrecta</comentario></glosa>
-    <glosa>Numeros enteros<comentario>alternativa incorrecta</comentario></glosa>
+      <glosa>
+        Ints
+        <comentario>
+          alternativa incorrecta
+        </comentario>
+      </glosa>
+      <glosa>
+        Numeros enteros
+        <comentario>
+          alternativa incorrecta
+        </comentario>
+      </glosa>
     </alternativa>
     <alternativa id="4" tipo="distractor">
-    <glosa>Listas<comentario>alternativa incorrecta</comentario></glosa>
+      <glosa>
+        Listas
+        <comentario>
+          alternativa incorrecta
+        </comentario>
+      </glosa>
     </alternativa>
-    </opciones>
+  </opciones>
 </pregunta>

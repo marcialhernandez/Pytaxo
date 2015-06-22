@@ -84,7 +84,7 @@ def borraHijos(ETObject):
 def agregaAlternativaIteracion(ETObject,dicIteracion,tipo,puntaje):
     seccionAlternativa=ET.SubElement(ETObject,'alternativa')
     seccionAlternativa.text=str(mergeKeyValue(dicIteracion.values()[0]))
-    seccionAlternativa.set('numeroIteracion',str(dicIteracion.keys()[0]))
+    seccionAlternativa.set('id',str(dicIteracion.keys()[0]))
     seccionAlternativa.set('tipo',tipo)
     seccionAlternativa.set('puntaje',puntaje)
     return str(dicIteracion.keys()[0])
@@ -137,7 +137,7 @@ def incluyeInfo(codigoPython,seccionSolucion,seccionAlternativas,plantillaSalida
             enunciado=enunciado.replace("@numIteraciones",generaGlosaIteraciones(actualCantidadCiclosConsulta))
             subRaizAux.text=enunciado
     borraHijos(seccionSolucion)
-    seccionComentarios=ET.SubElement(seccionSolucion,'comentarios')
+    seccionComentarios=ET.SubElement(seccionSolucion,'comentario')
     seccionComentarios.text=codigoPython["comentarios"]
     glosaSolucion=""
     indicaPrimero=True

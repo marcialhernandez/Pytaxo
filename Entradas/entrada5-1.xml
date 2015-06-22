@@ -40,19 +40,27 @@ def funcionTest2(dato):
         print "a"
         z=functionSuma(x,z)
     return z
-<nombreFuncionPrincipal>funcionTest2</nombreFuncionPrincipal>
-<lineaIterativa>while dato >0:</lineaIterativa>
-<cantidadCiclosConsulta>2</cantidadCiclosConsulta>
-<cantidadCiclosConsulta>1</cantidadCiclosConsulta>
-<!--- formato -->
-<!--- Las entradas tienen que estar en formato x=VALOR -->
-<!--- si la funcion tiene como entradas mas valores separelos por ; -->
-<!--- x=VALOR;y=VALOR2 -->
-<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
-<!--- en este caso seria dato=VALOR -->
-<entrada>dato=600</entrada>
-<entrada>dato=300</entrada>
-<comentario>Comentario Codigo2</comentario>
-</python>
-</codigo>
+            <nombreFuncionPrincipal>
+                funcionTest2
+            </nombreFuncionPrincipal>
+            <lineaIterativa>
+                while dato >0:
+            </lineaIterativa>
+            <cantidadCiclosConsulta>
+                2
+            </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                1
+            </cantidadCiclosConsulta>
+            <entrada>
+                dato=600
+            </entrada>
+            <entrada>
+                dato=300
+            </entrada>
+            <comentario>
+                Comentario Codigo2
+            </comentario>
+        </python>
+    </codigo>
 </pregunta>

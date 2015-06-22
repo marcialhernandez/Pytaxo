@@ -27,6 +27,11 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
+
+def borraHijos(ETObject):
+    for elem in ETObject.getchildren():
+        ETObject.remove(elem)
+    pass
     
 def generaGlosaEntradas(listaEntradasBrutas):
     glosaIntermedia=""
@@ -48,7 +53,7 @@ def generaGlosaEntradas(listaEntradasBrutas):
                     contador+=1
         return glosaIntermedia
     else:
-        glosaIntermedia="la entrada "+listaEntradas[0]
+        glosaIntermedia="la entrada "+listaEntradas[0].rstrip().lstrip()
         return glosaIntermedia
 
 def ejecutaPyTemporal(archivoTemporal):
@@ -75,9 +80,10 @@ def incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntrad
             idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
             subRaizAux.set('id',idXmlSalida)
         if subRaizAux.tag=='enunciado':
-            segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto])+"."
-            subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"])+" "+segundaParteEnunciado
-    seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentarios')
+            segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]).rstrip().lstrip()+"."
+            subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"]).rstrip().lstrip()+" "+segundaParteEnunciado.rstrip().lstrip()
+    borraHijos(seccionTrazaSolucion)
+    seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentario')
     seccionComentarios.text=codigoPython["comentarios"]
     return idXmlSalida
 
@@ -105,7 +111,7 @@ def estandarizaLineas(listaLineasTraza,nombreFuncionPrincipal):
                 linea="L"+str(linea["numLinea"])+': '+linea["linea"]+" - Mem: "+stack+" - Funcion de procedencia: "+linea['funcionProcedencia']
             listaTraza.append(linea)
         elif linea["evento"]=='return':
-            linea="L:"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
+            linea="L"+str(linea["numLinea"])+': Funcion: '+linea['funcionProcedencia']+ ' - retorna: '+str(linea['retorno'])
             listaTraza.append(linea)
         elif linea["evento"]=='exception':
             linea="Error en linea "+str(linea["numLinea"])+': '+linea["linea"]+', de la funcion: '+linea['funcionProcedencia']+', '+linea["tipo"]+': '+linea['glosa']

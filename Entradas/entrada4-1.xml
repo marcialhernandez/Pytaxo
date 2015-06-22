@@ -1,17 +1,32 @@
-<pregunta puntaje="2" tipo="pythonTraza" idOrigenEntrada="4" cantidadAlternativas="4" cantidadCodigo="2">
-<codigo>
-<python id="1">
-<nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
-<!--- formato -->
-<!--- Las entradas tienen que estar en formato x=VALOR -->
-<!--- si la funcion tiene como entradas mas valores separelos por ; -->
-<!--- x=VALOR;y=VALOR2 -->
-<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
-<!--- en este caso seria dato=VALOR -->
-<entrada>valor=127</entrada>
-<entrada>valor=95</entrada>
-<comentario>Comentario Codigo1</comentario>
-</python>
+<pregunta cantidadAlternativas="4" tipo="pythonTraza" idOrigenEntrada="4" puntaje="2" cantidadCodigo="2">
+    
+    <codigo>
+        
+        <python id="1">
+def functionSuma(dato1,dato2):
+    return dato1+dato2
+    
+def funcionTest(dato):
+    x=0
+    z=0
+    while dato >0:
+        x=dato -dato/3
+        dato=dato/4
+        print "a"
+        z=functionSuma(x,z)
+            <nombreFuncionPrincipal>
+                funcionTest
+            </nombreFuncionPrincipal>
+            <entrada>
+                valor=127
+            </entrada>
+            <entrada>
+                valor=95
+            </entrada>
+            <comentario>
+                Comentario Codigo1
+            </comentario>
+        </python>
 <python id="2">
 def functionSuma(x,y):
     return x+y

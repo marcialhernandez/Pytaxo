@@ -21,6 +21,7 @@ University of Santiago, Chile (Usach)"""
 import clases.alternativa as alternativa
 import clases.xmlEntrada as xmlEntrada
 import nombres, acceso, sys,hashlib, argparse, copy
+from xml.dom import minidom
 
 try:
     import xml.etree.cElementTree as ET
@@ -28,6 +29,8 @@ except ImportError:
     import xml.etree.ElementTree as ET
     
 def plantillaGenericaSalida():
+    #info='<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet href="salida.css" title="Estilo Estandar"?>'
+    #ET.SubElement(tree,'plantilla')
     raizXml=ET.Element('plantilla')
     ET.SubElement(raizXml,'enunciado')
     ET.SubElement(raizXml,'opciones')
@@ -110,15 +113,15 @@ def analizadorComparacion(raizXmlEntrada):
                     print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+codigo["id"]
                     listaIDOcupadas.append(codigo["id"])
                     contadorIDprovisorio+=1
-                codigo["codigoBruto"]=seccion.text
+                codigo["codigoBruto"]=seccion.text.rstrip().lstrip()
                 for subSeccion in seccion:
                     if subSeccion.tag=='nombreFuncionPrincipal':
-                        codigo["nombreFuncionPrincipal"]=subSeccion.text
+                        codigo["nombreFuncionPrincipal"]=subSeccion.text.rstrip().lstrip()
                 listaCodigos.append(codigo)
             #Cada entrada para los codigos y agrega a la listaDeEntradas
             if seccion.tag=='entrada':
                 entrada={}
-                entrada["entradaBruta"]=seccion.text
+                entrada["entradaBruta"]=seccion.text.rstrip().lstrip()
                 listaValores=[]
                 for entradaTemp in entrada["entradaBruta"].split(';'):
                     listaValores.append(entradaTemp.split('=')[-1])
@@ -127,7 +130,7 @@ def analizadorComparacion(raizXmlEntrada):
                 listaEntradas.append(entrada)
             #Se anidan los comentarios en uno solo
             if seccion.tag=='comentario':
-                comentarios.append(seccion.text)
+                comentarios.append(seccion.text.rstrip().lstrip())
     comentarios='\n'.join(comentarios)
     listaCodigosPorEntrada=[]
     #Luego para cada entrada
@@ -195,9 +198,9 @@ def analizadorIteracion(raizXmlEntrada):
                 dicCodigoPython["cantidadCiclosConsulta"]=list()
                 for subRaizCodigo in codigoPython:
                     if subRaizCodigo.tag=='nombreFuncionPrincipal':
-                        dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
+                        dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text.rstrip().lstrip()
                     elif subRaizCodigo.tag=='entrada':
-                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text.rstrip().lstrip())
                         listaValores=list()
                         try:
                             entradaParseada=subRaizCodigo.text.split(';')
@@ -210,11 +213,11 @@ def analizadorIteracion(raizXmlEntrada):
                         dicCodigoPython["entradas"].append(listaValores)
                 #No se valida si es numero la entrada
                     elif subRaizCodigo.tag=='cantidadCiclosConsulta':
-                        dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text)
+                        dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text.rstrip().lstrip())
                     elif subRaizCodigo.tag=='lineaIterativa':
-                        dicCodigoPython["lineaIterativa"]=subRaizCodigo.text
+                        dicCodigoPython["lineaIterativa"]=subRaizCodigo.text.rstrip().lstrip()
                     elif subRaizCodigo.tag=='comentario':
-                        comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
+                        comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text.rstrip().lstrip()
                 stringFuncionEntrada=list()
                 dicCodigoPython["codigo"]=list()
                 for entrada in dicCodigoPython["entradas"]:
@@ -224,9 +227,9 @@ def analizadorIteracion(raizXmlEntrada):
                         print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
                         exit()
                     stringFuncionEntrada.append(funcionEntrada)
-                    codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
+                    codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text.rstrip().lstrip(), funcionTracer, testEstandar, funcionEntrada)
                     dicCodigoPython["codigo"].append(codigoPyConEntrada)
-                dicCodigoPython["codigoBruto"]=codigoPython.text
+                dicCodigoPython["codigoBruto"]=codigoPython.text.rstrip().lstrip()
                 if len(str(dicCodigoPython["codigoBruto"]))<5:
                     print "Error 12: Una o mas entradas no contienen codigo python adjunto y se han omitido"
                     continue
@@ -284,12 +287,12 @@ def analizadorTraza(raizXmlEntrada):
             comentariosCodigo=""
             for subRaizCodigo in codigoPython:
                 if subRaizCodigo.tag=='nombreFuncionPrincipal':
-                    dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text
+                    dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text.rstrip().lstrip()
                 elif subRaizCodigo.tag=='entrada':
                     listaValores=list()
                     try:
                         desgloseEntrada=subRaizCodigo.text.split(';')
-                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text)
+                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text.rstrip().lstrip())
                     except:
                         print "Error 11: La entrada: 'None' presenta una falla y no se puede Trazar"
                         continue
@@ -298,7 +301,7 @@ def analizadorTraza(raizXmlEntrada):
                     listaValores=','.join(listaValores)
                     dicCodigoPython["entradas"].append(listaValores)
                 elif subRaizCodigo.tag=='comentario':
-                    comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text
+                    comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text.rstrip().lstrip()
             stringFuncionEntrada=list()
             dicCodigoPython["codigo"]=list()
             for entrada in dicCodigoPython["entradas"]:
@@ -308,9 +311,9 @@ def analizadorTraza(raizXmlEntrada):
                     print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
                     continue
                 stringFuncionEntrada.append(funcionEntrada)
-                codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text, funcionTracer, testEstandar, funcionEntrada)
+                codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text.rstrip().lstrip(), funcionTracer, testEstandar, funcionEntrada)
                 dicCodigoPython["codigo"].append(codigoPyConEntrada)
-            dicCodigoPython["codigoBruto"]=codigoPython.text
+            dicCodigoPython["codigoBruto"]=codigoPython.text.rstrip().lstrip()
             dicCodigoPython["comentarios"]=comentariosCodigo
             #Lista de diccionarios que contiene info del codigo python incrustado
             #cada diccionario contiene:
@@ -349,7 +352,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
-            termino=subRaiz.text
+            termino=subRaiz.text.rstrip().lstrip()
     elif tipo=='pythonCompara':
         listaCodigosPorEntrada, comentarios=analizadorComparacion(raizXmlEntrada)
         return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
@@ -369,10 +372,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         for subRaiz in raizXmlEntrada.iter('enunciado'):
             for elem in subRaiz:
                 if elem.tag=='glosa':
-                    enunciadoIncompleto.append(elem.text)
+                    enunciadoIncompleto.append(elem.text.rstrip().lstrip())
                 if elem.tag=='blank':
-                    enunciadoIncompleto.append('_'*len(elem.text))
-                    respuestas.append(elem.text)
+                    enunciadoIncompleto.append('_'*len(elem.text.rstrip().lstrip()))
+                    respuestas.append(elem.text.rstrip().lstrip())
                     presenciaBlank=True
         if presenciaBlank==False:
             print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
@@ -408,7 +411,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         listaIDs=[]
         for subRaiz in raizXmlEntrada.iter('definiciones'):
             for glosa in subRaiz.iter('glosa'):
-                definicion=glosa.text
+                definicion=glosa.text.rstrip().lstrip()
                 llaveTermino=glosa.attrib['id']
                 if llaveTermino in listaIDs:
                     continue
@@ -421,7 +424,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 for inpar in glosa.iter('inpar'):
                     textoComentario=""
                     for comentario in inpar.iter('comentario'):
-                        textoComentario=textoComentario+' '+comentario.text
+                        textoComentario=textoComentario+' '+comentario.text.rstrip().lstrip()
                     #textoComentario=textoComentario.lstrip()
                     #agrego solo si existe el inpar
                     if bool(inpar.text.rstrip())==True:
@@ -444,7 +447,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             for glosaOpcion in opcion.iter('glosa'):
                 comentarioAlternativa=""
                 for comentarioGlosa in glosaOpcion.iter('comentario'):
-                    comentarioAlternativa=comentarioAlternativa+" "+str(comentarioGlosa.text)
+                    comentarioAlternativa=comentarioAlternativa+" "+str(comentarioGlosa.text).rstrip().lstrip()
                 try:
                     idAlternativa=opcion.attrib['id']
                 except:
@@ -520,8 +523,52 @@ def lecturaXmls(nombreDirectorioEntradas,tipo):
             listaXmlFormateadas.append(preguntaParser(raizXml,nombres.obtieneNombreArchivo(xmlEntrada)))
     return listaXmlFormateadas
 
+def _xmlprettyprint(stringlist):
+    indent = ' '
+    in_tag = False
+    for token in stringlist:
+        if token.startswith('</'):
+            indent = indent[:-2]
+            yield indent + token + '\n'
+            in_tag = True
+        elif token.startswith('<'):
+            yield indent + token
+            indent += '  '
+            in_tag = True
+        elif token == '>':
+            yield '>' + '\n'
+            in_tag = False
+        elif in_tag:
+            yield token
+        else:
+            yield token
+ 
+ 
+def xmlprettyprint(element):
+    return ''.join(_xmlprettyprint(ET.tostringlist(element,'utf-8')))
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ET.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent=" ")
+
 def escribePlantilla(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato):
     acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
     tree = ET.ElementTree(raizXML)
-    tree.write(directorioSalida+'/'+nombreArchivo+'.'+formato)
-    pass
+    
+    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n<?xml-stylesheet href="../../css/salida.css" title="Estilo Estandar"?>\n"""
+    
+    #tree = ET.parse(filename)
+    # do some work on tree
+    
+    with open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w') as output: # would be better to write to temp file and rename
+        output.write(DECLARATION)
+        output.write(xmlprettyprint(raizXML))
+        #output.write(ET.tostring(raizXML, 'utf-8', method="xml"))
+        #tree.write(output, xml_declaration=False, encoding='utf-8') 
+    # xml_declaration=False - don't write default declaration
+    
+    #tree.write(directorioSalida+'/'+nombreArchivo+'.'+formato, encoding='UTF-8', xml_declaration=False)
+    #pass

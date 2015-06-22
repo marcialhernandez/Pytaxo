@@ -327,7 +327,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                        #Ahora se agregan las secciones de alternativas y el comentario, con su respectivo comentario
                        seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
                        #Se agrega comentario del item, que menciona el valor de retorno de cada funcion
-                       seccionComentario=ET.SubElement(subRaizSalida,'comentario')
+                       seccionComentario=ET.SubElement(subRaizSalida,'solucion')
                        seccionComentario.text=comentarioItem.rstrip()
                        #banderaTodas indica si todas las funciones comparadas son iguales o no, son iguales si es mayor que 1
                        #Si la banderaTodas es 0, ninguna es igual
