@@ -240,6 +240,7 @@ def obtieneTraza(datosSalidaSubproceso):
 
 def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
     validaPlantilla=False
+    taxonomia=""
     plantillasValidas=list()
     for archivoPlantilla in nombres.especificDirectoryNames(nombreDirectorioPlantillas):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
@@ -250,6 +251,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
+                taxonomia=subRaiz.attrib['taxo']
                      
         if validaPlantilla==True:
             enunciado=""
@@ -259,7 +261,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
             #plantillasValidas.append(arbolXmlPlantillaEntrada)
-            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip()))
+            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
 
@@ -276,6 +278,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     subRaizSalida.set('tipo',xmlEntradaObject.tipo)
                     subRaizSalida.set('id',xmlEntradaObject.id)
                     subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+                    subRaizSalida.set('taxonomia',plantilla.taxo)
                 if subRaizSalida.tag=='enunciado':
                     enunciado=plantilla.enunciado[:]
                     #subRaizSalida.text=plantilla.enunciado

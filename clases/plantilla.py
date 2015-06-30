@@ -24,6 +24,9 @@ class plantilla:
     #atributos de la clase
 #     def __init__(self,nombrePregunta,tipo,puntaje,termino,definicion,alternativas):
     def __init__(self,tipo,enunciado,**kwargs):
+        self.taxo="Null"
         self.tipo=tipo
         self.enunciado=enunciado
+        if 'taxo' in kwargs.keys():
+            self.taxo=kwargs['taxo']
         

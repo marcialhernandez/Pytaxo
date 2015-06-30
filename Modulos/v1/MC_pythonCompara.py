@@ -40,7 +40,7 @@ def generaAlternativas(banderaTodas,puntaje,pozoOpciones):
     listaAlternativasDistractoras=[]
     alternativaSolucion=""
     if banderaTodas==0:
-        alternativaSolucion=alternativa("Ninguna", "solucion", puntaje,"Ninguna")
+        alternativaSolucion=alternativa.alternativa("Ninguna", "solucion", puntaje,"Ninguna")
         listaAlternativasDistractoras.append(alternativa.alternativa("Todas", "distractor", 0,"I, II y III"))                  
         for opcion in pozoOpciones:
             comentario="La funcion "+opcion["glosaAlternativaNumerica"][0]+ " retorna "+ str(opcion["retorno"][0]) + " y la funcion " +opcion["glosaAlternativaNumerica"][1]+ " retorna "+ str(opcion["retorno"][1])+"."
@@ -252,6 +252,7 @@ def obtieneTraza(datosSalidaSubproceso):
 
 def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
     validaPlantilla=False
+    taxonomia=""
     plantillasValidas=list()
     for archivoPlantilla in nombres.especificDirectoryNames(nombreDirectorioPlantillas):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
@@ -261,6 +262,8 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
+                taxonomia=subRaiz.attrib['taxo']
+                
                      
         if validaPlantilla==True:
             enunciado=""
@@ -270,7 +273,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
             #plantillasValidas.append(arbolXmlPlantillaEntrada)
-            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip()))
+            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
 
@@ -289,6 +292,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                subRaizSalida.set('tipo',xmlEntradaObject.tipo)
                #subRaizSalida.set('id',xmlEntradaObject.id)
                subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+               subRaizSalida.set('taxonomia',plantilla.taxo)
            #if subRaizSalida.tag=='enunciado':
            #    enunciado=plantilla.enunciado[:]
                #subRaizSalida.text=plantilla.enunciado
