@@ -414,11 +414,11 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                     numerosIteracion+=agregaAlternativaIteracion(seccionAlternativas,alternativaCorrecta)+"+"
                                     idXmlSalida=incluyeInfo(codigoPython,trazaIteraciones,seccionAlternativas,plantillaSalida,contadorEntradasBruto,copy.copy(enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
                                     
-                                    
                                     if banderaEstado==True:
                                         #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-                                        borraHijos(seccionAlternativas)
-                                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')                                      
+                            
+                                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idXmlSalida,copy.copy(plantillaSalida),'xml')       
+                                        borraHijos(seccionAlternativas)                               
 
                             #La bandera se setea a False por cada archivo temporal que se comprueba
                             banderaEstado=False

@@ -15,12 +15,6 @@ def funcionTest(dato):
     return z
 <nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
 <lineaIterativa>while dato >0:</lineaIterativa>
-<!--- formato -->
-<!--- Las entradas tienen que estar en formato x=VALOR -->
-<!--- si la funcion tiene como entradas mas valores separelos por ; -->
-<!--- x=VALOR;y=VALOR2 -->
-<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
-<!--- en este caso seria dato=VALOR -->
 <entrada>valor=127</entrada>
 <entrada>valor=95</entrada>
 <comentario>Comentario Codigo1</comentario>
@@ -40,12 +34,6 @@ def funcionTest2(dato):
     return z
 <nombreFuncionPrincipal>funcionTest2</nombreFuncionPrincipal>
 <lineaIterativa>while dato >0:</lineaIterativa>
-<!--- formato -->
-<!--- Las entradas tienen que estar en formato x=VALOR -->
-<!--- si la funcion tiene como entradas mas valores separelos por ; -->
-<!--- x=VALOR;y=VALOR2 -->
-<!--- lo ideal es que el nombre de la entrada coincida con el de la entrada de la funcion -->
-<!--- en este caso seria dato=VALOR -->
 <entrada>valor=127</entrada>
 <entrada>valor=95</entrada>
 <comentario>Comentario Codigo2</comentario>

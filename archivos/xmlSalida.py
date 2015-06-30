@@ -572,3 +572,19 @@ def escribePlantilla(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato
     
     #tree.write(directorioSalida+'/'+nombreArchivo+'.'+formato, encoding='UTF-8', xml_declaration=False)
     #pass
+
+def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato):
+    acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
+    tree = ET.ElementTree(raizXML)
+    
+    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n<?xml-stylesheet href="../../css/salida.css" title="Estilo Estandar"?>\n"""
+    
+    #tree = ET.parse(filename)
+    # do some work on tree
+    
+    with open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w') as output: # would be better to write to temp file and rename
+        output.write(DECLARATION)
+       # output.write(xmlprettyprint(raizXML))
+        output.write(ET.tostring(raizXML, 'utf-8', method="xml"))
+        #tree.write(output, xml_declaration=False, encoding='utf-8')
+    pass 
