@@ -27,7 +27,12 @@ from clases import item
 
 nombreCarpetaModulo="Modulos"
 diccionarioTiposVersusModulos={}
-diccionarioTiposVersusModulos["v1"]=["MC_def_simple","MC_definicionPareada","MC_enunciadoIncompleto","MC_pythonCompara","MC_pythonIterativo","MC_pythonIterativoInvertido","MC_pythonTraza"]
+for versionModulo in nombres.nombresSubCarpetas(nombreCarpetaModulo):
+    versionModuloActual=versionModulo.split("/")[-1]
+    diccionarioTiposVersusModulos[versionModuloActual]=[]
+    for modulo in nombres.especificDirectoryNames(versionModulo):
+        diccionarioTiposVersusModulos[versionModuloActual].append(modulo.split(".py")[0])
+
 nombreCompilador="python"
 opcionesModulos=[]
 nombreTipoAGenerar=""
@@ -40,10 +45,14 @@ parser.add_argument('-v', required=True,choices=" ".join(diccionarioTiposVersusM
                     help='Especifica la versión de Pytaxo a ejecutar. Estan disponibles los argumentos: '+" ".join(diccionarioTiposVersusModulos.keys()),
                     metavar="VersiónConjuntoPreguntas")
 
-parser.add_argument('-m', required=False,choices=diccionarioTiposVersusModulos["v1"],
+parser.add_argument('-m', required=False,
                     help='Especifica el tipo de pregunta a crear. Estan disponible los argumentos'+ "\n"+"\n".join(opcionesModulos),
                     metavar="TipoPregunta")
 
+if parser.parse_args().m!=None and (not parser.parse_args().m in diccionarioTiposVersusModulos[parser.parse_args().v]):
+    print ("No existe el modulo: '"+parser.parse_args().m+"'" )
+    exit()
+    
 nombreTipoAGenerar=nombreCarpetaModulo+'/'+parser.parse_args().v
 
 banderaModuloEspecifico=False
