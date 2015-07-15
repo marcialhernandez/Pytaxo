@@ -444,18 +444,33 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     #{'distractores':{'definicion':lista de distractores (los diferentes distractores)}}
     for subRaiz in raizXmlEntrada.iter('opciones'):
         for opcion in raizXmlEntrada.iter('alternativa'):
+            try:
+                idAlternativa=opcion.attrib['id']
+            except:
+                print "Precaucion 2: una alternativa carece de Id y se ha omitido"
+                continue
+            try:
+                tipoOpcion=opcion.attrib['tipo']
+                print tipoOpcion
+                if not(tipoOpcion is 'solucion' or "distractor"):
+                    print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
+                    continue
+            except:
+                    print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
+                    continue
+                       
             for glosaOpcion in opcion.iter('glosa'):
                 comentarioAlternativa=""
                 for comentarioGlosa in glosaOpcion.iter('comentario'):
                     comentarioAlternativa=comentarioAlternativa+" "+str(comentarioGlosa.text).rstrip().lstrip()
-                try:
-                    idAlternativa=opcion.attrib['id']
-                except:
-                    print "Precaucion 2: una alternativa carece de Id y se ha omitido"
-                    continue
+#                 try:
+#                     idAlternativa=opcion.attrib['id']
+#                 except:
+#                     print "Precaucion 2: una alternativa carece de Id y se ha omitido"
+#                     continue
                 if idAlternativa in conjuntoAlternativas.keys():
                     largoLista=len(conjuntoAlternativas[opcion.attrib['id']])
-                    if opcion.attrib['tipo']=="solucion":
+                    if tipoOpcion=="solucion":
                         conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
                     else:
                         conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
