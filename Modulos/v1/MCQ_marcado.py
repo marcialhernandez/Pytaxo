@@ -335,16 +335,19 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                 subRaizAlternativa.set('id',cadaTermino.llave)
                 subRaizAlternativa.set('tipo',cadaTermino.tipo)
                 subRaizComentario=ET.SubElement(subRaizAlternativa,'comentario')
-                subRaizComentario.text=cadaTermino.comentario
-                idAlternativas+=cadaTermino.identificador()
+                #idAlternativas+=cadaTermino.identificador()
+                ############################################################################
                 subRaizSalida.set('idAlternativasGenerada',idAlternativas.rstrip())
-            ordenamientoDiferente+=1
-#                                 if contador==4:
-#                                     print str(contador)+' Creados'  
-#                                     return 0      
+                for terminoAlternativa in cadaTermino.glosa.split(" "):
+                #El primer y ultimo string de cada termino
+                    idAlternativas+=terminoAlternativa[1]+terminoAlternativa[-2]+"|"
+                idAlternativas.rstrip("|")
+                idAlternativas+="_"
+            idAlternativas.rstrip("_")
+            ordenamientoDiferente+=1 
             if banderaEstado==True:
                 #Se instancia la plantilla como un elemento de element tree
-                xmlSalida.escribePlantilla(directorioSalida,xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+idPreguntaGenerada+' '+idAlternativas.rstrip()+' '+str(ordenamientoDiferente) +' '+str(contador), plantillaSalida,'xml')
+                xmlSalida.escribePlantilla(directorioSalida,xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+idPreguntaGenerada+' '+idAlternativas.rstrip("_")+' '+str(ordenamientoDiferente), plantillaSalida,'xml')
                 
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")

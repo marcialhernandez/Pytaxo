@@ -451,7 +451,6 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 continue
             try:
                 tipoOpcion=opcion.attrib['tipo']
-                print tipoOpcion
                 if not(tipoOpcion is 'solucion' or "distractor"):
                     print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
                     continue
