@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="3" vecindadDistractores="4" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
+<pregunta cantidadAlternativas="3" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
     <codigo>
         <python id="1">
 def functionSuma(dato1,dato2):
@@ -34,7 +34,7 @@ def funcionTest(dato):
                 Comentario Codigo1
             </comentario>
         </python>
-        <python id="2">
+<python id="2">
 def functionSuma(dato1,dato2):
     return dato1+dato2
     
