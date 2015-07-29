@@ -27,13 +27,36 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
+
+def strToSN(v):
+  if v.lower() in ["yes", "true", "t", "1","si","y","s"]:
+      return "S"
+  else:
+      return "N"
     
-def plantillaGenericaSalida():
+def plantillaGenericaSalida( **kwargs):
     #info='<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet href="salida.css" title="Estilo Estandar"?>'
     #ET.SubElement(tree,'plantilla')
-    raizXml=ET.Element('plantilla')
-    ET.SubElement(raizXml,'enunciado')
-    ET.SubElement(raizXml,'opciones')
+    raizXml=ET.Element('question')
+    raizXml.set('type','multichoice')
+    name=ET.SubElement(raizXml,'name')
+    ET.SubElement(name,'text')
+    questiontext=ET.SubElement(raizXml,'questiontext')
+    ET.SubElement(questiontext,'text')
+    #ET.SubElement(raizXml,'opciones')
+    defaultgrade=ET.SubElement(raizXml,'defaultgrade')
+    if 'puntaje' in kwargs.keys():
+        defaultgrade.text=str(kwargs['puntaje'])
+    else:
+        defaultgrade.text='1'
+    shuffleanswers=ET.SubElement(raizXml,'shuffleanswers') # (values: 1/0) #banderizar
+    shuffleanswers.text='0'
+    single=ET.SubElement(raizXml,'single')
+    single.text='true'
+    answernumbering=ET.SubElement(raizXml,'answernumbering') #(allowed values: 'none', 'abc', 'ABCD' or '123') #banderizar
+    answernumbering.text='abc'
+    penalty=ET.SubElement(raizXml,'penalty')
+    penalty.text="0" #banderizar
     return raizXml
 
 def incluyeAlternativas(elementTreeObject,xmlEntradaObject):
@@ -389,6 +412,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         composicionDistractores="1+2"
         criterioOrdenDistractores="None"
         ordenTerminos="None"
+        parcialScore="N"
         cantidadCombinacionesDefiniciones=1
         #Se obtienen especificaciones para formar los distractores
         for subRaiz in raizXmlEntrada.iter('pregunta'):
@@ -401,6 +425,9 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     ordenTerminos=str(subRaiz.attrib['ordenTerminos'])
                 if bool(str(subRaiz.attrib['cantidadCombinacionesDefiniciones']).rstrip())==True:
                     cantidadCombinacionesDefiniciones=int(subRaiz.attrib['cantidadCombinacionesDefiniciones'])
+                if bool(str(subRaiz.attrib['parcialScore']).rstrip())==True:
+                    parcialScore=strToSN(subRaiz.attrib['parcialScore'])
+                    #print parcialScore
             except:
                 #valor por defecto "1+2"
                 pass
@@ -437,7 +464,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             conjuntoAlternativas['distractores']=conjuntoTerminosImpares
         #Se puede retornar antes el de definicion pareada, pues no presenta seccion opciones, sino una seccion completa de definiciones con sus pares e impares
         #Ademas este tipo de pregunta tiene mas atributos
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada,parcialScore=parcialScore)
             #print conjuntoAlternativas['terminos'].keys()
     #En la pregunta tipo definicion pareada la arquitectura del conjunto de alternativas cambia
     #ahora es {'terminos':{'definicion':lista de alternativas (las diferentes definiciones)}}
@@ -500,22 +527,29 @@ def incrustaAlternativasXml(subRaizOpciones,listaAlternativas):
     glosasAlternativas=""
     identificadorPregunta=""
     for elem in subRaizOpciones.getchildren():
-        subRaizOpciones.remove(elem)
+        if elem.tag=='answer':
+            subRaizOpciones.remove(elem)
     for alternativa in listaAlternativas:
         identificadorPregunta+=alternativa.identificador()
-        opcion = ET.SubElement(subRaizOpciones, 'alternativa')
-        opcion.text=alternativa.glosa
+        opcion = ET.SubElement(subRaizOpciones, 'answer')
+        opcionText=ET.SubElement(opcion, 'text')
+        opcionText.text=alternativa.glosa
         glosasAlternativas+=alternativa.glosa
         opcion.set('puntaje',alternativa.puntaje)
         opcion.set('id',alternativa.llave)
         opcion.set('tipo',alternativa.tipo)
-        hijo=ET.SubElement(opcion, 'comentario')
-        hijo.text=alternativa.comentario
+        if (alternativa.tipo=="solucion"):
+            opcion.set('fraction',"100")
+        else:
+            opcion.set('fraction',"0")
+        feedBack=ET.SubElement(opcion, 'feedback')
+        feedbackText=ET.SubElement(feedBack, 'text')
+        feedbackText.text=alternativa.comentario
     #A partir del texto concatenado, se crea una unica ID que representa las alternativas
     #Esta ID se asigna a un nuevo atributo a la subRaiz 'opciones'
     idItem=hashlib.sha256(glosasAlternativas).hexdigest()
-    subRaizOpciones.set('id',idItem)
-    subRaizOpciones.set('idPreguntaGenerada',identificadorPregunta.rstrip())
+    #subRaizOpciones.set('id',idItem)
+    #subRaizOpciones.set('idPreguntaGenerada',identificadorPregunta.rstrip())
     return idItem,identificadorPregunta.rstrip()
 
 #Funcion que analiza cada Xml de entrada
@@ -550,7 +584,7 @@ def _xmlprettyprint(stringlist):
             indent += '  '
             in_tag = True
         elif token == '>':
-            yield '>' + '\n'
+            yield '>'# + '\n'
             in_tag = False
         elif in_tag:
             yield token
@@ -601,4 +635,4 @@ def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,format
        # output.write(xmlprettyprint(raizXML))
         output.write(ET.tostring(raizXML, 'utf-8', method="xml"))
         #tree.write(output, xml_declaration=False, encoding='utf-8')
-    pass 
+    pass

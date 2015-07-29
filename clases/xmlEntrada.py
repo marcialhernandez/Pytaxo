@@ -67,6 +67,7 @@ class xmlEntrada:
             self.composicionDistractores=kwargs['composicionDistractores']
             self.ordenTerminos=kwargs['ordenTerminos']
             self.cantidadCombinacionesDefiniciones=kwargs['cantidadCombinacionesDefiniciones']
+            self.parcialScore=kwargs['parcialScore']
     
     def printContenidoEntrada(self):
         mensaje="Nombre entrada: {nombre} \nPuntaje: {puntaje}\nTermino: {termino}\nDefinicion: {definicion}\nDistractores: {alternativas} "

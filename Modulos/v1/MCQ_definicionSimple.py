@@ -24,12 +24,11 @@ from archivos import nombres
 import archivos.xmlSalida as xmlSalida
 import clases.plantilla as plantilla
 
-
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-
+    
 #Funcion que analiza la plantilla que corresponde a este tipo de pregunta
 #A esa plantilla se le añaden los datos obtenidos desde la entrada de
 #su mismo tipo, luego una vez completada la pregunta, se imprime
@@ -66,26 +65,32 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     #tipoPregunta=nombres.nombreScript(__file__)
     contador=0
     banderaEstado=False
+    nombreArchivo=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida()
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+        plantillaSalida.set('tipo',xmlEntradaObject.tipo)
+        #subRaizSalida.set('id',xmlEntradaObject.id)
+        plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+        plantillaSalida.set('taxonomia',plantilla.taxo)
+        for elem in plantillaSalida.iterfind('name/text'):
+            nombreArchivo=elem
         for subRaizSalida in plantillaSalida.iter():
-                if subRaizSalida.tag=='plantilla':
-                    subRaizSalida.set('tipo',xmlEntradaObject.tipo)
-                    subRaizSalida.set('id',xmlEntradaObject.id)
-                    subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
-                    subRaizSalida.set('taxonomia',plantilla.taxo)
-                if subRaizSalida.tag=='enunciado':
-                    subRaizSalida.text=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
-                if subRaizSalida.tag=='opciones':
-                    for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
-                        contador+=1
-                        identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(subRaizSalida, conjuntoAlternativas)
-                        if banderaEstado==True:
-                            xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas+' '+str(contador), plantillaSalida,'xml')
-                        else:
-                            print ET.tostring(plantillaSalida, 'utf-8', method="xml")
+                if subRaizSalida.tag=='questiontext':
+                    for elem in subRaizSalida.iterfind('text'):
+                        elem.text=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
+                    #subRaizSalida.text=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
+                #if subRaizSalida.tag=='opciones':
+        for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
+            contador+=1
+            identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(plantillaSalida, conjuntoAlternativas)
+            if banderaEstado==True:
+                idItem=xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas
+                nombreArchivo.text=idItem
+                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem, plantillaSalida,'xml')
+            else:
+                print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass

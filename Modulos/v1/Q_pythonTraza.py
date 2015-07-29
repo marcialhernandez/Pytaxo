@@ -70,21 +70,32 @@ def ejecutaPyTemporal(archivoTemporal):
 #contadorEntradasBruto: indica que entrada se esta ejecutando en la actual traza
 #plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
 #codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
-def incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado):
-    idXmlSalida=""
-    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
-    seccionTrazaSolucion.set('id', idEntradaBruta)
-    seccionTrazaSolucion.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
-    for subRaizAux in plantillaSalida.iter():
-        if subRaizAux.tag=='plantilla':
-            idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
-            subRaizAux.set('id',idXmlSalida)
-        if subRaizAux.tag=='enunciado':
-            segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]).rstrip().lstrip()+"."
-            subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"]).rstrip().lstrip()+" "+segundaParteEnunciado.rstrip().lstrip()
-    borraHijos(seccionTrazaSolucion)
-    seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentario')
-    seccionComentarios.text=codigoPython["comentarios"]
+def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,streamTraza,seccionRetroalimentacion):
+    idXmlSalida=codigoPython["id"]+'+'+str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())+'+'+codigoPython["entradasBruto"][contadorEntradasBruto]
+    segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]).rstrip().lstrip()+"."
+    enunciado=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"]).rstrip().lstrip()+" "+segundaParteEnunciado.rstrip().lstrip()
+    for elem in plantillaSalida.iterfind('generalfeedback'):
+        plantillaSalida.remove(elem)
+    for elem in plantillaSalida.getchildren():
+        if elem.tag=='questiontext':
+            for elem2 in elem.iterfind('text'):
+                elem2.text='<![CDATA[<h2>'+enunciado+'</h2><pre><code class="codeblock">'+codigoPython["codigoBruto"]+'</code></pre>'#+']]>'
+    generalfeedback=ET.SubElement(plantillaSalida,'generalfeedback')
+    generalfeedbackText=ET.SubElement(generalfeedback,'text')
+    seccionRetroalimentacion.text=codigoPython["comentarios"].lstrip()+'\n\n'+streamTraza
+    #idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
+    #seccionTrazaSolucion.set('id', idEntradaBruta)
+    #seccionTrazaSolucion.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
+    #for subRaizAux in plantillaSalida.iter():
+        #if subRaizAux.tag=='plantilla':
+        #    idXmlSalida=codigoPython["id"]+'+'+idEntradaBruta
+        #    subRaizAux.set('id',idXmlSalida)
+        #if subRaizAux.tag=='enunciado':
+        #    segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]).rstrip().lstrip()+"."
+        #    subRaizAux.text=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"]).rstrip().lstrip()+" "+segundaParteEnunciado.rstrip().lstrip()
+    #borraHijos(seccionTrazaSolucion)
+    #seccionComentarios=ET.SubElement(seccionTrazaSolucion,'comentario')
+    #seccionComentarios.text=codigoPython["comentarios"]
     return idXmlSalida
 
 def mergeLineas(listaLineasTraza):
@@ -209,48 +220,68 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida()
-        for subRaizSalida in plantillaSalida.iter():
-                if subRaizSalida.tag=='plantilla':
-                    subRaizSalida.set('tipo',xmlEntradaObject.tipo)
-                    subRaizSalida.set('id',xmlEntradaObject.id)
-                    subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
-                    subRaizSalida.set('taxonomia',plantilla.taxo)
-                if subRaizSalida.tag=='enunciado':
-                    enunciado=plantilla.enunciado[:]
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+#         for subRaizSalida in plantillaSalida.iter():
+                #if subRaizSalida.tag=='plantilla':
+        plantillaSalida.set('tipo',xmlEntradaObject.tipo)
+        #unico tipo de item que cambia
+        plantillaSalida.set('type',"essay")
+        answer=ET.SubElement(plantillaSalida,'answer')
+        answer.set('fraction',"0")
+        answerFeedback=ET.SubElement(answer,'feedback')
+        answerFeedbackText=ET.SubElement(answerFeedback,'text')
+        #plantillaSalida.set('id',xmlEntradaObject.id)
+        plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+        plantillaSalida.set('taxonomia',plantilla.taxo)
+        #responseformat.text="editor"
+        responsefieldlines=ET.SubElement(plantillaSalida,'responsefieldlines')
+        responsefieldlines.text="300"
+        #responsetemplate=ET.SubElement(plantillaSalida,'responsetemplate')
+        #responsetemplate.set('format',"html")
+        #responsetemplateText=ET.SubElement(plantillaSalida,'text')
+                #if subRaizSalida.tag=='enunciado':
+                #    enunciado=plantilla.enunciado[:]
                     #subRaizSalida.text=plantilla.enunciado
-                if subRaizSalida.tag=='opciones':
-                    for codigoPython in xmlEntradaObject.codigos:
-                        #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
-                        for elem in subRaizSalida.getchildren():
-                            subRaizSalida.remove(elem)
-                        seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-                        #seccionCodigo.set('id', hashlib.sha256(codigoPython["codigoBruto"]).hexdigest())
-                        seccionCodigo.text=codigoPython["codigoBruto"]
-                        seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
-                        #lista de archivos temporales por entrada anidada al codigo
-                        contadorEntradasBruto=0
-                        glosaEnunciado=""
-                        for archivoTemporal in codigoPython["codigo"]:
-                            idXmlSalida=incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado)
-                            streamTraza=obtieneTraza(ejecutaPyTemporal(archivoTemporal))
-                            if len(streamTraza)>0:
-                                normalizaLineas(streamTraza)#Normaliza numero de lineas
-                            else:
-                                banderaEstado="No trazable"
-                            streamTraza=estandarizaLineas(streamTraza,codigoPython["nombreFuncionPrincipal"])#Pasa las lineas a formato String
-                            streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
-                            seccionTrazaSolucion.text=streamTraza
-                            if banderaEstado==True:
-                                xmlSalida.escribePlantilla(kwuargs['directorioSalida'], xmlEntradaObject.tipo,str(xmlEntradaObject.idOrigenEntrada)+"."+idXmlSalida,plantillaSalida,'xml')
-                                contador+=1
-                            elif banderaEstado==False:
-                                print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-                                contador+=1
-                            else:
-                                print "Error 13: La funcion '"+codigoPython["nombreFuncionPrincipal"] +"' o su entrada: '"+codigoPython["entradasBruto"][contadorEntradasBruto]+"' presenta una falla y no se puede Trazar"
-                                banderaEstado=True
-                            contadorEntradasBruto+=1
+                #if subRaizSalida.tag=='opciones':
+        for codigoPython in xmlEntradaObject.codigos:
+            #Por cada ciclo debo eliminar los hijos de la seccion y poner los nuevos
+            #for elem in subRaizSalida.getchildren():
+            #    subRaizSalida.remove(elem)
+            #seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
+            #seccionCodigo.set('id', hashlib.sha256(codigoPython["codigoBruto"]).hexdigest())
+            #seccionCodigo.text=codigoPython["codigoBruto"]
+            #seccionTrazaSolucion=ET.SubElement(subRaizSalida,'trazaSolucion')
+            #lista de archivos temporales por entrada anidada al codigo
+            contadorEntradasBruto=0
+            glosaEnunciado=""
+            for archivoTemporal in codigoPython["codigo"]:
+                #idXmlSalida=incluyeInfo(codigoPython,seccionTrazaSolucion,plantillaSalida,contadorEntradasBruto,enunciado)
+                streamTraza=obtieneTraza(ejecutaPyTemporal(archivoTemporal))
+                if len(streamTraza)>0:
+                    normalizaLineas(streamTraza)#Normaliza numero de lineas
+                else:
+                    banderaEstado="No trazable"
+                streamTraza=estandarizaLineas(streamTraza,codigoPython["nombreFuncionPrincipal"])#Pasa las lineas a formato String
+                #streamTraza=mergeLineas(streamTraza)#Pasa la lista de lineas a solo un string
+                idXmlSalida=incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,plantilla.enunciado[:],mergeLineas(streamTraza),answerFeedbackText)
+                #seccionTrazaSolucion.text=streamTraza
+                if banderaEstado==True:
+                    #codigoPython["entradasBruto"][contadorEntradasBruto]
+                    id=str(xmlEntradaObject.idOrigenEntrada)+"."+idXmlSalida
+                    plantillaSalida.set('id',id)
+                    for elem in plantillaSalida.getchildren():
+                        if elem.tag=='name':
+                            for elem2 in elem.iterfind('text'):
+                                elem2.text=id
+                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'], xmlEntradaObject.tipo,id,plantillaSalida,'xml')
+                    contador+=1
+                elif banderaEstado==False:
+                    print ET.tostring(plantillaSalida, 'utf-8', method="xml")
+                    contador+=1
+                else:
+                    print "Error 13: La funcion '"+codigoPython["nombreFuncionPrincipal"] +"' o su entrada: '"+codigoPython["entradasBruto"][contadorEntradasBruto]+"' presenta una falla y no se puede Trazar"
+                    banderaEstado=True
+                contadorEntradasBruto+=1
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                         
     pass

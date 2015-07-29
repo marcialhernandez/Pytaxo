@@ -270,30 +270,35 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #         for elem in conjunto:
 #             print elem.tipo           
 
-def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
+def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
     #falta revisar como hacer que todas las hebras puedan incrementar el total, para luego imprimirlo
     #de momento cada una lo incrementa, pero este efecto no se ve reflejado en la variable global
-    subRaizSalida=None
-    for elem in plantillaSalida.iter('opciones'):
-        subRaizSalida=elem
+    #subRaizSalida=None
+    #for elem in plantillaSalida.iter('opciones'):
+    #    subRaizSalida=elem
 #     Proceso necesario cuando era monohebra
 #     for elem in subRaizSalida.getchildren():
 #         subRaizSalida.remove(elem)
     contador=0
 #     for elem in subRaizSalida.getchildren():
 #         subRaizSalida.remove(elem)
-    seccionDefiniciones=ET.SubElement(subRaizSalida,'definiciones')
-    idPreguntaGenerada=""
+    #seccionDefiniciones=ET.SubElement(subRaizSalida,'definiciones')
+    #idPreguntaGenerada=""
+    conjuntoDefinicionesEnunciado=""
+    contadorDefiniciones=0
     for definicion in conjuntoDefiniciones:
-        subRaizDefinicion=ET.SubElement(seccionDefiniciones,'definicion')
-        subRaizDefinicion.text=definicion
-        idPreguntaGenerada+=definicion+' '
-    idPreguntaGenerada=hashlib.sha256(idPreguntaGenerada.rstrip()).hexdigest()
-    for x in plantillaSalida.iter('plantilla'): x.set('id', idPreguntaGenerada)               
+        #subRaizDefinicion=ET.SubElement(seccionDefiniciones,'definicion')
+        #subRaizDefinicion.text=definicion
+        contadorDefiniciones+=1
+        conjuntoDefinicionesEnunciado+=str(contadorDefiniciones)+'.-'+definicion+'\n'
+        #idPreguntaGenerada+=definicion+' '
+    idPreguntaGenerada=hashlib.sha256(conjuntoDefinicionesEnunciado).hexdigest()
+    conjuntoDefinicionesEnunciado+='_____________________________________________________'
+    #for x in plantillaSalida.iter('plantilla'): x.set('id', idPreguntaGenerada)               
     #Seccion donde estaran los terminos
-    seccionTerminos=ET.SubElement(subRaizSalida,'terminos')
+    #seccionTerminos=ET.SubElement(subRaizSalida,'terminos')
     #Seccion donde estaran las alternativas
-    seccionAlternativas=ET.SubElement(subRaizSalida,'conjuntoAlternativas')
+    #seccionAlternativas=ET.SubElement(subRaizSalida,'conjuntoAlternativas')
     #Aqui se presenta cada posible pregunta
     solucionesYDistractores=posiblesSolucionesYDistractoresConjunto(xmlEntradaObject,conjuntoDefiniciones)
     #Para cada solucion de la variante actual 
@@ -313,31 +318,46 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
             #No se ordena
             pass 
         #Por cada ciclo debo eliminar los hijos de la seccion terminos y poner los nuevos
-        for elem in seccionTerminos.getchildren():
-            seccionTerminos.remove(elem)
+        #for elem in seccionTerminos.getchildren():
+        #    seccionTerminos.remove(elem)
         #Agrego los posibles terminos
+        conjuntoTerminosEnunciado=""
+        contadorTerminos=0
         for cadaTermino in listaTerminos:
-            subRaizTermino=ET.SubElement(seccionTerminos,'posiblePar')
-            subRaizTermino.text=cadaTermino.glosa
-            subRaizTermino.set('id',cadaTermino.llave)
+            #subRaizTermino=ET.SubElement(seccionTerminos,'posiblePar')
+            #subRaizTermino.text=cadaTermino.glosa
+            #subRaizTermino.set('id',cadaTermino.llave)
+            contadorTerminos+=1
+            conjuntoTerminosEnunciado+=str(contadorTerminos)+'.-'+cadaTermino.glosa+'\n'
         #solucion provisional
         ordenamientoDiferente=0 #indica que es el mismo grupo de alternativas pero estan ordenados de forma diferente
         for cadaConjunto in agrupamientoPareado(xmlEntradaObject,solucion,solucionesYDistractores['distractores'],cantidadAlternativas,especificacion=xmlEntradaObject.composicionDistractores, orderBy=xmlEntradaObject.criterioOrdenDistractores):
-            for elem in seccionAlternativas.getchildren():
-                seccionAlternativas.remove(elem)
+            for elem in plantillaSalida.getchildren():
+                if elem.tag=='answer':
+                    plantillaSalida.remove(elem)
             glosasAlternativas=""
             idAlternativas=""
             for cadaTermino in cadaConjunto:
-                subRaizAlternativa=ET.SubElement(seccionAlternativas,'alternativa')
-                subRaizAlternativa.text=cadaTermino.glosa
+                subRaizAlternativa=ET.SubElement(plantillaSalida,'answer')
+                subRaizAlternativaText=ET.SubElement(subRaizAlternativa,'text')
+                subRaizAlternativaText.text=cadaTermino.glosa
                 glosasAlternativas+=cadaTermino.glosa
                 subRaizAlternativa.set('puntaje',str(cadaTermino.puntaje))
                 subRaizAlternativa.set('id',cadaTermino.llave)
                 subRaizAlternativa.set('tipo',cadaTermino.tipo)
-                subRaizComentario=ET.SubElement(subRaizAlternativa,'comentario')
+                if "N" in xmlEntradaObject.parcialScore:
+                    if cadaTermino.tipo=="solucion":
+                        subRaizAlternativa.set('fraction',"100")
+                    else:
+                        subRaizAlternativa.set('fraction',"0")
+                else:
+                    subRaizAlternativa.set('fraction',str(int((cadaTermino.puntaje*100)/float(xmlEntradaObject.puntaje))))
+                subRaizComentario=ET.SubElement(subRaizAlternativa,'feedback')
+                subRaizComentarioText=ET.SubElement(subRaizComentario,'text')
+                subRaizComentarioText.text=cadaTermino.comentario
                 #idAlternativas+=cadaTermino.identificador()
                 ############################################################################
-                subRaizSalida.set('idAlternativasGenerada',idAlternativas.rstrip())
+                #subRaizSalida.set('idAlternativasGenerada',idAlternativas.rstrip())
                 for terminoAlternativa in cadaTermino.glosa.split(" "):
                 #El primer y ultimo string de cada termino
                     idAlternativas+=terminoAlternativa[1]+terminoAlternativa[-2]+"|"
@@ -346,8 +366,18 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
             idAlternativas.rstrip("_")
             ordenamientoDiferente+=1 
             if banderaEstado==True:
+                id=xmlEntradaObject.idOrigenEntrada+"-"+idPreguntaGenerada+' '+idAlternativas.rstrip("_")+' '+str(ordenamientoDiferente)
+                plantillaSalida.set('id',id)
                 #Se instancia la plantilla como un elemento de element tree
-                xmlSalida.escribePlantilla(directorioSalida,xmlEntradaObject.tipo,xmlEntradaObject.idOrigenEntrada+"-"+idPreguntaGenerada+' '+idAlternativas.rstrip("_")+' '+str(ordenamientoDiferente), plantillaSalida,'xml')
+                for subRaizSalida in plantillaSalida.iter():
+                    if subRaizSalida.tag=='questiontext':
+                        for elem in subRaizSalida.iterfind('text'):
+                            elem.text=enunciado+'\n Definiciones:\n'+conjuntoDefinicionesEnunciado+'\nTerminos:\n'+conjuntoTerminosEnunciado
+                    if subRaizSalida.tag=='name':
+                        for elem in subRaizSalida.iterfind('text'):
+                            elem.text=id
+                #Se instancia la plantilla como un elemento de element tree
+                xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml')
                 
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
@@ -403,35 +433,35 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida()
-        for subRaizSalida in plantillaSalida.iter():
-                if subRaizSalida.tag=='plantilla':
-                    subRaizSalida.set('tipo',xmlEntradaObject.tipo)
-                    subRaizSalida.set('id',xmlEntradaObject.id)
-                    subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
-                    subRaizSalida.set('taxonomia',plantilla.taxo)
-                if subRaizSalida.tag=='enunciado':
-                    subRaizSalida.text=plantilla.enunciado
-                if subRaizSalida.tag=='opciones':
-                    cantidadCombinacionesDefiniciones=0
-                    #Si la cantidad de combinaciones de definiciones es 0, no se genera nada
-                    if xmlEntradaObject.cantidadCombinacionesDefiniciones==0:
-                        pass
-                    #Si la cantidad de combinaciones de definiciones es 1, se trabaja con la entrada
-                    #tal como se ingreso por el usuario
-                    elif xmlEntradaObject.cantidadCombinacionesDefiniciones==1:
-                        listaDeConjuntoDefiniciones.append(xmlEntradaObject.alternativas['terminos'].keys())
-                    else:
-                        listaDeConjuntoDefiniciones=xmlEntradaObject.barajaDefiniciones()    
-                    for conjuntoDefiniciones in listaDeConjuntoDefiniciones:
-                        if xmlEntradaObject.cantidadCombinacionesDefiniciones==cantidadCombinacionesDefiniciones:
-                            break
-                        t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.deepcopy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total) )
-                        t.setDaemon(True)
-                        hilos.append(t)
-                        t.start()
-                        t.join()
-                        cantidadCombinacionesDefiniciones+=1
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+        #for subRaizSalida in plantillaSalida.iter():
+                #if subRaizSalida.tag=='plantilla':
+        plantillaSalida.set('tipo',xmlEntradaObject.tipo)
+        plantillaSalida.set('id',xmlEntradaObject.id)
+        plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+        plantillaSalida.set('taxonomia',plantilla.taxo)
+                #if subRaizSalida.tag=='enunciado':
+                    #subRaizSalida.text=plantilla.enunciado
+                #if subRaizSalida.tag=='opciones':
+        cantidadCombinacionesDefiniciones=0
+        #Si la cantidad de combinaciones de definiciones es 0, no se genera nada
+        if xmlEntradaObject.cantidadCombinacionesDefiniciones==0:
+            pass
+        #Si la cantidad de combinaciones de definiciones es 1, se trabaja con la entrada
+        #tal como se ingreso por el usuario
+        elif xmlEntradaObject.cantidadCombinacionesDefiniciones==1:
+            listaDeConjuntoDefiniciones.append(xmlEntradaObject.alternativas['terminos'].keys())
+        else:
+            listaDeConjuntoDefiniciones=xmlEntradaObject.barajaDefiniciones()    
+        for conjuntoDefiniciones in listaDeConjuntoDefiniciones:
+            if xmlEntradaObject.cantidadCombinacionesDefiniciones==cantidadCombinacionesDefiniciones:
+                break
+            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.deepcopy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado) )
+            t.setDaemon(True)
+            hilos.append(t)
+            t.start()
+            t.join()
+            cantidadCombinacionesDefiniciones+=1
     #Se imprime solo si se especifica directorio de salida
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(total.valor)+' Creados' 

@@ -35,45 +35,58 @@ except ImportError:
 #por pantalla para que la informacion pueda ser recogida por el programa
 #principal
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, **kwuargs): #,xmlEntradaObject):
-    plantillaSalida=xmlSalida.plantillaGenericaSalida()
+    plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
     contador=0
     banderaEstado=False
+    nombreArchivo=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
+    #for subRaizSalida in plantillaSalida.iter():
+    plantillaSalida.set('tipo',xmlEntradaObject.tipo)
+    plantillaSalida.set('id',xmlEntradaObject.id)
+    plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+    for elem in plantillaSalida.iterfind('name/text'):
+            nombreArchivo=elem
     for subRaizSalida in plantillaSalida.iter():
-            if subRaizSalida.tag=='plantilla':
-                subRaizSalida.set('tipo',xmlEntradaObject.tipo)
-                subRaizSalida.set('id',xmlEntradaObject.id)
-                subRaizSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
-            if subRaizSalida.tag=='enunciado':
-                subRaizSalida.text=xmlEntradaObject.enunciado
-            if subRaizSalida.tag=='opciones':
-                for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
-                    #Se concatena el texto de todas las alternativas
-                    glosasAlternativas=""
-                    identificadorPregunta=""
-                    for elem in subRaizSalida.getchildren():
-                        subRaizSalida.remove(elem)
-                    for alternativa in conjuntoAlternativas:
-                        opcion = ET.SubElement(subRaizSalida, 'alternativa')
-                        opcion.text=alternativa.glosa
-                        glosasAlternativas+=alternativa.glosa
-                        identificadorPregunta+=alternativa.identificador()
-                        opcion.set('puntaje',alternativa.puntaje)
-                        opcion.set('id',alternativa.llave)
-                        opcion.set('tipo',alternativa.tipo)
-                        hijo=ET.SubElement(opcion, 'comentario')
-                        hijo.text=alternativa.comentario
-                    #A partir del texto concatenado, se crea una unica ID que representa las alternativas
-                    #Esta ID se asigna a un nuevo atributo a la subRaiz 'opciones'
-                    identificadorItem=hashlib.sha256(glosasAlternativas).hexdigest()
-                    subRaizSalida.set('id',identificadorItem)
-                    subRaizSalida.set('idPreguntaGenerada',identificadorPregunta.rstrip())
-                    contador+=1
-                    if banderaEstado==True:
-                        xmlSalida.escribePlantilla(kwuargs['directorioSalida'],xmlEntradaObject.tipo, xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip(), plantillaSalida,'xml')
-                    else:
-                        print ET.tostring(plantillaSalida, 'utf-8', method="xml")
+        if subRaizSalida.tag=='questiontext':
+            for elem in subRaizSalida.iterfind('text'):
+                elem.text=xmlEntradaObject.enunciado
+        #if subRaizSalida.tag=='opciones':
+    for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
+        #Se concatena el texto de todas las alternativas
+        glosasAlternativas=""
+        identificadorPregunta=""
+        for elem in plantillaSalida.getchildren():
+            if elem.tag=='answer':
+                plantillaSalida.remove(elem)
+        for alternativa in conjuntoAlternativas:
+            opcion = ET.SubElement(plantillaSalida, 'answer')
+            if (alternativa.tipo=="solucion"):
+                opcion.set('fraction',"100")
+            else:
+                opcion.set('fraction',"0")
+            opcionText=ET.SubElement(opcion, 'text')
+            opcionText.text=alternativa.glosa
+            glosasAlternativas+=alternativa.glosa
+            identificadorPregunta+=alternativa.identificador()
+            opcion.set('puntaje',alternativa.puntaje)
+            opcion.set('id',alternativa.llave)
+            opcion.set('tipo',alternativa.tipo)
+            feedback=ET.SubElement(opcion, 'feedback')
+            feedbackText=ET.SubElement(feedback, 'text')
+            feedbackText.text=alternativa.comentario
+        #A partir del texto concatenado, se crea una unica ID que representa las alternativas
+        #Esta ID se asigna a un nuevo atributo a la subRaiz 'opciones'
+        identificadorItem=hashlib.sha256(glosasAlternativas).hexdigest()
+        #subRaizSalida.set('id',identificadorItem)
+        #subRaizSalida.set('idPreguntaGenerada',identificadorPregunta.rstrip())
+        if banderaEstado==True:
+            contador+=1
+            id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip()
+            nombreArchivo.text=id
+            xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo, id, plantillaSalida,'xml')
+        else:
+            print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass
