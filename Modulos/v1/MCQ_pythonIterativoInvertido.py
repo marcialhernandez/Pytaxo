@@ -18,7 +18,7 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import os, sys,subprocess, hashlib, copy, itertools, ast
+import os, sys,subprocess, hashlib, copy, itertools, ast,argparse
 sys.path.insert(0, os.getcwd())
 
 from archivos import nombres, xmlSalida, acceso
@@ -354,14 +354,14 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             validaPlantilla=False
     return plantillasValidas
 
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
     contador=0
     banderaEstado=False
     enunciado=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida()
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
         #for subRaizSalida in plantillaSalida.iter():
 #                 if subRaizSalida.tag=='plantilla':
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
@@ -442,8 +442,12 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 if elem.tag=='name':
                                     for elem2 in elem.iterfind('text'):
                                         elem2.text=id
-                
-                            xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,copy.copy(plantillaSalida),'xml')       
+                            if raiz=='quiz':
+                                quiz = ET.Element('quiz')
+                                quiz.append(plantillaSalida)
+                                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+                            else:
+                                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,copy.copy(plantillaSalida),'xml',formato,estilo)       
                             #borraHijos(seccionAlternativas)                               
 
                 #La bandera se setea a False por cada archivo temporal que se comprueba
@@ -452,6 +456,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                         
     pass
 
+#Obtencion de argumentos de entrada
+parser = argparse.ArgumentParser(description='Argumentos de entrada de Pytaxo')
+raiz,formato,estilo=acceso.parserAtributos(parser)
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
@@ -464,4 +471,4 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)

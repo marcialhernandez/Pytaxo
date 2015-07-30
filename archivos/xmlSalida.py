@@ -33,8 +33,20 @@ def strToSN(v):
       return "S"
   else:
       return "N"
+
+def determinaNumerado(v):
+    if v in ['none', 'abc', 'ABCD','123']:
+        return "S"
+    else:
+        return "N"
+
+def determinaFormatoSalida(v):
+    if v.lower() in ['quiz', 'answer']:
+        return "S"
+    else:
+        return "N"
     
-def plantillaGenericaSalida( **kwargs):
+def plantillaGenericaSalida(puntajeValue,shuffleanswersValue,penaltyValue,answernumberingValue):
     #info='<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet href="salida.css" title="Estilo Estandar"?>'
     #ET.SubElement(tree,'plantilla')
     raizXml=ET.Element('question')
@@ -45,18 +57,15 @@ def plantillaGenericaSalida( **kwargs):
     ET.SubElement(questiontext,'text')
     #ET.SubElement(raizXml,'opciones')
     defaultgrade=ET.SubElement(raizXml,'defaultgrade')
-    if 'puntaje' in kwargs.keys():
-        defaultgrade.text=str(kwargs['puntaje'])
-    else:
-        defaultgrade.text='1'
+    defaultgrade.text=str(puntajeValue)
     shuffleanswers=ET.SubElement(raizXml,'shuffleanswers') # (values: 1/0) #banderizar
-    shuffleanswers.text='0'
+    shuffleanswers.text=shuffleanswersValue
     single=ET.SubElement(raizXml,'single')
     single.text='true'
     answernumbering=ET.SubElement(raizXml,'answernumbering') #(allowed values: 'none', 'abc', 'ABCD' or '123') #banderizar
-    answernumbering.text='abc'
+    answernumbering.text=answernumberingValue
     penalty=ET.SubElement(raizXml,'penalty')
-    penalty.text="0" #banderizar
+    penalty.text=penaltyValue
     return raizXml
 
 def incluyeAlternativas(elementTreeObject,xmlEntradaObject):
@@ -357,6 +366,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     comentarioAlternativa=""
     termino="" #Para el tipo pregunta definicion
     enunciado="" #Para el tipo pregunta enunciadoIncompleto
+    shuffleanswers=""
+    penalty=""
+    answernumbering=""
+    formatoSalida="quiz"
     for subRaiz in raizXmlEntrada.iter('pregunta'):
         try:
             puntaje=int((subRaiz.attrib['puntaje']))
@@ -372,21 +385,50 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         except:
             print "Precaucion 1: el atributo 'idOrigenEntrada' no existe en el documento '"+nombreArchivo+"'.\nY se ha asignado idOrigenEntrada=null"
             idOrigenEntrada="null"
+        try:
+            shuffleanswers=int(subRaiz.attrib['shuffleanswers'])
+            if shuffleanswers==1:
+                shuffleanswers=str(shuffleanswers)
+            elif shuffleanswers==0:
+                shuffleanswers=str(shuffleanswers)
+            else:
+                shuffleanswers="1"
+        except:
+            shuffleanswers="1"
+        try:
+            penalty=float(subRaiz.attrib['penalty'])
+            if penalty>puntaje:
+                penalty=puntaje
+            penalty=str(penalty)
+        except:
+            penalty="0"
+        try:
+            answernumbering=str(subRaiz.attrib['answernumbering'])
+            if determinaNumerado(answernumbering)=="N":
+                answernumbering="abc"
+        except:
+            answernumbering="abc"
+#         try:
+#             formatoSalida=str(subRaiz.attrib['formatoSalida'])
+#             if determinaFormatoSalida(formatoSalida)=="N":
+#                 formatoSalida="quiz"
+#         except:
+#             formatoSalida="quiz"
         
     if tipo=='definicion':
         for subRaiz in raizXmlEntrada.iter('termino'):
             termino=subRaiz.text.rstrip().lstrip()
     elif tipo=='pythonCompara':
         listaCodigosPorEntrada, comentarios=analizadorComparacion(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
         listaCodigosPython=analizadorIteracion(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='pythonTraza':
         listaCodigosPython=analizadorTraza(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='enunciadoIncompleto':
         respuestas=list()
@@ -464,7 +506,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             conjuntoAlternativas['distractores']=conjuntoTerminosImpares
         #Se puede retornar antes el de definicion pareada, pues no presenta seccion opciones, sino una seccion completa de definiciones con sus pares e impares
         #Ademas este tipo de pregunta tiene mas atributos
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada,parcialScore=parcialScore)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,termino=termino,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada,parcialScore=parcialScore)
             #print conjuntoAlternativas['terminos'].keys()
     #En la pregunta tipo definicion pareada la arquitectura del conjunto de alternativas cambia
     #ahora es {'terminos':{'definicion':lista de alternativas (las diferentes definiciones)}}
@@ -510,7 +552,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     except:
                         print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
                         exit()                    
-    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,termino=termino,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
+    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,termino=termino,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
 
 #Funcion que analiza argumentos ingresados por comando al ejecutar la funcion
 #Retorna la cantidad de alternativas ingresada por el usuario, en caso que no
@@ -621,17 +663,25 @@ def escribePlantilla(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato
     #tree.write(directorioSalida+'/'+nombreArchivo+'.'+formato, encoding='UTF-8', xml_declaration=False)
     #pass
 
-def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato):
+def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato,informacionXML,estilo):
     acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
     tree = ET.ElementTree(raizXML)
-    
-    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n<?xml-stylesheet href="../../css/salida.css" title="Estilo Estandar"?>\n"""
+    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n"""
+    ESTILO=""
+    if estilo=='no':
+        pass
+    else:
+        ESTILO = '<?xml-stylesheet href="../../css/'+estilo+'.css" title="Estilo Estandar"?>\n'
+
     
     #tree = ET.parse(filename)
     # do some work on tree
     
     with open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w') as output: # would be better to write to temp file and rename
-        output.write(DECLARATION)
+        if informacionXML=='si':
+            output.write(DECLARATION)
+        if estilo!='no':
+            output.write(ESTILO)
        # output.write(xmlprettyprint(raizXML))
         output.write(ET.tostring(raizXML, 'utf-8', method="xml"))
         #tree.write(output, xml_declaration=False, encoding='utf-8')

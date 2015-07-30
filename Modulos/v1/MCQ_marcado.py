@@ -18,9 +18,9 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import os, sys, itertools, hashlib, threading, copy, logging
+import os, sys, itertools, hashlib, threading, copy, logging,argparse
 sys.path.insert(0, os.getcwd())
-from archivos import nombres, xmlSalida
+from archivos import nombres, xmlSalida,acceso
 from clases import plantilla, alternativa
 
 try:
@@ -270,7 +270,7 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #         for elem in conjunto:
 #             print elem.tipo           
 
-def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
+def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
     #falta revisar como hacer que todas las hebras puedan incrementar el total, para luego imprimirlo
     #de momento cada una lo incrementa, pero este efecto no se ve reflejado en la variable global
     #subRaizSalida=None
@@ -377,8 +377,12 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                         for elem in subRaizSalida.iterfind('text'):
                             elem.text=id
                 #Se instancia la plantilla como un elemento de element tree
-                xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml')
-                
+                if raiz=='quiz':
+                    quiz = ET.Element('quiz')
+                    quiz.append(plantillaSalida)
+                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+                else:
+                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml',formato,estilo)
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
             contador+=1
@@ -422,7 +426,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             validaPlantilla=False
     return plantillasValidas
 
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
     #Esto era requerido cuando se tomaba como tipo el nombre de la plantilla, y no un atributo incrustado en el xml
     #tipoPregunta=nombres.nombreScript(__file__)
     #Variable compartida, pues cada hebra aumenta el total de archivos creados
@@ -433,7 +437,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
         #for subRaizSalida in plantillaSalida.iter():
                 #if subRaizSalida.tag=='plantilla':
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
@@ -456,7 +460,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         for conjuntoDefiniciones in listaDeConjuntoDefiniciones:
             if xmlEntradaObject.cantidadCombinacionesDefiniciones==cantidadCombinacionesDefiniciones:
                 break
-            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.deepcopy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado) )
+            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.copy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado,raiz,formato,estilo) )
             t.setDaemon(True)
             hilos.append(t)
             t.start()
@@ -467,6 +471,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         print xmlEntradaObject.idOrigenEntrada+"->"+str(total.valor)+' Creados' 
     return 0                          
 
+#Obtencion de argumentos de entrada
+parser = argparse.ArgumentParser(description='Argumentos de entrada de Pytaxo')
+raiz,formato,estilo=acceso.parserAtributos(parser)
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
@@ -485,4 +492,4 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
     
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)

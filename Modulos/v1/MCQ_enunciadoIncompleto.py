@@ -18,10 +18,10 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import os, sys
+import os, sys,argparse
 sys.path.insert(0, os.getcwd())
 import hashlib
-from archivos import nombres, xmlSalida
+from archivos import nombres, xmlSalida,acceso
 from clases import alternativa
 
 try:
@@ -34,8 +34,8 @@ except ImportError:
 #su mismo tipo, luego una vez completada la pregunta, se imprime
 #por pantalla para que la informacion pueda ser recogida por el programa
 #principal
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, **kwuargs): #,xmlEntradaObject):
-    plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
+    plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
     contador=0
     banderaEstado=False
     nombreArchivo=""
@@ -84,13 +84,21 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             contador+=1
             id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip()
             nombreArchivo.text=id
-            xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo, id, plantillaSalida,'xml')
+            if raiz=='quiz':
+                quiz = ET.Element('quiz')
+                quiz.append(plantillaSalida)
+                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+            else:
+                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo, id, plantillaSalida,'xml',formato,estilo)
         else:
             print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass
 
+#Obtencion de argumentos de entrada
+parser = argparse.ArgumentParser(description='Argumentos de entrada de Pytaxo')
+raiz,formato,estilo=acceso.parserAtributos(parser)
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
@@ -107,7 +115,7 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
 
 # # Almacenamiento usando el parser para este tipo de pregunta
 # if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:

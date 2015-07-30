@@ -18,11 +18,45 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
+import argparse
 import subprocess, stat, os, tempfile
 import clases.entrada as entrada
 import clases.item as item
 from nombres import obtieneNombreArchivo
 
+def parserAtributos(parser):
+    parser.add_argument('-r', required=False,
+                    help='Especifica la raiz de las preguntas a generar. Puede ser "answer" o "quiz"',
+                    metavar="RaizPregunta")
+    
+    parser.add_argument('-f', required=False,
+                        help='Especifica si es necesaria agregar la primera linea que especifica el formato',
+                        metavar="FormatoPregunta")
+    
+    parser.add_argument('-s', required=False,
+                        help='Especifica si hay o no un archivo de estilo adjunto',
+                        metavar="EstiloPregunta")
+    
+    raiz=str(parser.parse_args().r).lower().rstrip().lstrip()
+    if raiz in ['answer','quiz']:
+        pass
+    else:
+        raiz='quiz'
+    
+    formato=str(parser.parse_args().f).lower().rstrip().lstrip()
+    if formato in ['si','no']:
+        pass
+    else:
+        formato='si'
+    
+    estilo=str(parser.parse_args().s).lower().rstrip().lstrip()
+    if estilo in ['si','no']:
+        if estilo=='si':
+            estilo='default'
+    else:
+        if estilo=="none":
+            estilo='default'
+    return raiz,formato,estilo
 
 #Funcion que otorga permisos de acceso a un archivo
 #Argumentos:
@@ -42,9 +76,9 @@ def formateaResultado(resultado):
 #Argumentos:
 #-Ruta de archivo y su nombre por ejemplo "Modulos/test1.py"
 #-lenguaje compilador del modulo, por ejemplo "python"
-def obtenerResultadosModulo(rutaArchivo, lenguaje):
+def obtenerResultadosModulo(rutaArchivo, lenguaje,raiz,formato,estilo):
     permisoAcceso(rutaArchivo)
-    proceso = subprocess.Popen([lenguaje, rutaArchivo],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    proceso = subprocess.Popen([lenguaje, rutaArchivo,raiz,formato,estilo],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     output, errors = proceso.communicate()
     if proceso.returncode:
         try:

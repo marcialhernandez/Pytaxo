@@ -18,9 +18,9 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import os, sys
+import os, sys,argparse
 sys.path.insert(0, os.getcwd())
-from archivos import nombres
+from archivos import nombres,acceso
 import archivos.xmlSalida as xmlSalida
 import clases.plantilla as plantilla
 
@@ -61,7 +61,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             validaPlantilla=False
     return plantillasValidas
     
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
     #tipoPregunta=nombres.nombreScript(__file__)
     contador=0
     banderaEstado=False
@@ -69,7 +69,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
-        plantillaSalida=xmlSalida.plantillaGenericaSalida(puntaje=xmlEntradaObject.puntaje)
+        plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
         #subRaizSalida.set('id',xmlEntradaObject.id)
         plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
@@ -88,13 +88,21 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             if banderaEstado==True:
                 idItem=xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas
                 nombreArchivo.text=idItem
-                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem, plantillaSalida,'xml')
+                if raiz=='quiz':
+                    quiz = ET.Element('quiz')
+                    quiz.append(plantillaSalida)
+                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem,quiz,'xml',formato,estilo)
+                else:
+                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem, plantillaSalida,'xml',formato,estilo)
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
         print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'                            
     pass
 
+#Obtencion de argumentos de entrada
+parser = argparse.ArgumentParser(description='Argumentos de entrada de Pytaxo')
+raiz,formato,estilo=acceso.parserAtributos(parser)
 # Declaracion de directorio de entradas
 nombreDirectorioEntradas="./Entradas"
 nombreDirectorioPlantillas="./Plantillas"
@@ -113,7 +121,7 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
 
 #La forma para quitar los signos que no fueron pasados correctamente desde
 #la entrada es la siguiente

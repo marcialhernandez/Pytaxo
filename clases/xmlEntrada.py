@@ -26,13 +26,17 @@ class xmlEntrada:
     
     #atributos de la clase
 #     def __init__(self,nombrePregunta,tipo,puntaje,termino,definicion,alternativas):
-    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,**kwargs):
+    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,**kwargs):
         #Atributos en comun
         self.nombre=nombre
         self.tipo=tipo
         self.puntaje=puntaje
         self.alternativas=alternativas
         self.cantidadAlternativas=cantidadAlternativas
+        self.shuffleanswers=shuffleanswers
+        self.penalty=penalty
+        self.answernumbering=answernumbering
+        self.formatoSalida=formatoSalida
         self.id="NULL"
         if 'idOrigenEntrada' in kwargs.keys():
             self.idOrigenEntrada=kwargs['idOrigenEntrada']

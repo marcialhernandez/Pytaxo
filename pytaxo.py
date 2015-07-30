@@ -49,11 +49,46 @@ parser.add_argument('-m', required=False,
                     help='Especifica el tipo de pregunta a crear. Estan disponible los argumentos'+ "\n"+"\n".join(opcionesModulos),
                     metavar="TipoPregunta")
 
-if parser.parse_args().m!=None and (not parser.parse_args().m in diccionarioTiposVersusModulos[parser.parse_args().v]):
+raiz,formato,estilo=acceso.parserAtributos(parser)
+raiz="-r "+raiz
+formato="-f "+formato
+estilo="-s "+estilo
+# parser.add_argument('-r', required=False,
+#                     help='Especifica la raiz de las preguntas a generar. Puede ser "answer" o "quiz"',
+#                     metavar="RaizPregunta")
+# 
+# parser.add_argument('-f', required=False,
+#                     help='Especifica si es necesaria agregar la primera linea que especifica el formato',
+#                     metavar="FormatoPregunta")
+# 
+# parser.add_argument('-s', required=False,
+#                     help='Especifica si hay o no un archivo de estilo adjunto',
+#                     metavar="EstiloPregunta")
+
+if parser.parse_args().m!=None and (not str(parser.parse_args().m).rstrip().lstrip() in diccionarioTiposVersusModulos[parser.parse_args().v]):
     print ("No existe el modulo: '"+parser.parse_args().m+"'" )
     exit()
-    
-nombreTipoAGenerar=nombreCarpetaModulo+'/'+parser.parse_args().v
+
+# raiz=str(parser.parse_args().r).lower()
+# if raiz in ['answer','quiz']:
+#     pass
+# else:
+#     raiz='quiz'
+# 
+# formato=str(parser.parse_args().f).lower()
+# if formato in ['si','no']:
+#     pass
+# else:
+#     formato='si'
+# 
+# estilo=str(parser.parse_args().s).lower()
+# if estilo in ['si','no']:
+#     if estilo=='si':
+#         estilo='default'
+# else:
+#     estilo='default'
+
+nombreTipoAGenerar=nombreCarpetaModulo+'/'+str(parser.parse_args().v).rstrip().lstrip()
 
 banderaModuloEspecifico=False
     
@@ -75,10 +110,10 @@ else:
     if parser.parse_args().m==None:
         for modulo in listaModulosDisponibles:
             modulo=nombreTipoAGenerar+"/"+modulo
-            acceso.obtenerResultadosModulo(modulo,nombreCompilador).printModuloPregunta()
+            acceso.obtenerResultadosModulo(modulo,nombreCompilador,raiz,formato,estilo).printModuloPregunta()
     else:
         for modulo in listaModulosDisponibles:
             if str(parser.parse_args().m) in modulo:
                 modulo=nombreTipoAGenerar+"/"+modulo
-                acceso.obtenerResultadosModulo(modulo,nombreCompilador).printModuloPregunta()
+                acceso.obtenerResultadosModulo(modulo,nombreCompilador,raiz,formato,estilo).printModuloPregunta()
                 break;
