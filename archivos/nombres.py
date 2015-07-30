@@ -35,7 +35,6 @@ def currentDirectoryNames():
     for dirname, dirnames, filenames in os.walk('.'):
     # print path to all subdirectories first.
         for subdirname in dirnames:
-            #listaDirectorios.append(subdirname)
             listaDirectorios.append(os.path.join(dirname, subdirname))
     return listaDirectorios
 
@@ -54,7 +53,6 @@ def especificDirectoryNames(nombreArchivo):
         for filename in filenames:
             if not "__init__" in filename and not ".DS_Store" in filename and not "traceFuntions" in filename and not "testEstandar" in filename:
                 listaDirectorios.append(filename)
-            #print os.path.join(dirname, filename)
     return listaDirectorios
 
 #Funcion que obtiene las rutas de los subarchivos del directorio entregado como argumento
@@ -63,7 +61,6 @@ def fullEspecificDirectoryNames(nombreArchivo):
     for dirname, dirnames, filenames in os.walk(nombreArchivo):
         for filename in filenames:
             listaDirectorios.append(os.path.join(dirname, filename))
-            #print os.path.join(dirname, filename)
     return listaDirectorios
 
 def fullEspecificDirectoryNamesXML(nombreArchivo):
@@ -72,7 +69,6 @@ def fullEspecificDirectoryNamesXML(nombreArchivo):
         for filename in filenames:
             if ".xml" in filename:
                 listaDirectorios.append(os.path.join(dirname, filename))
-            #print os.path.join(dirname, filename)
     return listaDirectorios
 
 def validaExistenciaArchivo(nombreArchivo):

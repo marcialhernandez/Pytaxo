@@ -25,8 +25,7 @@ class xmlEntrada:
     #atributos estaticos
     
     #atributos de la clase
-#     def __init__(self,nombrePregunta,tipo,puntaje,termino,definicion,alternativas):
-    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,formatoSalida,**kwargs):
+    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,**kwargs):
         #Atributos en comun
         self.nombre=nombre
         self.tipo=tipo
@@ -36,7 +35,6 @@ class xmlEntrada:
         self.shuffleanswers=shuffleanswers
         self.penalty=penalty
         self.answernumbering=answernumbering
-        self.formatoSalida=formatoSalida
         self.id="NULL"
         if 'idOrigenEntrada' in kwargs.keys():
             self.idOrigenEntrada=kwargs['idOrigenEntrada']

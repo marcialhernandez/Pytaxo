@@ -41,7 +41,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     nombreArchivo=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
-    #for subRaizSalida in plantillaSalida.iter():
     plantillaSalida.set('tipo',xmlEntradaObject.tipo)
     plantillaSalida.set('id',xmlEntradaObject.id)
     plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
@@ -51,7 +50,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         if subRaizSalida.tag=='questiontext':
             for elem in subRaizSalida.iterfind('text'):
                 elem.text=xmlEntradaObject.enunciado
-        #if subRaizSalida.tag=='opciones':
     for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
         #Se concatena el texto de todas las alternativas
         glosasAlternativas=""
@@ -78,8 +76,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         #A partir del texto concatenado, se crea una unica ID que representa las alternativas
         #Esta ID se asigna a un nuevo atributo a la subRaiz 'opciones'
         identificadorItem=hashlib.sha256(glosasAlternativas).hexdigest()
-        #subRaizSalida.set('id',identificadorItem)
-        #subRaizSalida.set('idPreguntaGenerada',identificadorPregunta.rstrip())
         if banderaEstado==True:
             contador+=1
             id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip()
@@ -116,10 +112,3 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
 
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
-
-# # Almacenamiento usando el parser para este tipo de pregunta
-# if nombres.validaExistenciasSubProceso(nombreDirectorioEntradas)==True:
-#     listaXmlEntrada=lecturaXmls(nombreDirectorioEntradas)
-# 
-# for cadaXmlEntrada in listaXmlEntrada:
-#     retornaPlantilla(cadaXmlEntrada)

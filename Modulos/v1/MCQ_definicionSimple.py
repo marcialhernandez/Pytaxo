@@ -43,7 +43,6 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
         arbolXmlPlantillaEntrada = ET.ElementTree() # instantiate an object of *class* `ElementTree`
         arbolXmlPlantillaEntrada.parse(nombreDirectorioArchivoPlantilla)
-        #arbolXml=ET.ElementTree(file=nombreDirectorioArchivoPlantilla)
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
@@ -56,13 +55,11 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                     enunciado=enunciado+subRaiz.text
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
-            #plantillasValidas.append(arbolXmlPlantillaEntrada)
             plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
     
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
-    #tipoPregunta=nombres.nombreScript(__file__)
     contador=0
     banderaEstado=False
     nombreArchivo=""
@@ -71,7 +68,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
-        #subRaizSalida.set('id',xmlEntradaObject.id)
         plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
         plantillaSalida.set('taxonomia',plantilla.taxo)
         for elem in plantillaSalida.iterfind('name/text'):
@@ -80,8 +76,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                 if subRaizSalida.tag=='questiontext':
                     for elem in subRaizSalida.iterfind('text'):
                         elem.text=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
-                    #subRaizSalida.text=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
-                #if subRaizSalida.tag=='opciones':
         for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
             contador+=1
             identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(plantillaSalida, conjuntoAlternativas)
@@ -122,8 +116,3 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
 
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
-
-#La forma para quitar los signos que no fueron pasados correctamente desde
-#la entrada es la siguiente
-# enunciadoSinTermino.encode("ascii","ignore")
-#         #.translate(dict.fromkeys(map(ord, u",!.;¿?")))

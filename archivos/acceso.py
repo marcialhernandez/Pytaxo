@@ -84,11 +84,8 @@ def obtenerResultadosModulo(rutaArchivo, lenguaje,raiz,formato,estilo):
         try:
             raise Exception(errors)
         except Exception as falla:
-            #print type(falla.args)
-            #print type(falla.args[0])
             return item.item(obtieneNombreArchivo(rutaArchivo),"",formateaResultado(falla.args[0]))
     else:
-        #print output
         return item.item(obtieneNombreArchivo(rutaArchivo),formateaResultado(output),"")
 
 #Funcion que ejecuta una entrada y obtiene sus resultados
@@ -103,11 +100,8 @@ def obtenerResultadosEntrada(rutaArchivo, lenguaje):
         try:
             raise Exception(errors)
         except Exception as falla:
-            #print type(falla.args)
-            #print type(falla.args[0])
             return entrada.entrada(obtieneNombreArchivo(rutaArchivo),"",formateaResultado(falla.args[0]))
     else:
-        #print output
         return entrada.entrada(obtieneNombreArchivo(rutaArchivo),formateaResultado(output),"")
 
 def CrearDirectorio(rutaNuevoDirectorio):
@@ -124,8 +118,6 @@ def CrearDirectorio(rutaNuevoDirectorio):
 def make_traceFuntionsFile(datos):
     fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
     try:
-        #fd.write("import pdb\n\n") #debug module
-        #fd.write("pdb.set_trace()")
         fd.write(datos)
         fd.seek(0)
     finally:
@@ -162,9 +154,6 @@ def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
                 fd.write(linea)
             else:
                 fd.write(linea)
-        #testEstandar.replace("x=funcion(x)","x="+funcionEntrada)
-        #print "bbbbbb    "+testEstandar
-        #fd.write(testEstandar)
         fd.write("\n\n")
         #No me combiene dejar el puntero al principio, pues seguire agregando informacion en un futuro
         #fd.seek(0)

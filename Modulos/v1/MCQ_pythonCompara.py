@@ -99,10 +99,6 @@ def agregaGlosaFunciones(funcionesComparadas):
     comentarioItem=""
     
     for funcion in funcionesComparadas:
-        #seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-        #seccionCodigo.set('id', funcion["id"])
-        #seccionCodigo.set('nombreFuncion',funcion["nombreFuncionPrincipal"])
-        #seccionesCodigo.append(seccionCodigo)
         contadorFunciones+=1
         idItem+=funcion["codigoBruto"]
         hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
@@ -145,19 +141,9 @@ def agregaEnunciadoEId(plantillaSalida,idItem,enunciado,glosaEntrada,codigoEnunc
         if elem.tag=='questiontext':
             for elem2 in elem.iterfind('text'):
                 elem2.text='<![CDATA[<h2>'+enunciado.replace("@entrada",glosaEntrada)+'</h2><BR>'+codigoEnunciado#+']]>'
-#         elif elem.tag=='name':
-#             for elem2 in elem.iterfind('text'):
-#                 elem2.text=idItem
     generalfeedback=ET.SubElement(plantillaSalida,'generalfeedback')
     generalfeedbackText=ET.SubElement(generalfeedback,'text')
     generalfeedbackText.text=comentarioItem
-                
-#     for subSeccion in plantillaSalida.iter():
-#         if subSeccion.tag=='plantilla':
-#             subSeccion.set('id',idItem)
-#             #Se aprovecha de agregar el enunciado
-#         if subSeccion.tag=='enunciado':
-#             subSeccion.text=enunciado.replace("@entrada",glosaEntrada) 
 
 def ejecutaPyTemporal(archivoTemporal):
     nombreTemporal=archivoTemporal.name
@@ -173,7 +159,6 @@ def agregaAlternativa(ETObject,alternativaObject):
     seccionAlternativaText=ET.SubElement(seccionAlternativa,'text')
     seccionAlternativaFeedback=ET.SubElement(seccionAlternativa,'feedback')
     seccionAlternativaFeedbackText=ET.SubElement(seccionAlternativaFeedback,'text')
-    #seccionAlternativa=ET.SubElement(ETObject,'alternativa')
     seccionAlternativaText.text=alternativaObject.glosa
     seccionAlternativa.set('id', alternativaObject.llave)
     seccionAlternativa.set('tipo',alternativaObject.tipo)
@@ -182,8 +167,6 @@ def agregaAlternativa(ETObject,alternativaObject):
         seccionAlternativa.set('fraction',"100")
     else:
         seccionAlternativa.set('fraction',"0")
-    #seccionAlternativa.set('puntaje',puntaje)
-    #seccionAlternativaComentario=ET.SubElement(seccionAlternativa,'comentario')
     if hasattr(alternativaObject, 'comentario'):
         seccionAlternativaFeedbackText.text=alternativaObject.glosa
     return alternativaObject.llave
@@ -249,7 +232,6 @@ def obtieneTraza(datosSalidaSubproceso):
                     linea["argumentos"]=ast.literal_eval(linea["argumentos"])
                     if "_run_exitfuncs" in linea["funcionProcedencia"]:
                         banderaAgregaLinea=False
-                    #print type(linea["argumentos"])
                 elif linea["evento"]=='return':
                     try:
                         linea["retorno"]=ast.literal_eval(linea["retorno"])
@@ -282,12 +264,10 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
         arbolXmlPlantillaEntrada = ET.ElementTree() # instantiate an object of *class* `ElementTree`
         arbolXmlPlantillaEntrada.parse(nombreDirectorioArchivoPlantilla)
-        #arbolXml=ET.ElementTree(file=nombreDirectorioArchivoPlantilla)
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
                 taxonomia=subRaiz.attrib['taxo']
-                
                      
         if validaPlantilla==True:
             enunciado=""
@@ -311,19 +291,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
-        #for subRaizSalida in plantillaSalida.iter():
-           #enunciado=plantilla.enunciado[:]
-           #if subRaizSalida.tag=='plantilla':
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
-        #subRaizSalida.set('id',xmlEntradaObject.id)
         plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
         plantillaSalida.set('taxonomia',plantilla.taxo)
-           #if subRaizSalida.tag=='enunciado':
-           #    enunciado=plantilla.enunciado[:]
-               #subRaizSalida.text=plantilla.enunciado
-        #if subRaizSalida.tag=='opciones':
-        #       pass
-           #Para cada entrada
         for entrada in xmlEntradaObject.codigos:
             #Se evalua cada codigo con la entrada actual
             for codigoAsociado in entrada["codigos"]:
@@ -341,8 +311,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             #Aqui ya se ha duplicado la info
             for funcionesComparadas in list(itertools.combinations(entrada["codigos"],cantidadFuncionesAComparar)):
                 #Antes de agregar nueva informacion, se eliminan los hijos
-                #borraHijos(subRaizSalida)
-                #contadorFunciones=0
                 #hasNombres {}:Tabla hashNombres creada para asociar cada funcion a un numero
                #comentarioItem "": comentario agregado al final, que menciona los retornos de todas las funciones que aparecen en el item
                #idItem "": id identificador de las funciones que se usan en el item

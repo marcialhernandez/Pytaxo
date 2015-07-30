@@ -75,8 +75,6 @@ def comprimeAlternativasSingle(listaAlternativas):
                 comentarios+='"Sin comentario"'+' '
     if 'solucion' in tipo and 'distractor' in tipo:
         tipo='distractor'
-    #puntaje=float(puntaje)/cantidadAlternativas
-    #print puntaje
     return alternativa.alternativa(llave,tipo.rstrip(),float(puntaje)/len(listaAlternativas),glosa.rstrip(),comentario=comentarios.rstrip())
         
 #No preserva el orden y no admite datos tipo list() como por ejemplo matrices  
@@ -271,35 +269,14 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #             print elem.tipo           
 
 def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
-    #falta revisar como hacer que todas las hebras puedan incrementar el total, para luego imprimirlo
-    #de momento cada una lo incrementa, pero este efecto no se ve reflejado en la variable global
-    #subRaizSalida=None
-    #for elem in plantillaSalida.iter('opciones'):
-    #    subRaizSalida=elem
-#     Proceso necesario cuando era monohebra
-#     for elem in subRaizSalida.getchildren():
-#         subRaizSalida.remove(elem)
     contador=0
-#     for elem in subRaizSalida.getchildren():
-#         subRaizSalida.remove(elem)
-    #seccionDefiniciones=ET.SubElement(subRaizSalida,'definiciones')
-    #idPreguntaGenerada=""
     conjuntoDefinicionesEnunciado=""
     contadorDefiniciones=0
     for definicion in conjuntoDefiniciones:
-        #subRaizDefinicion=ET.SubElement(seccionDefiniciones,'definicion')
-        #subRaizDefinicion.text=definicion
         contadorDefiniciones+=1
         conjuntoDefinicionesEnunciado+=str(contadorDefiniciones)+'.-'+definicion+'\n'
-        #idPreguntaGenerada+=definicion+' '
     idPreguntaGenerada=hashlib.sha256(conjuntoDefinicionesEnunciado).hexdigest()
     conjuntoDefinicionesEnunciado+='_____________________________________________________'
-    #for x in plantillaSalida.iter('plantilla'): x.set('id', idPreguntaGenerada)               
-    #Seccion donde estaran los terminos
-    #seccionTerminos=ET.SubElement(subRaizSalida,'terminos')
-    #Seccion donde estaran las alternativas
-    #seccionAlternativas=ET.SubElement(subRaizSalida,'conjuntoAlternativas')
-    #Aqui se presenta cada posible pregunta
     solucionesYDistractores=posiblesSolucionesYDistractoresConjunto(xmlEntradaObject,conjuntoDefiniciones)
     #Para cada solucion de la variante actual 
     for solucion in solucionesYDistractores['soluciones']:
@@ -324,9 +301,6 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
         conjuntoTerminosEnunciado=""
         contadorTerminos=0
         for cadaTermino in listaTerminos:
-            #subRaizTermino=ET.SubElement(seccionTerminos,'posiblePar')
-            #subRaizTermino.text=cadaTermino.glosa
-            #subRaizTermino.set('id',cadaTermino.llave)
             contadorTerminos+=1
             conjuntoTerminosEnunciado+=str(contadorTerminos)+'.-'+cadaTermino.glosa+'\n'
         #solucion provisional
@@ -355,9 +329,6 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                 subRaizComentario=ET.SubElement(subRaizAlternativa,'feedback')
                 subRaizComentarioText=ET.SubElement(subRaizComentario,'text')
                 subRaizComentarioText.text=cadaTermino.comentario
-                #idAlternativas+=cadaTermino.identificador()
-                ############################################################################
-                #subRaizSalida.set('idAlternativasGenerada',idAlternativas.rstrip())
                 for terminoAlternativa in cadaTermino.glosa.split(" "):
                 #El primer y ultimo string de cada termino
                     idAlternativas+=terminoAlternativa[1]+terminoAlternativa[-2]+"|"
@@ -408,7 +379,6 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
         arbolXmlPlantillaEntrada = ET.ElementTree() # instantiate an object of *class* `ElementTree`
         arbolXmlPlantillaEntrada.parse(nombreDirectorioArchivoPlantilla)
-        #arbolXml=ET.ElementTree(file=nombreDirectorioArchivoPlantilla)
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
@@ -421,7 +391,6 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                     enunciado=enunciado+subRaiz.text
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
-            #plantillasValidas.append(arbolXmlPlantillaEntrada)
             plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
@@ -438,15 +407,10 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
-        #for subRaizSalida in plantillaSalida.iter():
-                #if subRaizSalida.tag=='plantilla':
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
         plantillaSalida.set('id',xmlEntradaObject.id)
         plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
         plantillaSalida.set('taxonomia',plantilla.taxo)
-                #if subRaizSalida.tag=='enunciado':
-                    #subRaizSalida.text=plantilla.enunciado
-                #if subRaizSalida.tag=='opciones':
         cantidadCombinacionesDefiniciones=0
         #Si la cantidad de combinaciones de definiciones es 0, no se genera nada
         if xmlEntradaObject.cantidadCombinacionesDefiniciones==0:

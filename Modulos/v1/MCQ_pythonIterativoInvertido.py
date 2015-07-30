@@ -95,7 +95,6 @@ def generaGlosaIteraciones(stringIteraciones):
 
 def generaGlosaEntradas(listaEntradasBrutas):
     glosaIntermedia=""
-    #listaEntradas=codigoPython["entradasBruto"][contadorEntradasBruto].split(";")
     listaEntradas=listaEntradasBrutas.split(";")
     cantidadEntradas=len(listaEntradas)
     if cantidadEntradas>1:
@@ -143,7 +142,6 @@ def agregaAlternativaIteracion(ETObject,alternativaObject):
     seccionAlternativaText=ET.SubElement(seccionAlternativa,'text')
     seccionAlternativaFeedback=ET.SubElement(seccionAlternativa,'feedback')
     seccionAlternativaFeedbackText=ET.SubElement(seccionAlternativaFeedback,'text')
-    #seccionAlternativa=ET.SubElement(ETObject,'alternativa')
     seccionAlternativaText.text=alternativaObject.llave
     seccionAlternativa.set('id', alternativaObject.llave)
     seccionAlternativa.set('tipo',alternativaObject.tipo)
@@ -152,8 +150,6 @@ def agregaAlternativaIteracion(ETObject,alternativaObject):
         seccionAlternativa.set('fraction',"100")
     else:
         seccionAlternativa.set('fraction',"0")
-    #seccionAlternativa.set('puntaje',puntaje)
-    #seccionAlternativaComentario=ET.SubElement(seccionAlternativa,'comentario')
     seccionAlternativaFeedbackText.text=alternativaObject.glosa
     return alternativaObject.llave
 
@@ -194,19 +190,10 @@ def ejecutaPyTemporal(archivoTemporal):
 def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa):
     idXmlSalida=""
     idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
-#     seccionAlternativas.set('id', idEntradaBruta)
-#     seccionAlternativas.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
-#     seccionAlternativas.set('combinacionAlternativas', numerosIteracion)
-#     for subRaizAux in plantillaSalida.iter():
-#         if subRaizAux.tag=='plantilla':
     idXmlSalida=str(codigoPython["id"])+'-'+idEntradaBruta+'-'+numerosIteracion
-#             subRaizAux.set('id',idXmlSalida)
-#         if subRaizAux.tag=='enunciado':
     enunciado=enunciado.replace("@iteracion",codigoPython["lineaIterativa"])
     enunciado=enunciado.replace("@entrada",generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))
     enunciado=enunciado.replace("@funcionPrincipal",codigoPython["nombreFuncionPrincipal"])
-    #subRaizAux.text=enunciado
-    #borraHijos(seccionSolucion)
     for elem in plantillaSalida.iterfind('generalfeedback'):
         plantillaSalida.remove(elem)
     for elem in plantillaSalida.getchildren():
@@ -215,8 +202,6 @@ def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,num
                 elem2.text='<![CDATA[<h2>'+enunciado+'</h2><pre><code class="codeblock">'+codigoPython["codigoBruto"]+'</code></pre>'
     generalfeedback=ET.SubElement(plantillaSalida,'generalfeedback')
     generalfeedbackText=ET.SubElement(generalfeedback,'text')
-    #seccionComentarios=ET.SubElement(seccionSolucion,'comentarios')
-    #seccionComentarios.text=codigoPython["comentarios"]
     glosaSolucion=""
     indica10=False
     largoListaTrazasLineaIterativa=len(listaTrazasLineaIterativa)
@@ -335,7 +320,6 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
         arbolXmlPlantillaEntrada = ET.ElementTree() # instantiate an object of *class* `ElementTree`
         arbolXmlPlantillaEntrada.parse(nombreDirectorioArchivoPlantilla)
-        #arbolXml=ET.ElementTree(file=nombreDirectorioArchivoPlantilla)
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             
             if subRaiz.attrib['tipo']==tipoPregunta:
@@ -349,7 +333,6 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
                     enunciado=enunciado+subRaiz.text
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
-            #plantillasValidas.append(arbolXmlPlantillaEntrada)
             plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
@@ -362,15 +345,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
-        #for subRaizSalida in plantillaSalida.iter():
-#                 if subRaizSalida.tag=='plantilla':
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
         plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
         plantillaSalida.set('taxonomia',plantilla.taxo)
-#                 if subRaizSalida.tag=='enunciado':
-#                     enunciado=plantilla.enunciado[:]
-                    #subRaizSalida.text=plantilla.enunciado
-                #if subRaizSalida.tag=='opciones':
         for codigoPython in xmlEntradaObject.codigos:
             contadorEntradasBruto=0
             glosaEnunciado=""
@@ -415,12 +392,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     
                     alternativaCorrecta=generaAlternativaCorrecta(alternativaCorrecta,xmlEntradaObject.puntaje)
                     
-                    #borraHijos(subRaizSalida)
-                    #seccionCodigo=ET.SubElement(subRaizSalida,'codigoPython')
-                    #seccionCodigo.text=codigoPython["codigoBruto"]
-                    #seccionAlternativas=ET.SubElement(subRaizSalida,'alternativas')
-                    #trazaIteraciones=ET.SubElement(subRaizSalida,'solucion')
-                    
                     for cadaCombinacion in list(itertools.combinations(pozoDistractores,int(xmlEntradaObject.cantidadAlternativas)-1)):
                         contador+=1
 #                                   #menciona las iteraciones de cada alternativa separados por una +
@@ -435,7 +406,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         idXmlSalida=incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,copy.copy(plantilla.enunciado[:]),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
                         
                         if banderaEstado==True:
-                            #print ET.tostring(plantillaSalida, 'utf-8', method="xml")
                             id=xmlEntradaObject.idOrigenEntrada+'-'+idXmlSalida
                             plantillaSalida.set('id',id)
                             for elem in plantillaSalida.getchildren():
@@ -448,7 +418,6 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                                 xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
                             else:
                                 xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,copy.copy(plantillaSalida),'xml',formato,estilo)       
-                            #borraHijos(seccionAlternativas)                               
 
                 #La bandera se setea a False por cada archivo temporal que se comprueba
                 banderaEstado=False
