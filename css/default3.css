@@ -1,0 +1,1302 @@
+/**************************************
+ * THEME NAME: usach-virtual-v19
+ *
+ * Files included in this sheet:
+ *
+ *   usach-virtual-v19/fw_layout.css
+ *   usach-virtual-v19/fw_color.css
+ *   usach-virtual-v19/fw_fonts.css
+ **************************************/
+
+/***** usach-virtual-v19/fw_layout.css start *****/
+
+/* Core */
+
+
+body {
+    background: url('img/usach-back.gif') repeat;
+    margin: 0;
+	padding: 0;
+}
+
+#page {
+	width: 1100px;
+	margin: -8px auto 40px auto;
+	background: #fff;
+	border: 1px solid #cacaca;
+}
+
+#header-usach-virtual {
+	background: url('img/usach-body-back.gif') repeat-x;
+	height: 140px;
+}
+#header-usach-virtual-contenido {
+	width: 1050px;
+	margin: 0 auto;
+}
+.usach-virtual-menu-global-izq {
+	float: left;
+	width: 48%;
+	padding: 13px 0 0 0;
+}
+.usach-virtual-menu-global-izq a
+, .usach-virtual-menu-global-izq a:hover {
+	color: #fff!important;
+	text-decoration: none;	
+}
+.usach-virtual-menu-global-der {
+	float: right;
+	width: 48%;
+	text-align: right;
+}
+.usach-virtual-menu-global-der ul {
+	margin: 0;
+}
+.usach-virtual-menu-global-der li {
+	list-style-type: none;
+	float: right;
+	margin: 0;
+	padding: 14px 10px 13px 8px;
+	background: url('img/usach-virtual-menu-global-back.gif') repeat-y top right;
+}
+.usach-virtual-menu-global-der li a {
+	color: #8eabd3;
+	text-decoration: none;
+}
+.usach-virtual-menu-global-der li a:hover {
+	color: #fff;
+	text-decoration: none;
+}
+.usach-virtual-moodle-header-izq {
+	float: left;
+	width: 340px;
+	height: 70px;
+	background: url('img/usach-virtual-logo.gif') no-repeat;
+	margin: 9px 0 0 0;
+}
+.usach-virtual-moodle-header-der {
+	float: right;
+	width: 50%;
+	height: 72px;
+	background: url('img/usach-virtual-logo-moodle.gif') no-repeat top right;
+	margin: 9px 0 0 0;
+	position: relative;
+}
+.usach-virtual-moodle-header-der .login-menu {
+	text-align: right;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	font-size: 14px;
+}
+.usach-virtual-moodle-header-der .login-menu a {
+	font-weight: bold;
+}
+.usach-virtual-moodle-header-der .login-menu form {
+	display: none;
+}
+#usach-virtual-footer {
+  padding: 20px;
+  color: #fff;
+  background: #1954ac url('img/usach-virtual-logo-footer.gif') no-repeat 100% 50%;
+}
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+  text-align: left;
+  padding-left: 5px;
+} 
+
+h1, h2, h3, h4 {
+  text-align: left;
+}
+
+h1 {
+  padding: 6px;
+}
+
+h2 {
+  padding: 4px;
+
+}
+
+h3 {
+  padding: 3px;
+
+}
+
+#layout-table #left-column{
+    border: 0;
+    padding: 0px 20px 0 0;
+}
+#layout-table #right-column {
+    border: 0;
+    padding: 0px 0 0 20px;
+}
+
+#left-column .hidden .header, #right-column .hidden .header {
+border-bottom-style:dashed;
+border-bottom-width:1px;
+}
+
+
+#content {
+clear:both;
+padding: 10px 15px;
+}
+  
+h1, h2, h3, th.header {
+}
+
+h4 {
+  border-bottom-style: solid;
+  border-bottom-width:1px; 
+}
+
+input, select {
+  padding: 0px;
+}
+#layout-table #middle-column{
+  vertical-align:top;
+  padding: 15px;
+  background: #ededed;
+  border: 1px solid #d9d9d9;
+}
+.sitetopic {
+  padding:4px;
+  margin: 0px;
+}
+
+.generaltable {
+  border-width:0px; 
+}
+
+.generalbox {
+  border-width:1px; 
+  border-style:solid;  
+  width: auto;
+}
+.generalbox#intro {
+  border-width:1px; 
+  border-style:solid;  
+  width: auto;
+}
+
+.sitetopiccontent {
+  border-width:1px;
+  border-style:solid;
+}
+
+.clearfix { 
+ min-width: 0; 
+ /* overflow: hidden; */ 
+}
+
+.clearfix:after {
+  /* content: "<!-- -->";  */
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
+/***
+ *** Header
+ ***/
+
+#header-home {
+  /* padding:1em 0.5em; */
+  height:100px;
+  border-width:1px;
+  border-style:solid;
+}
+
+#header {
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.headermain, h1.headermain {
+  float:left;
+  margin:0%;
+  padding:0%;
+  border-width: 0px;
+  font-family: 'Monda', sans-serif;
+  font-size: 2.5em;
+  font-weight:  lighter;
+  display: block;
+}
+
+.headermenu {
+  float:right;
+  text-align:right;
+  font-size: 1.2em;
+  padding: 10px 0 0 0;
+}
+.headermenu a {
+  color: #fff!important;
+  font-weight: bold;
+  text-decoration: underline!important;
+}
+
+.navbar {
+  width:100%;
+  padding:5px 20px;
+  border-width:0px;
+/*  border-style:solid; */
+}
+
+div.navbar {
+  width: auto;
+  padding-bottom: 9px;
+}
+
+table.navbar {
+  width: 100%;
+}
+
+.navbar .navbutton form {
+  float: left;
+}
+
+.navbar .navbutton {
+}
+
+.navbar .breadcrumb {
+  float:left;
+  margin:0;
+}
+
+.breadcrumb ul {
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+  list-style:none;
+}
+.breadcrumb li {
+  display:inline;
+  color: #fff;
+}
+
+.navbar .navbutton,
+.navbar .menu {
+  float:right;
+}
+
+#footer .navbar {
+  margin-top: 4em;
+}
+
+
+/***
+ *** Login
+ ***/
+
+TABLE.loginbox {
+  margin-top: 40px;
+}
+
+.loginbox .header {
+  border-width:1px;
+  border-style:solid;
+  border-bottom-width: 0px;
+}
+
+.loginbox .content {
+  border-top-width: 1px;
+}
+
+
+/***
+ *** Footer
+ ***/
+ 
+#footer {
+
+}
+#footer hr {
+	display: none;
+}
+
+ 
+#footer p.helplink {
+ margin-bottom: 0px;
+}
+
+
+/***
+ *** Blocks
+ ***/
+.sideblock, .sideblock .header, .sideblock .content  {
+  border-width: 0px;
+ }
+ .sideblock {
+	 border-bottom: 1px solid #ccc;
+	 padding-bottom: 20px;
+	 text-align: left;
+ }
+
+
+.sideblock .header h2 {
+  border-width: 0px;
+  padding-top: 4px;
+  color: #999;
+font-weight: bold;
+font-size: 1.4em;
+padding: 1px 3px;
+margin-bottom: 15px;
+ }
+
+.sideblock .header .hide-show-image {
+ padding-top: 4px;
+}
+ 
+.sideblock .footer {
+  border-top-width:1px;
+  border-top-style:dotted;
+  border-color: #ddd;
+  padding: 10px 0;
+  margin: 10px 0 0 0;
+}
+  
+
+/***
+ *** Calendar
+ ***/
+ 
+#calendar .today,
+.minicalendar .today {
+  border:1px solid !important;
+} 
+ 
+ table.minicalendar {
+  width: 100%;
+  margin:10px auto;
+  padding:2px;
+  border-width:1px;
+  border-style:solid;
+  border-collapse:separate;
+  border-spacing:1px !important;
+}
+
+table.minicalendar tr.weekdays th {
+   border-style: none;
+}
+
+table.minicalendar tr td.day {
+  border-style: solid;
+  border-width: 1px;
+}
+
+table.minicalendar tr.weekdays th abbr {
+  border-style: none;
+
+  }
+
+table.calendarmonth {
+  border-collapse:separate;
+  border-spacing:1px !important;
+}
+
+table.calendarmonth tr td  {
+  border-style: solid;
+  border-width: 1px;
+}
+
+
+/***
+ *** Course
+ ***/
+ 
+.headingblock {
+  border-width:1px;
+  border-style:solid;
+  padding:5px;
+}
+
+
+.categorybox .category,
+.categorybox .category {
+  border-bottom: solid;
+  border-width: 1px;
+  padding-top: 7px;
+}
+
+#course-view .section .left {
+  border-right-width: 1px;
+  border-right-style: dashed;
+}
+
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-width: 1px;
+  border-style: dashed;
+}
+
+#course-view .section td.content ul.section.img-text {
+	line-height: 22px;
+}
+
+#course-view .section td.content ul.section.img-text li.activity.label {
+	line-height: 16px;
+	margin-bottom: 5px;
+}
+
+.coursebox .info .name {
+  padding-bottom: 5px;
+  }
+
+.tabrow0 { 
+   padding-top: 4px; 
+} 
+
+/***
+ *** Modules: glossary
+ ***/
+
+.entry .concept,
+.entryheader .concept {
+   margin-top: 5px;
+   margin-bottom: 10px;
+}
+
+.glossarypost.continuous {
+	padding: 5px;
+}
+
+/***
+ *** Error message
+ ***/
+
+.errorbox {
+/*   color:#ffffff; */
+   border-width: 2px;
+}
+
+
+
+/* Nuevas Clases */
+
+#header-magister {
+	width: 950px;
+	height: 146px;
+	margin: 0 auto;
+	background: #000 url('img/header-mdu-udla.gif') no-repeat top center	;
+	color: #fff;
+	position: relative;
+}
+#header-magister-content {
+	padding: 20px 20px 0 20px;
+}
+#header-magister h1,
+#header-magister h3,
+#header-magister h3  {
+	margin: 0;
+	letter-spacing: 0.1em;
+}
+#magister-logo {
+	position: absolute;
+	top: 44px;
+	left: 20px;
+	display: block;
+	width: 238px;
+	height: 74px;
+	background: #000 url('img/logo-mdu-udla.gif') no-repeat top center	;
+}
+#header-magister h2 {
+	margin: 0 0 5px 0;
+}
+
+#header-magister h3 {
+	font-weight: 100;
+	font-size: 0.9em;
+}
+
+
+/* Magister Menu Global */
+.clear {clear: both;}
+
+#magister-menu  {
+		position: absolute;
+		bottom: 0;
+		right: 20px;
+}
+#magister-menu ul {
+		margin: 0;
+		padding: 0;
+}
+#magister-menu ul li {
+		float: left;
+		list-style-type: none;
+		margin: 20px 0 0 0;
+		padding: 0;
+}
+#magister-menu ul li a {
+		padding: 10px 20px;
+		margin: 10px 1px 0 0;
+		background: #515151;
+		color: #fff;
+		border-radius: 3px 3px 0 0;
+		-webkit-border-radius: 3px 3px 0 0;
+		-moz-border-radius: 3px 3px 0 0;
+		font-size: 1em;
+		display: block;
+}
+#magister-menu ul li.menu-clases a {
+		background: #7e7e7e;
+}
+#magister-menu ul li.menu-clases a:hover {
+		cursor: default;
+}
+#magister-menu ul li a:hover {
+		background: #7e7e7e;
+		text-decoration: none;
+}
+
+
+
+
+div.header {
+	background: #fff!important;
+	border: none!important;
+}
+#course-view .section td.left {
+	display: none;
+}
+#course-view .section.main .content {
+	border: none!important;
+	background: none!important;
+}
+#course-view .section td.right {
+	border: none!important;
+	background: none!important;
+}
+.block_search_forums .searchform
+, .activitydate, .activityhead
+, .sideblock .content div.info
+, .block_news_items .newlink {
+	text-align: left;
+}
+
+.coursebox .info {
+	float: none;
+	width: auto;
+	padding: 10px;
+}
+.coursebox .info .name a{
+	font-size: 1.3em;
+}
+.coursebox .summary {
+	float: none;
+	width: auto;
+	padding: 10px;
+	line-height: 1.4em;
+}
+#page hr {
+	display: none;
+}
+
+#soporte-udla {
+background: #000 url('../img/soporte-udla.png')no-repeat top right;
+height: 160px;
+}
+
+li.post .head
+, .activitydate {
+	font-size: 0.8em;
+}
+li.post .info
+, .activityhead {
+	font-weight: bold;
+}
+.weeks .separator {
+	height: 2px;
+	border-top: 1px solid #ccc;
+	margin: 20px 0 0 0!important;
+}
+.weeks .section {
+	padding: 0 0 20px 0!important;
+}/***** usach-virtual-v19/fw_layout.css end *****/
+
+/***** usach-virtual-v19/fw_color.css start *****/
+
+/* Core */
+
+body {
+  background-color: #F7F6F1;
+}
+
+a:link {
+    color: #f67912;
+}
+
+a:visited {
+    color:#f67912;
+}
+
+a:hover {
+    color: #b3560a;
+}
+
+a.dimmed:link,
+a.dimmed:visited {
+  color:#AAAAAA;
+}
+
+h1 {
+
+}
+
+h2 {
+
+}
+
+h2.headingblock.header  {
+ background: url(pix/grad/gradient_h.jpg);
+ border-radius: 5px;
+ -webkit-border-radius: 5px;
+ -moz-border-radius: 5px;
+}
+
+
+h3 {
+  border-color:#C6BDA8;
+}
+h4 {
+  border-color:#C6BDA8;
+}
+
+
+th {
+    background-color:#E3DFD4;
+
+}
+
+th.header,
+td.header,
+div.header {
+  background-color: #E3DFD4;
+
+}
+
+th.header {
+  border-color: #C6BDA8;
+}
+
+#left-column .hidden .header, #right-column .hidden .header {
+}
+
+
+#layout-table #left-column, #layout-table #right-column {
+  
+}
+
+.generalbox {
+  border-color:#C6BDA8;
+  background-color:#fffed3;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.generaltable,
+.generaltable td {
+  border-color:#C6BDA8;
+  /* background-color:#FFFFFF; */
+}
+
+/* .generaltable .r0 td.cell.c0 {
+ background-color:#C6BDA8; 
+} */
+
+.generaltable .r0 {
+ background-color:#FEF9F6; 
+}
+
+.generaltable .r1 {
+ background-color:#F1EFEB; 
+}
+
+.generaltable .r1 td.cell.c0 {
+border-color:#C6BDA8; 
+/* background-color:#E3DFD4; */
+}
+
+.navbar {
+  background-color:#f08b24;
+  border-bottom: 1px solid #d2d2d2;
+  
+}
+.navbar .breadcrumb li {
+    font-size: 12px!important;
+}
+.navbar .breadcrumb li a {
+    color: #fff!important;
+    text-transform: capitalize;
+    text-decoration: underline;
+}
+
+.sitetopiccontent {
+  border-color:#C6BDA8;
+  background-color:#FFFFFF;
+}
+
+.highlight {
+  background-color:#C6BDA8;
+}
+
+.highlight2 {
+  color:#C6BDA8; /* highlight missing terms in forum search */
+}
+
+/***
+ *** Roles
+ ***/
+
+.rolecap .inherit.capdefault, .rolecap .allow.capdefault {
+  background-color:#E3DFD4;
+}
+
+#admin-roles-override .capcurrent {
+  background-color:#E3DFD4;
+}
+
+/***
+ *** Header
+ ***/
+
+#header-home, #header {
+  background: #f08b24 url('img/usach-header-back.gif') repeat-x;
+  }
+
+h1.headermain {
+  background-color: transparent;
+}
+
+/***
+ *** Login
+ ***/
+
+
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox .subcontent {
+  border-color:#C6BDA8;
+}
+
+.loginbox .content {
+  border-color:#C6BDA8;
+}
+
+/***
+ *** Blocks
+ ***/
+
+.sideblock .content {
+line-height: 1.4em!important;
+}
+
+.sideblock .header, .sideblock .header h2 {
+
+}
+
+.sideblock hr {
+  color:#C6BDA8;
+  /*background-color:#FEF9F6;*/
+}
+
+.sideblock .footer {
+  border-top-color:#C6BDA8;
+}
+.sideblock .content {
+	background: none!important;
+}
+.sideblock .content .post .head .date,
+.sideblock .content .post .head .name {
+  color: #000000;
+  }
+
+/***
+ *** Calendar
+***/
+ 
+#calendar .maincalendar,
+#calendar .sidecalendar,
+#calendar .maincalendar .event {
+  border-color: #C6BDA8;
+}
+
+#calendar .maincalendar table.calendarmonth th {
+  border-color: #C6BDA8;
+}
+
+
+table.calendarmonth tr td {
+   border-color:#C6BDA8;
+} 
+
+table.minicalendar {
+  border-color:#C6BDA8;
+}
+
+table.minicalendar tr.weekdays th {
+  background-color:#FEF9F6;
+  border-color:#C6BDA8;
+  }
+
+table.minicalendar tr td.day {
+   border-color:#C6BDA8;
+  }
+  
+table.minicalendar tr td.weekend {
+  border-color:#C6BDA8;
+  color: red;
+  }
+  
+#calendar .today,
+.minicalendar .today {
+  border-color:#000000 !important;
+}
+  
+/* colors for calendar events */
+#calendar .event_global,
+.minicalendar .event_global,
+.block_calendar_month .event_global {
+  border-color:#2EBA0E !important;
+  background-color:#2EBA0E;
+}
+
+#calendar .event_course,
+.minicalendar .event_course,
+.block_calendar_month .event_course {
+  border-color:#FF9966 !important;
+  background-color:#FF9966;
+}
+
+#calendar .event_group,
+.minicalendar .event_group,
+.block_calendar_month .event_group {
+  border-color:#FBBB23 !important;
+  background-color:#FBBB23;
+}
+
+#calendar .event_user,
+.minicalendar .event_user,
+.block_calendar_month .event_user {
+  border-color:#A1BECB !important;
+  background-color:#A1BECB;
+}
+
+.cal_popup_fg {
+  background-color:#FEF9F6;
+}
+
+.cal_popup_bg {
+  border-color:#C6BDA8;
+  background-color:#FEF9F6;
+}
+
+
+/***
+ *** Course
+ ***/
+
+.headingblock {
+  border-color:#C6BDA8;
+}
+
+.coursebox {
+  border-color:#C6BDA8;
+  background: #FEF9F6;
+}
+
+.coursebox .info {
+}
+
+.categoryboxcontent,
+.courseboxcontent {
+  border-color:#C6BDA8;
+  background: #FFFFFF;
+}
+
+.categorybox .category,
+.categorybox .category {
+  border-color: #C6BDA8;
+}
+
+#course-view .section.main .content {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+#course-view .section.main .side {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+#course-view .current .right.side,
+#course-view .current .left.side {
+  background-color: #C6BDA8;
+}
+
+#course-view .section.hidden .content,
+#course-view .section.hidden .side {
+  border-color:#C6BDA8;
+ }
+
+
+
+
+/***
+ *** Tabs
+ ***/
+
+.tabs .side {
+  border-color: #C6BDA8;
+}
+.tabrow td {
+  background:url(pix/tab/left.gif) top left no-repeat;
+}
+.tabrow td .tablink {
+  background:url(pix/tab/right.gif) top right no-repeat;
+}
+.tabrow td:hover {
+  background-image:url(pix/tab/left_hover.gif);
+}
+.tabrow td:hover .tablink {
+  background-image:url(pix/tab/right_hover.gif);
+}
+.tabrow .last span {
+  background:url(pix/tab/right_end.gif) top right no-repeat;
+}
+.tabrow .selected {
+  background:url(pix/tab/left_active.gif) top left no-repeat;
+}
+.tabrow .selected .tablink {
+  background:url(pix/tab/right_active.gif) top right no-repeat;
+}
+.tabrow td.selected:hover {
+  background-image:url(pix/tab/left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+  background-image:url(pix/tab/right_active_hover.gif);
+}
+
+/***
+ *** Modules: Forum
+ ***/
+
+.forumheaderlist,
+.forumpost {
+  border-color:#C6BDA8;
+}
+
+.forumpost .content {
+  background: #FEF9F6;
+}
+
+.forumpost .left {
+  background:#FEF9F6; 
+}
+
+.forumpost .topic {
+  border-bottom-color: #C6BDA8;
+}
+
+.forumpost .starter {
+  background:#FEF9F6; 
+}
+
+.forumheaderlist .discussion .starter {
+  background:#FEF9F6; 
+}
+
+.forumheaderlist td {
+  border-color: #C6BDA8;
+}
+
+.sideblock .post .head {
+  color:#FEF9F6;
+}
+
+.forumthread .unread {
+  background: #FEF9F6;
+}
+#mod-forum-discuss .forumpost {
+  background: none;
+}
+
+#mod-forum-discuss .forumpost.unread .content {
+/*  border-color: #C6BDA8; */
+} 
+
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
+
+/***
+ *** Modules: glossary
+ ***/
+
+.picture,
+.entryattachment,
+.entryapproval {
+  background-color: #E3DFD4;
+ } 
+
+.entrybox {
+  border-color: #C6BDA8;
+ }
+
+.glossarypost.dictionary,
+.glossarypost.fullwithauthor,
+.glossarypost.fullwithoutauthor,
+.glossarypost.continuous, 
+.glossarypost.encyclopedia,
+.glossarypost.faq {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+.glossarycategoryheader th  {
+  background-color: #F7F6F1;
+}
+
+
+.glossarycategoryheader h2, 
+.glossarypost .concept h3 {
+  background-color: #FFFFFF
+}
+
+
+/***
+ *** Error message
+ ***/
+
+.errorbox {
+   color:#000000;
+   border-color:#990000;
+   background-color:#FEF9F6;
+ }
+
+.errorboxcontent {
+   background-color:#FEF9F6;
+}
+ 
+
+/***
+ *** Grade
+ ***/
+
+.grade-report-grader table#user-grades td.cell span.gradepass {
+  background-color: #C2EBBD; 
+}
+
+.grade-report-grader table#user-grades td.cell span.gradefail {
+  background-color: #EBC4BD;
+}
+
+/***
+ *** User
+ ***/
+
+.userinfobox {
+ border-color: #C6BDA8;
+}
+
+.userinfobox .side {
+ background-color: #EDEAE4;
+}
+
+.userinfobox .content {
+ background-color: #FEF9F6;
+}
+
+
+.weeks #section-0 {
+ border-radius: 5px;
+ -webkit-border-radius: 5px;
+ -moz-border-radius: 5px;
+}
+.weeks .section {
+background: none!important;
+}
+.weekdates {
+		font-size: 1em;
+	display: inline-block;
+	background: #fffea3;
+	padding: 3px 7px;
+	margin: 15px 0 25px 0;
+		border-radius: 3px;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		font-family: 'Monda', sans-serif;
+}/***** usach-virtual-v19/fw_color.css end *****/
+
+/***** usach-virtual-v19/fw_fonts.css start *****/
+
+/* Core */
+
+.clearer {
+  font-size:1px;
+}
+
+body, td, li, input, select {
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif!important; 
+    font-weight: 400;
+    font-size : 13px;
+    letter-spacing: normal;
+}
+
+th {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4 {
+}
+
+h1 {
+    font-size:1.2em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size:1.15em;
+}
+h3 {
+    font-size:1.1em;
+}
+h4 {
+    font-weight:bold;
+}
+
+th.header,
+td.header,
+div.header,
+.headingblock {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+
+.categorybox .category {
+/*  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; */
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.generaltable td.cell.c0 {
+  font-weight: bold;
+}
+/***
+ *** Header
+ ***/
+ 
+
+
+.logininfo,
+#header-home .headermenu font {
+     font-size:.9em;
+}
+
+ /***
+ *** Blocks
+ ***/
+ 
+.sideblock .footer {
+    font-size:0.85em;
+    text-align: left;
+}
+
+/***
+ *** Calendar
+ ***/
+#calendar .maincalendar table.calendarmonth td {
+  font-size:.8em;
+}
+
+#calendar .maincalendar .calendar-controls .current {
+  font-weight: bold;
+}
+
+#calendar .sidecalendar .filters {
+  font-size:0.75em
+  }
+
+table.minicalendar tr.weekdays th {
+  font-size:0.7em;
+  font-weight:normal;
+  }
+
+table.minicalendar tr td {
+  font-size:0.7em;
+  }
+  
+/***
+ *** Course
+ ***/
+  
+#course-view .section .left {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.coursebox .info .name {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Accessibility: only certain fonts support Unicode chars like &#x25BA; in IE6 */
+.arrow, .arrow_button input {
+}
+
+/*
+span.arrow {
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+} */
+
+p.arrow_button input {
+}
+
+
+/*Accessibility: resizable icons. */
+img.resize {
+  width: 1em;
+  height: 1em;
+}
+
+/***
+ *** Glossary
+ ***/
+.glossarypost div.concept h3,
+.glossarypost.continuous .concept {
+  display: inline;
+}
+/***** usach-virtual-v19/fw_fonts.css end *****/
+

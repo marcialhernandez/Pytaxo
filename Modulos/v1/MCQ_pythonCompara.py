@@ -102,7 +102,7 @@ def agregaGlosaFunciones(funcionesComparadas):
         contadorFunciones+=1
         idItem+=funcion["codigoBruto"]
         hashNombres[funcion["nombreFuncionPrincipal"]]="I"*contadorFunciones
-        seccionCodigo+='<h1>'+"Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+'</h1><pre><code class="inline">'+funcion["codigoBruto"]+'</code></pre><BR>'
+        seccionCodigo+='<h1>\n'+"Funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+'</h1>\n<pre><code class="inline">\n'+funcion["codigoBruto"]+'</code></pre><BR>\n\n'
         try:
             comentarioItem+="La funcion "+hashNombres[funcion["nombreFuncionPrincipal"]]+" retorna "+str(funcion["retorno"])+"\n"
         except:
@@ -140,7 +140,10 @@ def agregaEnunciadoEId(plantillaSalida,idItem,enunciado,glosaEntrada,codigoEnunc
     for elem in plantillaSalida.getchildren():
         if elem.tag=='questiontext':
             for elem2 in elem.iterfind('text'):
-                elem2.text='<![CDATA[<h2>'+enunciado.replace("@entrada",glosaEntrada)+'</h2><BR>'+codigoEnunciado#+']]>'
+                for elem3 in elem2.getchildren():
+                    elem2.remove(elem3)
+                elem2.append(ET.Comment((' --><![CDATA[' + ('<h2>'+enunciado.replace("@entrada",glosaEntrada)+'</h2><BR>\n\n'+codigoEnunciado).replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+                #elem2.text='<![CDATA[<h2>'+enunciado.replace("@entrada",glosaEntrada)+'</h2><BR>'+codigoEnunciado#+']]>'
     generalfeedback=ET.SubElement(plantillaSalida,'generalfeedback')
     generalfeedbackText=ET.SubElement(generalfeedback,'text')
     generalfeedbackText.text=comentarioItem

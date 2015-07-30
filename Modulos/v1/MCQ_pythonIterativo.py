@@ -150,7 +150,10 @@ def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,num
     for elem in plantillaSalida.getchildren():
         if elem.tag=='questiontext':
             for elem2 in elem.iterfind('text'):
-                elem2.text='<![CDATA[<h2>'+enunciado+'</h2><pre><code class="codeblock">'+codigoPython["codigoBruto"]+'</code></pre>'
+                for elem3 in elem2.getchildren():
+                    elem2.remove(elem3)
+                elem2.append(ET.Comment((' --><![CDATA[' + ('\n<h2>'+enunciado+'</h2><BR>\n\n'+'<pre><code class="codeblock">\n'+codigoPython["codigoBruto"]+'\n</code></pre>').replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+                #elem2.text='<![CDATA[<h2>'+enunciado+'</h2><pre><code class="codeblock">'+codigoPython["codigoBruto"]+'</code></pre>'
     generalfeedback=ET.SubElement(plantillaSalida,'generalfeedback')
     generalfeedbackText=ET.SubElement(generalfeedback,'text')
     generalfeedbackText.text=codigoPython["comentarios"]+'\n\n'+glosaSolucion

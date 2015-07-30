@@ -1,4 +1,4 @@
-plantilla {
+quiz {
   counter-reset: contador;
   font-family: Georgia;
   background-image: url(pytaxo.png);
@@ -15,13 +15,14 @@ opciones{
   counter-reset: contadorCodigo;
 }
 
-codigoPython:before {
+quiz question questiontext text:before {
   content: counter(contadorCodigo, upper-roman) ". ";
   counter-increment: contadorCodigo;
 
 }
 
-codigoPython{
+quiz question questiontext text{
+    mode: literal;
     display: block; 
     background: none repeat scroll 0 0 #F3F5F7;
     border-color: #AAAAAA #AAAAAA #CCCCCC;
@@ -45,15 +46,15 @@ codigoPython{
     word-wrap: break-word;
 }
 
-trazaSolucion:hover > comentario{
+generalfeedback:hover > comentario{
   display: block;
 }
 
-trazaSolucion:hover{
+generalfeedback:hover{
   visibility: visible;
 }
 
-trazaSolucion:before {
+generalfeedback:before {
   content: "Traza\A ";
   color:blue;
   text-decoration: underline;
@@ -62,7 +63,7 @@ trazaSolucion:before {
   visibility: visible;
 }
 
-trazaSolucion{
+generalfeedback{
     visibility: hidden;
     display: block;
     background: none repeat scroll 0 0 #F3F5F7;
@@ -82,20 +83,20 @@ trazaSolucion{
     word-spacing: normal;
 }
 
-solucion:hover{
+answer feedback:hover{
   visibility: visible;
 }
 
-solucion:before {
+answer feedback:before {
   content: "Solución\A ";
   text-decoration: underline;
-  font-size: 14pt;
+  font-size: 12pt;
   color:blue;
   white-space: pre;
   visibility: visible;
 }
 
-solucion{
+answer feedback{
     visibility: hidden;
     display: block;
     background: none repeat scroll 0 0 #F3F5F7;
@@ -108,7 +109,7 @@ solucion{
     margin: 1em auto 2em 0;
     max-width: 60%;
     min-width: 50%;
-    overflow: auto;
+    /*overflow: auto;*/
     padding: 0.5em 0.1em 0.5em 1em;
     text-transform: none;
     white-space: pre-wrap;
@@ -168,17 +169,17 @@ definicion{
   margin-top: 10pt;
 }
 
-alternativa:before {
+answer:before {
   content: counter(contador, upper-alpha) ". ";
   counter-increment: contador;
 }
 
-alternativa[tipo=solucion]:hover {
+answer[tipo=solucion]:hover {
   background-color: red;
   font-style:italic;
 }
 
-alternativa{
+answer{
   display: block;
   min-width: 50%;
   background-color: transparent;
@@ -214,19 +215,32 @@ comentario::before {
     content: "Comentario: ";
 }
 
-alternativa:hover > comentario {
+answer:hover > comentario {
     display: block;
     margin-left: 25px;
 }
 
-alternativa:hover:after{
+answer:hover:after{
 	margin-left: 25px;
 	content:"[Tipo]: "attr(tipo) "\A    [Id]: "attr(id) "\A    [Puntaje]: "attr(puntaje);
 }
 
-enunciado {
+quiz question name text{
+  content: "Solución\A ";
+  white-space: pre;
+  margin-top: 12pt;
+  display: block;
+  font-size: 12pt;
+  margin-bottom: 14pt;
+}
+
+/*opt:literal{
+
+}*/
+/*quiz question questiontext text {
+  opt:literal
 	margin-top: 12pt;
 	display: block;
-	font-size: 18pt;
+	font-size: 14pt;
 	margin-bottom: 14pt;
-}
+}*/
