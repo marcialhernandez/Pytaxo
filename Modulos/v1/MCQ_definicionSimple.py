@@ -81,7 +81,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(plantillaSalida, conjuntoAlternativas)
             if banderaEstado==True:
                 idItem=xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas
-                nombreArchivo.text=idItem
+                nombreArchivo.text=plantilla.taxo+"-"+idItem
                 if raiz=='quiz':
                     quiz = ET.Element('quiz')
                     quiz.append(plantillaSalida)

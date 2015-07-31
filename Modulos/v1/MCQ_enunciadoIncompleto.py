@@ -34,7 +34,7 @@ except ImportError:
 #su mismo tipo, luego una vez completada la pregunta, se imprime
 #por pantalla para que la informacion pueda ser recogida por el programa
 #principal
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas,raiz,formato,estilo,taxo, **kwuargs): #,xmlEntradaObject):
     plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
     contador=0
     banderaEstado=False
@@ -79,7 +79,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         if banderaEstado==True:
             contador+=1
             id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip()
-            nombreArchivo.text=id
+            nombreArchivo.text=taxo+"-"+id
             if raiz=='quiz':
                 quiz = ET.Element('quiz')
                 quiz.append(plantillaSalida)
@@ -102,6 +102,8 @@ nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta="enunciadoIncompleto"
 listaXmlEntrada=list()
+#Debido a que este modulo no necesita de plantillas
+taxo="recordar"
 
 #Ahora la entrada que indica la cantidad de alternativas viene incrustada como atributo en los respectivos
 #XML de entrada
@@ -111,4 +113,4 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,taxo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)

@@ -414,7 +414,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                             for elem in plantillaSalida.getchildren():
                                 if elem.tag=='name':
                                     for elem2 in elem.iterfind('text'):
-                                        elem2.text=id
+                                        elem2.text=plantilla.taxo+"-"+id
                             if raiz=='quiz':
                                 quiz = ET.Element('quiz')
                                 quiz.append(plantillaSalida)

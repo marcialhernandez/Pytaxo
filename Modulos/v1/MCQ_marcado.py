@@ -268,7 +268,7 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #         for elem in conjunto:
 #             print elem.tipo           
 
-def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo,limiteGeneracion): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
+def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo,limiteGeneracion,taxo): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
     contador=0
     conjuntoDefinicionesEnunciado=""
     contadorDefiniciones=0
@@ -349,7 +349,7 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                             elem.text=enunciado+'\n Definiciones:\n'+conjuntoDefinicionesEnunciado+'\nTerminos:\n'+conjuntoTerminosEnunciado
                     if subRaizSalida.tag=='name':
                         for elem in subRaizSalida.iterfind('text'):
-                            elem.text=id
+                            elem.text=taxo+"-"+id
                 #Se instancia la plantilla como un elemento de element tree
                 if raiz=='quiz':
                     quiz = ET.Element('quiz')
@@ -428,7 +428,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         for conjuntoDefiniciones in listaDeConjuntoDefiniciones:
             if xmlEntradaObject.cantidadCombinacionesDefiniciones==cantidadCombinacionesDefiniciones:
                 break
-            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.copy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado,raiz,formato,estilo,limiteGeneracion) )
+            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.copy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado,raiz,formato,estilo,limiteGeneracion,plantilla.taxo) )
             t.setDaemon(True)
             hilos.append(t)
             t.start()
