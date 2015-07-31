@@ -1,0 +1,55 @@
+<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="13" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" formatoSalida="quiz">
+    <termino>
+        Compilador
+    </termino>
+    <opciones>
+        <alternativa id="1" tipo="solucion">
+            <glosa>
+                Software que traduce un un programa escrito en un lenguaje de programacion a otro lenguaje de programacion
+                <comentario>
+                    alternativa correcta
+                </comentario>
+            </glosa>
+            <glosa>
+                Software que traduce un un programa escrito en un lenguaje de programacion a lenguaje maquina
+                <comentario>
+                    alternativa correcta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="2" tipo="distractor">
+            <glosa>
+                Procedimiento que traduce un un programa escrito en un lenguaje de programacion a otro lenguaje de programacion
+                <comentario></comentario>
+            </glosa>
+            <glosa>
+                Algoritmo que traduce un un programa escrito en un lenguaje de programacion a otro lenguaje de programacion
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="3" tipo="distractor">
+            <glosa>
+                Maquina que traduce un programa escrito en un lenguaje de programacion a su lenguaje
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+            <glosa>
+                Maquina que interpreta un programa en un determinado lenguaje de programacion
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="4" tipo="distractor">
+            <glosa>
+                Software que traduce un programa escrito en un lenguaje de programacion a otro lenguaje de programacion por cada ejecucion 
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+            <glosa>
+                Algoritmo que traduce un programa escrito en un lenguaje de programacion a otro lenguaje de programacion por cada ejecucion 
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+    </opciones>
+</pregunta>

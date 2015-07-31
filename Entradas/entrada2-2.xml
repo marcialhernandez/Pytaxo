@@ -1,49 +1,49 @@
-<pregunta cantidadAlternativas="3" tipo="enunciadoIncompleto" idOrigenEntrada="2" puntaje="2">
+<pregunta cantidadAlternativas="4" tipo="enunciadoIncompleto" idOrigenEntrada="11" puntaje="2">
   <enunciado>
     <glosa>
-      La funcion 
+      Todas las siguientes funciones son metodos de la clase lista, a excepcion de
     </glosa>
     <blank>
-      .split()
+      .find()
     </blank>
         <glosa>
-      retorna una lista de strings usando como delimitador su argumento.
+      .
     </glosa>
   </enunciado>
   <opciones>
     <alternativa id="2" tipo="distractor">
       <glosa>
-        .splitlines()
+        .remove()
         <comentario>
-          Retorna una lista de lineas en el string, lineas determinadas por los saltos de carro que aparezcan en el argumento 
+          Elimina un elemento de una lista
         </comentario>
       </glosa>
       <glosa>
-        .rstrip()
+        .append()
         <comentario>
-          Retorna una copia del argumento, con los argumentos removidos por la derecha
+          Agrega un elemento al final
         </comentario>
       </glosa>
     </alternativa>
     <alternativa id="3" tipo="distractor">
       <glosa>
-        .strip()
+        .pop()
         <comentario>
-          Retorna una copia del string con los caracteres pasados como argumento removidos
+          Remueve y retorna el elemento de la lista determinando por la posicion dada por argumento
         </comentario>
       </glosa>
       <glosa>
-        .cut()
+        .reverse()
         <comentario>
-          No existe
+          Invierte los elementos de una lista
         </comentario>
       </glosa>
     </alternativa>
     <alternativa id="4" tipo="distractor">
       <glosa>
-        .splitt()
+        .count()
         <comentario>
-          es .split(), tiene una t demas
+          Retorna la cantidad de veces que aparece el argumento en una lista
         </comentario>
       </glosa>
     </alternativa>

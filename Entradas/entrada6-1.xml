@@ -1,42 +1,73 @@
 <pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6" cantidadAlternativas="4">
+        <!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+    -->
 <codigo>
 <python id="1">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
-    
-def funcionTest(dato):
-    x=0
-    z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
-    return z
-<nombreFuncionPrincipal>funcionTest</nombreFuncionPrincipal>
-<lineaIterativa>while dato >0:</lineaIterativa>
-<entrada>valor=127</entrada>
-<entrada>valor=95</entrada>
-<comentario>Comentario Codigo1</comentario>
+def add_many(operand1, *operands):
+    Sum = operand1
+    for op in operands:
+        Sum += op
+    return Sum
+<nombreFuncionPrincipal>add_many</nombreFuncionPrincipal>
+<lineaIterativa>for op in operands</lineaIterativa>
+<entrada>operand1=127;operands=1, 3, 5, 7, 20</entrada>
+<entrada>operand1=12;operands=1, 3, 5, 20</entrada>
+<entrada>operand1=1;operands=1, 3, 5</entrada>
+<entrada>operand1=112;operands=1, 3, 5,10,11,56,342,2</entrada>
+<entrada>operand1=12132;operands=1, 3, 5,10,11,56,342</entrada>
+<comentario>Funcion que suma todos los valores de operands a operand1</comentario>
 </python>
 <python id="2">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
-    
-def funcionTest2(dato):
-    x=0
-    z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
-    return z
-<nombreFuncionPrincipal>funcionTest2</nombreFuncionPrincipal>
-<lineaIterativa>while dato >0:</lineaIterativa>
-<entrada>valor=127</entrada>
-<entrada>valor=95</entrada>
-<comentario>Comentario Codigo2</comentario>
+import math
+
+def sieve(n):
+    primes = list(range(2,n+1))
+    max = math.sqrt(n)
+    num = 2
+    while num &lt; max:
+        i = num
+        while i &lt;= n:
+            i += num
+            if i in primes:
+                primes.remove(i)
+        for j in primes:
+            if j > num:
+                num = j
+                break           
+    return primes
+<nombreFuncionPrincipal>sieve</nombreFuncionPrincipal>
+<lineaIterativa>while i &lt;= n</lineaIterativa>
+<entrada>n=8</entrada>
+<entrada>n=12</entrada>
+<entrada>n=14</entrada>
+<entrada>n=15</entrada>
+<entrada>n=18</entrada>
+<comentario>Funcion que retorna todos los numeros primos hasta n</comentario>
+</python>
+<python id="3">
+def pascal(n):
+    if n == 1:
+        return [1]
+    else:
+        line = [1]
+        previous_line = pascal(n-1)
+        for i in range(len(previous_line)-1):
+            line.append(previous_line[i] + previous_line[i+1])
+        line += [1]
+    return line
+<nombreFuncionPrincipal>pascal</nombreFuncionPrincipal>
+<lineaIterativa>for i in range(len(previous_line)-1)</lineaIterativa>
+<entrada>n=3</entrada>
+<entrada>n=4</entrada>
+<entrada>n=5</entrada>
+<entrada>n=6</entrada>
+<entrada>n=7</entrada>
+<comentario>Funcion que genera un triangulo de Pascal de nivel=n</comentario>
 </python>
 </codigo>
 </pregunta>

@@ -268,7 +268,7 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #         for elem in conjunto:
 #             print elem.tipo           
 
-def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
+def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo,limiteGeneracion): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
     contador=0
     conjuntoDefinicionesEnunciado=""
     contadorDefiniciones=0
@@ -305,7 +305,10 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
             conjuntoTerminosEnunciado+=str(contadorTerminos)+'.-'+cadaTermino.glosa+'\n'
         #solucion provisional
         ordenamientoDiferente=0 #indica que es el mismo grupo de alternativas pero estan ordenados de forma diferente
+        contadorLimite=0
         for cadaConjunto in agrupamientoPareado(xmlEntradaObject,solucion,solucionesYDistractores['distractores'],cantidadAlternativas,especificacion=xmlEntradaObject.composicionDistractores, orderBy=xmlEntradaObject.criterioOrdenDistractores):
+            if contadorLimite==limiteGeneracion:
+                break;
             for elem in plantillaSalida.getchildren():
                 if elem.tag=='answer':
                     plantillaSalida.remove(elem)
@@ -357,6 +360,7 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
             contador+=1
+            contadorLimite+=1
     #Condicion de carrera
     total.incrementar(contador)
     #Descomentar para validar funcionamiento
@@ -395,7 +399,7 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
             validaPlantilla=False
     return plantillasValidas
 
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo,limiteGeneracion, **kwuargs): #,xmlEntradaObject):
     #Esto era requerido cuando se tomaba como tipo el nombre de la plantilla, y no un atributo incrustado en el xml
     #tipoPregunta=nombres.nombreScript(__file__)
     #Variable compartida, pues cada hebra aumenta el total de archivos creados
@@ -424,7 +428,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         for conjuntoDefiniciones in listaDeConjuntoDefiniciones:
             if xmlEntradaObject.cantidadCombinacionesDefiniciones==cantidadCombinacionesDefiniciones:
                 break
-            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.copy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado,raiz,formato,estilo) )
+            t = threading.Thread(target=procesoPareador, args=(conjuntoDefiniciones,copy.copy(plantillaSalida),xmlEntradaObject, cantidadAlternativas,banderaEstado,kwuargs['directorioSalida'],total,plantilla.enunciado,raiz,formato,estilo,limiteGeneracion) )
             t.setDaemon(True)
             hilos.append(t)
             t.start()
@@ -445,6 +449,8 @@ nombreDirectorioSalidas="Salidas"
 nombreCompilador="python"
 tipoPregunta='definicionPareada'
 listaXmlEntrada=list()
+#Limite experimental, lo ideal es que sea una entrada
+limiteGeneracion=2000
 
 # Almacenamiento usando el parser para este tipo de pregunta
 
@@ -456,4 +462,4 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
     
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo,limiteGeneracion, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)

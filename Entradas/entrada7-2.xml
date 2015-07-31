@@ -1,0 +1,100 @@
+<pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="7" puntaje="2">
+	<!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+    -->
+	<codigo>
+		<python id="1">
+def g1(n):
+	if n&lt;=3:
+	    return n
+	else:
+	    return g(n-1)+2*g(n-2)+3*g(n-3)
+			<nombreFuncionPrincipal>
+				g1
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="2">
+def g2(n):
+    if n &lt;= 3:
+        return n
+    a, b, c = 1, 2, 3
+    for i in range(n - 3):
+        a, b, c = b, c, c + 2 * b + 3 * a
+    return c
+			<nombreFuncionPrincipal>
+				g2
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="3">
+def g3(n):
+    if n &lt;= 3:
+        return n
+    a, b, c = 1, 2, 3
+    while n > 3:
+        a, b, c = b, c, c + 2 * b + 3 * a
+        n -= 1
+    return c
+			<nombreFuncionPrincipal>
+				g3
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="4">
+def g4(n):
+    if n &lt;= 3:
+        return n
+    a, b, c = 1, 2, 3
+    while n > 3:
+        a, b, c = b, c-a, c + 2 * b + 3 * a
+        n -= 1
+    return c
+			<nombreFuncionPrincipal>
+				g4
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="5">
+def g5(n):
+    if n == 3:
+        return n
+    a, b, c = 1, 2, 3
+    while n > 3:
+        b, a, c = c-a,b, c + 2 * b + 3 * a
+        n -= 1
+    return c
+			<nombreFuncionPrincipal>
+				g5
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="6">
+def g6(n):
+    if n == 3:
+        return n
+    a, b, c = 2, 1, 3
+    while n > 3:
+        b, a, c = c-a,b, c + 2 * b + 2 * a
+        n =n- 1
+    return c
+			<nombreFuncionPrincipal>
+				g6
+			</nombreFuncionPrincipal>
+		</python>
+		<entrada>
+			n=2
+		</entrada>
+		<entrada>
+			n=3
+		</entrada>
+		<entrada>
+			n=4
+		</entrada>
+		<entrada>
+			n=5
+		</entrada>
+		<comentario>
+			Funcion obtenida de http://stackoverflow.com/questions/20929796/python-convert-this-recursive-function-to-iterative
+		</comentario>
+	</codigo>
+</pregunta>

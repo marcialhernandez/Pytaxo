@@ -3,12 +3,46 @@ quiz {
   font-family: Georgia;
   background-image: url(pytaxo.png);
   background-repeat:no-repeat; 
-  background-size: 20%;
-  background-position: 90% 10%;*/
+  background-size: 25%;
+  background-position: 90% 5%;*/
   /*background-position: bottom right;*/
   text-align:left;
   margin-left: 12pt;
 }
+
+question name text:before{
+  content:"Identificador  ::  ";
+  font-size: 16pt;
+}
+
+question name text:{
+  margin-left: 25px;
+  font-size: 14pt;
+}
+
+question defaultgrade{
+  visibility: hidden;
+}
+
+question shuffleanswers{
+  visibility: hidden;
+} 
+
+question single{
+  visibility: hidden;
+}
+
+question answernumbering{
+  visibility: hidden;
+}
+
+question penalty{
+  visibility: hidden;
+}
+
+question responsefieldlines{
+  visibility: hidden;
+} 
 
 opciones{
   display: block; 
@@ -116,59 +150,6 @@ answer feedback{
     word-spacing: normal;
 }
 
-definiciones{
-  counter-reset: contadorDefiniciones;
-  padding-top: 12pt;
-  padding-bottom: 12pt;
-  margin-bottom: 14pt;
-  border: solid 1px;
-  border-radius: 20px;
-  display: inline-block;
-  position: relative; 
-  height: 100%; 
-  width: 400px; 
-  background-color: #E6E627;
-}
-
-definicion:before {
-  content: counter(contadorDefiniciones, upper-roman) ". ";
-  counter-increment: contadorDefiniciones;
-
-}
-
-terminos{
-  counter-reset: contadorDefiniciones;
-  padding-left: 12pt;
-  padding-top: 12pt;
-  padding-bottom: 12pt;
-  margin-bottom: 14pt;
-  margin-left: 80px;
-  border: solid 1px;
-  border-radius: 20px;
-  display: inline-block;
-  position: absolute;  
-  width: 300px; 
-  background-color: #E6E627;
-}
-
-posiblePar:before {
-  content: counter(contadorDefiniciones, upper) " . ";
-  counter-increment: contadorDefiniciones;
-}
-
-posiblePar:after {
-  content: "\A ";
-  white-space: pre;
-}
-
-definicion{
-  display: block;
-  margin-left: 25px;
-  font-size: 12pt;
-  margin-bottom: 10pt;
-  margin-top: 10pt;
-}
-
 answer:before {
   content: counter(contador, upper-alpha) ". ";
   counter-increment: contador;
@@ -181,7 +162,8 @@ answer[tipo=solucion]:hover {
 
 answer{
   display: block;
-  min-width: 50%;
+  min-width: 60%;
+  min-height: 20%;
   background-color: transparent;
   padding-left: 4pt;
   padding-top: 4pt;
@@ -211,36 +193,18 @@ comentario {
   text-align: left;
 }
 
-comentario::before {
+answer > feedback::before {
     content: "Comentario: ";
 }
 
-answer:hover > comentario {
+answer > feedback :hover {
+
     display: block;
     margin-left: 25px;
 }
 
 answer:hover:after{
 	margin-left: 25px;
-	content:"[Tipo]: "attr(tipo) "\A    [Id]: "attr(id) "\A    [Puntaje]: "attr(puntaje);
-}
-
-quiz question name text{
-  content: "Solución\A ";
-  white-space: pre;
-  margin-top: 12pt;
-  display: block;
+	content:"-[Tipo]: "attr(tipo) "\A - [Id]: "attr(id) "\A- [Puntaje]: "attr(puntaje);
   font-size: 12pt;
-  margin-bottom: 14pt;
 }
-
-/*opt:literal{
-
-}*/
-/*quiz question questiontext text {
-  opt:literal
-	margin-top: 12pt;
-	display: block;
-	font-size: 14pt;
-	margin-bottom: 14pt;
-}*/

@@ -1,17 +1,11 @@
 <pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="1" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" formatoSalida="quiz">
     <termino>
-        flotante
+        Array
     </termino>
     <opciones>
         <alternativa id="1" tipo="solucion">
             <glosa>
-                tipo de dato que soporta decimales
-                <comentario>
-                    alternativa correcta
-                </comentario>
-            </glosa>
-            <glosa>
-                tipo de numero que soporta decimales
+                Lista de n elementos de un mismo tipo
                 <comentario>
                     alternativa correcta
                 </comentario>
@@ -19,11 +13,11 @@
         </alternativa>
         <alternativa id="2" tipo="distractor">
             <glosa>
-                tipo de funcion que soporta decimales
+                Lista de n elementos de un mismo tipo, inmutable
                 <comentario></comentario>
             </glosa>
             <glosa>
-                tipo de juego que soporta decimales
+                Lista de n elementos de cualquier tipo, inmutable
                 <comentario>
                     alternativa incorrecta
                 </comentario>
@@ -31,27 +25,28 @@
         </alternativa>
         <alternativa id="3" tipo="distractor">
             <glosa>
-                tipo de estructura que soporta decimales
-                <comentario></comentario>
+                Lista de n elementos de cualquier tipo
+                <comentario>alternativa incorrecta</comentario>
             </glosa>
             <glosa>
-                tipo de formato que soporta decimales
-                <comentario></comentario>
+                Lista de n caracteres
+                <comentario>alternativa incorrecta</comentario>
             </glosa>
-            <comentario>
-                alternativa incorrecta
-            </comentario>
+            <glosa>
+                Lista de n caracteres, mutable
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
         </alternativa>
         <alternativa id="4" tipo="distractor">
             <glosa>
-                tipo de numero que soporta decimales
+                Diccionario de n elementos de un mismo tipo
                 <comentario>
                     alternativa incorrecta
                 </comentario>
             </glosa>
             <glosa>
-                tipo de comando que soporta decimales
-                <comentario></comentario>
+                Tupla de n elementos
+                <comentario>alternativa incorrecta</comentario>
             </glosa>
         </alternativa>
     </opciones>

@@ -1,4 +1,11 @@
 <pregunta cantidadAlternativas="4" tipo="pythonTraza" idOrigenEntrada="4" puntaje="2" cantidadCodigo="2">
+    <!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+    -->
 	<codigo>
 		<python id="1">
 def functionSuma(dato1,dato2):
@@ -22,42 +29,81 @@ def funcionTest(dato):
 				valor=95
 			</entrada>
 			<comentario>
-				Comentario Codigo1
+				Funcion de Test, obtenida desde una pep de FCyP
 			</comentario>
 		</python>
 		<python id="2">
-def functionSuma(x,y):
-    return x+y
+def calculaAck(m, n):
+    if m == 0:
+        return n+1
+    if n == 0:
+        return calculaAck(m-1, 1)
+    return calculaAck(m-1, calculAck(m, n-1))
 			<nombreFuncionPrincipal>
-				functionSuma
+				calculaAck
 			</nombreFuncionPrincipal>
 			<entrada>
-				x=['a,'b'];y=['c','d']
+				m=2;n=2
 			</entrada>
-			<entrada>
-				95;96
+						<entrada>
+				m=3;n=4
 			</entrada>
-			<entrada>
-				x=['a','b'];y=['c','d']
+						<entrada>
+				m=4;n=3
 			</entrada>
 			<comentario>
-				Comentario Codigo2
+				Calcula la funcion de Ackermann A(m, n), lamentablemente tiene un error y deberia parar la ejecucion tal y como se muestra en la siguiente traza:
 			</comentario>
 		</python>
 		<python id="3">
-import math
-
-def functionAngulo(x,y):
-    dato=math.sin(x)+math.cos(y)
-    return dato
+def calculaAck(m, n):
+    if m == 0:
+        return n+1
+    if n == 0:
+        return calculaAck(m-1, 1)
+    return calculaAck(m-1, calculaAck(m, n-1))
 			<nombreFuncionPrincipal>
-				functionAngulo
+				calculaAck
 			</nombreFuncionPrincipal>
 			<entrada>
-				x=0.1;y=0.2
+				m=2;n=2
+			</entrada>
+						<entrada>
+				m=1;n=2
+			</entrada>
+						<entrada>
+				m=2;n=1
+			</entrada>
+			<entrada>
+				m=1;n=1
 			</entrada>
 			<comentario>
-				Comentario Codigo3
+				Calcula la funcion de Ackermann A(m, n)
+			</comentario>
+		</python>
+
+<python id="4">
+def calculaSen(x, order):
+    a = x
+    s = a
+    for i in range(1, order):
+        a *= -1 * x**2 / ((2 * i) * (2 * i + 1))
+        s += a
+    return s
+			<nombreFuncionPrincipal>
+				calculaSen
+			</nombreFuncionPrincipal>
+			<entrada>
+				x=0.4;order=5
+			</entrada>
+			<entrada>
+				x=0.3;order=4
+			</entrada>
+			<entrada>
+				x=0.1;order=5
+			</entrada>
+			<comentario>
+				Funcion que representa la serie de Taylor de order=order de Sen(x)
 			</comentario>
 		</python>
 	</codigo>

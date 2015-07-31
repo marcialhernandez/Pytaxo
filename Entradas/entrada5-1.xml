@@ -1,72 +1,87 @@
 <pregunta cantidadAlternativas="3" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
+    <!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+    -->
     <codigo>
         <python id="1">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
-    
-def funcionTest(dato):
-    x=0
-    z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
+def fib2(n):
+    result = []
+    a, b = 0, 1
+    while b &lt; n:
+        result.append(b)
+        a, b = b, a+b
+    return result
             <nombreFuncionPrincipal>
-                funcionTest
+                fib2
             </nombreFuncionPrincipal>
             <lineaIterativa>
-                while dato >0:
+                while b &lt; n:
             </lineaIterativa>
             <cantidadCiclosConsulta>
-                2
+                4
             </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
-                1
+                3
+            </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                5
+            </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                6
+            </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                7
             </cantidadCiclosConsulta>
             <entrada>
-                dato=300
+                n=150
             </entrada>
             <entrada>
-                dato=250
+                n=250
             </entrada>
             <comentario>
-                Comentario Codigo1
+                Retorna la lista de numeros de Fibonacci hasta n
             </comentario>
         </python>
 <python id="2">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
-    
-def funcionTest2(dato):
-    x=0
-    z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
-    return z
+def permu(xs):
+    if xs:
+        r , h = [],[]
+        for x in xs:
+            if x not in h:
+                ts = xs[:]; ts.remove(x)
+                for p in permu(ts):
+                    r.append([x]+p)
+            h.append(x)
+        return r
+    else:
+        return [[]]
             <nombreFuncionPrincipal>
-                funcionTest2
+                permu
             </nombreFuncionPrincipal>
             <lineaIterativa>
-                while dato >0:
+                for p in permu(ts):
             </lineaIterativa>
+            <cantidadCiclosConsulta>
+                1
+            </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
                 2
             </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
-                1
+                3
             </cantidadCiclosConsulta>
             <entrada>
-                dato=600
+                xs=[1,2,3]
             </entrada>
             <entrada>
-                dato=300
+                xs=[2,3]
             </entrada>
             <comentario>
-                Comentario Codigo2
+                Funcion que retorna la permutacion de una lista
             </comentario>
         </python>
     </codigo>
