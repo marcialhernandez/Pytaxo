@@ -1,4 +1,5 @@
-quiz {
+quiz question{
+  display: block;
   counter-reset: contador;
   font-family: Georgia;
   background-image: url(pytaxo.png);
@@ -8,6 +9,23 @@ quiz {
   /*background-position: bottom right;*/
   text-align:left;
   margin-left: 12pt;
+}
+
+quiz question:after{
+   display: block;
+   content:"";
+   position: relative;
+   padding: 0;
+   margin: 8px auto;
+   height: 0;
+   width: 100%;
+   max-height: 0;
+   font-size: 1px;
+   line-height: 0;
+   clear: both;
+   border: none;
+   border-top: 1px solid #aaaaaa;
+   border-bottom: 1px solid #ffffff;
 }
 
 question name text:before{

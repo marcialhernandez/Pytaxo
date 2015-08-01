@@ -63,6 +63,7 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     contador=0
     banderaEstado=False
     nombreArchivo=""
+    archivoSalida=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
@@ -85,9 +86,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                 if raiz=='quiz':
                     quiz = ET.Element('quiz')
                     quiz.append(plantillaSalida)
-                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem,quiz,'xml',formato,estilo)
+                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem,quiz,'xml',formato,estilo,merge=raiz)
                 else:
-                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem, plantillaSalida,'xml',formato,estilo)
+                    xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,idItem, plantillaSalida,'xml',formato,estilo,merge=raiz)
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
@@ -111,8 +112,14 @@ listaXmlEntrada=list()
 #XML de entrada
 #cantidadAlternativas=xmlSalida.argParse()
 
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','open',formato,estilo)
+
 if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','close',formato,estilo)

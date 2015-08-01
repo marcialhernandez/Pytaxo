@@ -645,21 +645,34 @@ def escribePlantilla(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato
     #tree.write(directorioSalida+'/'+nombreArchivo+'.'+formato, encoding='UTF-8', xml_declaration=False)
     #pass
 
-def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato,informacionXML,estilo):
-    acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
+def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,formato,informacionXML,estilo,**kwargs):
+    banderaMerge=False
+    DECLARATION=""
+    archivoSalida=""
+    if 'merge' in kwargs.keys():
+        if kwargs['merge']=='merge':
+            modoEscritura='a'
+            banderaMerge=True
+            acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
+            archivoSalida=open(directorioSalida+'/'+tipoPregunta+'-'+'Output'+'.'+formato,'a')
+        else:
+            archivoSalida=open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w')
+    else:
+        archivoSalida=open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w')
+    #acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
     tree = ET.ElementTree(raizXML)
-    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n"""
+    if banderaMerge==False:
+        DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n"""
+        #nombreArchivoSalida=directorioSalida+'/'+nombreArchivo+'.'+formato
     ESTILO=""
     if estilo=='no':
         pass
     else:
-        ESTILO = '<?xml-stylesheet href="../../css/'+estilo+'.css" title="Estilo Estandar"?>\n'
-
-    
+        if banderaMerge==False:
+            ESTILO = '<?xml-stylesheet href="../../css/'+estilo+'.css" title="Estilo Estandar"?>\n'
     #tree = ET.parse(filename)
     # do some work on tree
-    
-    with open(directorioSalida+'/'+nombreArchivo+'.'+formato, 'w') as output: # would be better to write to temp file and rename
+    with archivoSalida as output: # would be better to write to temp file and rename
         if informacionXML=='si':
             output.write(DECLARATION)
         if estilo!='no':
@@ -667,4 +680,26 @@ def escribePlantilla2(directorioSalida,tipoPregunta,nombreArchivo,raizXML,format
        # output.write(xmlprettyprint(raizXML))
         output.write(ET.tostring(raizXML, 'utf-8', method="xml"))
         #tree.write(output, xml_declaration=False, encoding='utf-8')
+    archivoSalida.close()
     pass
+
+def mergeOperation(directorioSalida,tipoPregunta,formato,modo,formatoXML,estilo):
+    DECLARATION = """<?xml version="1.0" encoding="utf-8"?>\n"""
+    ESTILO = '<?xml-stylesheet href="../../css/'+estilo+'.css" title="Estilo Estandar"?>\n'
+    if modo=='open':
+        #Se borra el archivo
+        acceso.CrearDirectorio(directorioSalida+'/'+tipoPregunta)
+        archivoSalida=open(directorioSalida+'/'+tipoPregunta+'-'+'Output'+'.'+formato,'w')
+        archivoSalida.write('')
+        archivoSalida.close()
+        archivoSalida=open(directorioSalida+'/'+tipoPregunta+'-'+'Output'+'.'+formato,'a')
+        if formatoXML=='si':
+            archivoSalida.write(DECLARATION)
+        if estilo!='no':
+            archivoSalida.write(ESTILO)
+        archivoSalida.write('<quiz>\n')
+        archivoSalida.close()
+    else:
+        archivoSalida=open(directorioSalida+'/'+tipoPregunta+'-'+'Output'+'.'+formato,'a')
+        archivoSalida.write('</quiz>')
+        archivoSalida.close()

@@ -240,9 +240,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     if raiz=='quiz':
                         quiz = ET.Element('quiz')
                         quiz.append(plantillaSalida)
-                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo,merge=raiz)
                     else:
-                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'], xmlEntradaObject.tipo,id,plantillaSalida,'xml',formato,estilo)
+                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'], xmlEntradaObject.tipo,id,plantillaSalida,'xml',formato,estilo,merge=raiz)
                     contador+=1
                 elif banderaEstado==False:
                     print ET.tostring(plantillaSalida, 'utf-8', method="xml")
@@ -266,8 +266,14 @@ nombreCompilador="python"
 tipoPregunta='pythonTraza'
 listaXmlEntrada=list()
 
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','open',formato,estilo)
+
 if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','close',formato,estilo)

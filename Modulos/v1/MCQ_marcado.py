@@ -354,9 +354,9 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                 if raiz=='quiz':
                     quiz = ET.Element('quiz')
                     quiz.append(plantillaSalida)
-                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo,merge=raiz)
                 else:
-                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml',formato,estilo)
+                    xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml',formato,estilo,merge=raiz)
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
             contador+=1
@@ -450,7 +450,7 @@ nombreCompilador="python"
 tipoPregunta='definicionPareada'
 listaXmlEntrada=list()
 #Limite experimental, lo ideal es que sea una entrada
-limiteGeneracion=2000
+limiteGeneracion=1000
 
 # Almacenamiento usando el parser para este tipo de pregunta
 
@@ -458,8 +458,14 @@ limiteGeneracion=2000
 #XML de entrada
 #cantidadAlternativas=xmlSalida.argParse()
 
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','open',formato,estilo)
+
 if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
     
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,tipoPregunta,raiz,formato,estilo,limiteGeneracion, directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','close',formato,estilo)

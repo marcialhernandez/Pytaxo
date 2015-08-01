@@ -26,7 +26,7 @@ from nombres import obtieneNombreArchivo
 
 def parserAtributos(parser):
     parser.add_argument('-r', required=False,
-                    help='Especifica la raiz de las preguntas a generar. Puede ser "answer" o "quiz"',
+                    help='Especifica la raiz de las preguntas a generar. Puede ser "answer", "quiz" o "merge"',
                     metavar="RaizPregunta")
     
     parser.add_argument('-f', required=False,
@@ -38,7 +38,7 @@ def parserAtributos(parser):
                         metavar="EstiloPregunta")
     
     raiz=str(parser.parse_args().r).lower().rstrip().lstrip()
-    if raiz in ['answer','quiz']:
+    if raiz in ['answer','quiz','merge']:
         pass
     else:
         raiz='quiz'

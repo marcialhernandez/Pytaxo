@@ -83,9 +83,9 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             if raiz=='quiz':
                 quiz = ET.Element('quiz')
                 quiz.append(plantillaSalida)
-                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo)
+                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo,merge=raiz)
             else:
-                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo, id, plantillaSalida,'xml',formato,estilo)
+                xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo, id, plantillaSalida,'xml',formato,estilo,merge=raiz)
         else:
             print ET.tostring(plantillaSalida, 'utf-8', method="xml")
     if banderaEstado==True:
@@ -109,8 +109,14 @@ taxo="recordar"
 #XML de entrada
 #cantidadAlternativas=xmlSalida.argParse()
 
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','open',formato,estilo)
+
 if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
     retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,taxo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+
+if raiz=='merge':
+    xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','close',formato,estilo)
