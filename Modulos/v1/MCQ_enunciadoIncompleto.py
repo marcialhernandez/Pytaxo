@@ -50,35 +50,37 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         if subRaizSalida.tag=='questiontext':
             for elem in subRaizSalida.iterfind('text'):
                 elem.text=xmlEntradaObject.enunciado
-    for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
+    for conjuntoAlternativas in xmlEntradaObject.agrupamientoEnunciadoIncompleto(cantidadAlternativas):
+        pass
         #Se concatena el texto de todas las alternativas
-        glosasAlternativas=""
-        identificadorPregunta=""
+        glosasAlternativas=[]
+        identificadorPregunta=[]
+        #Se eliminan las alternativas anteriores
         for elem in plantillaSalida.getchildren():
             if elem.tag=='answer':
                 plantillaSalida.remove(elem)
         for alternativa in conjuntoAlternativas:
             opcion = ET.SubElement(plantillaSalida, 'answer')
-            if (alternativa.tipo=="solucion"):
-                opcion.set('fraction',"100")
-            else:
-                opcion.set('fraction',"0")
+            opcion.set('fraction',str(alternativa.puntaje))
             opcionText=ET.SubElement(opcion, 'text')
             opcionText.text=alternativa.glosa
-            glosasAlternativas+=alternativa.glosa
-            identificadorPregunta+=alternativa.identificador()
-            opcion.set('puntaje',alternativa.puntaje)
-            opcion.set('id',alternativa.llave)
-            opcion.set('tipo',alternativa.tipo)
+            glosasAlternativas.append(alternativa.glosa)
+            identificadorPregunta.append(alternativa.llave)
             feedback=ET.SubElement(opcion, 'feedback')
             feedbackText=ET.SubElement(feedback, 'text')
-            feedbackText.text=alternativa.comentario
+            if alternativa.tipo=="solucion":
+                opcion.set('puntaje',str(xmlEntradaObject.puntaje))
+            else:
+                feedbackText.text=alternativa.comentario
+                opcion.set('puntaje',"0")
+            opcion.set('id',alternativa.llave)
+            opcion.set('tipo',alternativa.tipo)
         #A partir del texto concatenado, se crea una unica ID que representa las alternativas
         #Esta ID se asigna a un nuevo atributo a la subRaiz 'opciones'
-        identificadorItem=hashlib.sha256(glosasAlternativas).hexdigest()
+        identificadorItem=hashlib.sha256("".join(glosasAlternativas)).hexdigest()
         if banderaEstado==True:
             contador+=1
-            id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorPregunta.rstrip()
+            id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+"|".join(identificadorPregunta)
             nombreArchivo.text=taxo+"-"+id
             if raiz=='quiz':
                 quiz = ET.Element('quiz')

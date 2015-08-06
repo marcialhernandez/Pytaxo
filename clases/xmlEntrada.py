@@ -18,8 +18,9 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import itertools, hashlib
+import itertools, hashlib, copy
 from archivos import nombres
+from clases import alternativa
 
 class xmlEntrada:
     #atributos estaticos
@@ -123,9 +124,9 @@ class xmlEntrada:
     def agrupamientoAlternativas2(self,cantidadAlternativas):
         if cantidadAlternativas<=1:
             return list()
-        listaDeListaDeAlternativas=list()
+        listaDeListaDeAlternativas=[]
         listaDeSoluciones=None
-        listaDeAlternativasValidas=list()
+        listaDeAlternativasValidas=[]
         for llave in self.alternativas.keys():
             if self.alternativas[llave][0].tipo=='solucion':
                 listaDeSoluciones=self.alternativas[llave]
@@ -144,5 +145,113 @@ class xmlEntrada:
         #print len(listaDeAlternativasValidas)
         return listaDeAlternativasValidas
     
+    def agrupamientoEnunciadoIncompleto(self,cantidadAlternativas):
+        if cantidadAlternativas<=1:
+            return []
+        distractores=[]
+        listaDeDistractores=[]
+        listaDeSoluciones=[]
+        listaDeAlternativasValidas=[]
+        listaDeListaDeDistractores=[]
+        #forma de invertir un diccionario : dict(zip(map.values(), map.keys()))
+        #print self.alternativas["respuestas"]
+        #print self.alternativas["distractores"]
+        #Con idOrden, las listas 
+        #Aseguro el orden a medida que se agregan las listas
+        combinacionesListas=list(itertools.product([0, 1], repeat=len(self.alternativas["idOrden"].keys())))
+        del combinacionesListas[0] #elimina caso solo distractores
+        del combinacionesListas[-1] #elimina caso solo soluciones
+        
+        for llave in range(len(self.alternativas["idOrden"].keys())):
+            listaKeySolucion=[]
+            listaKeyDistractor=[]
+            for alternativaSinonimaCorrecta in self.alternativas["respuestas"][self.alternativas["idOrden"][llave]]:
+                listaKeySolucion.append([self.alternativas["idOrden"][llave],alternativaSinonimaCorrecta])
+            for alternativaDistractoraCorrecta in self.alternativas["distractores"][self.alternativas["idOrden"][llave]]:
+                listaKeyDistractor.append([self.alternativas["idOrden"][llave],alternativaDistractoraCorrecta])
+            #Lista de listas de forma [llave,glosa]
+            #lo comun es que todas las listas tienen la misma llave, por ejemplo lista 1
+            #[llave1,glosa], [llave1,glosa]...
+            #lista2
+            #[llave2,glosa].....
+            listaDeDistractores.append(listaKeyDistractor)
+            listaDeSoluciones.append(listaKeySolucion)
+        for combinacion in combinacionesListas:
+            #print combinacion
+            listaTemporal=[]
+            contador=0
+            for decisionBinaria in combinacion:
+                #Se agrega una lista de distractores
+                if decisionBinaria==0:
+                    listaTemporal.append(listaDeDistractores[contador])
+                    contador+=1
+                    pass
+                #Se agrega una lista de soluciones
+                else:
+                    listaTemporal.append(listaDeSoluciones[contador])
+                    contador+=1
+                    pass
+            listaDeListaDeDistractores.append(listaTemporal)
+        del listaTemporal
+        for lista in listaDeListaDeDistractores:
+            #Se agrupan usando producto cartesiano, lo que no altera el orden
+            for distractor in list(itertools.product(*lista)):
+                #print distractor
+                #print "________"
+                distractores.append(distractor)  
+        
+        alternativasDistractoras=[]
+        alternativasCorrectas=[]
+        fraccionPuntajePorSolucion=int(100./len(self.alternativas["idOrden"].keys()))
+        
+        #Se tiene que llevar cada distractor a formato alternativa
+        for distractor in distractores:
+            llave=[]
+            tipo="distractor"
+            puntaje=0 #sera puesto como fraccion de forma inmediata
+            glosa=[]
+            comentario=[]
+            for opcion in distractor:
+                if opcion[1]["tipo"]=='solucion':
+                    puntaje+=fraccionPuntajePorSolucion
+                    llave.append(str(opcion[0])+'.'+opcion[1]["glosa"])
+                else:
+                    llave.append(str(opcion[0])+'.'+str(opcion[1]["id"]))
+                    comentario.append(str(opcion[1]["comentario"]))
+                glosa.append(opcion[1]["glosa"])
+            alternativasDistractoras.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"-".join(glosa),comentario='-'.join(comentario)))
+        #Lista de alternativas solucion
+        del distractores
+        #for distractor in alternativasDistractoras:
+        #    print distractor
+        
+        #Se tiene que llevar cada solucion a formato alternativa
+        for solucion in list(itertools.product(*listaDeSoluciones)):
+            llave=[]
+            tipo="solucion"
+            puntaje=100 #sera puesto como fraccion de forma inmediata
+            glosa=[]
+            for opcion in solucion:
+                llave.append(str(opcion[0])+'.'+opcion[1]["glosa"])
+                glosa.append(opcion[1]["glosa"])
+            alternativasCorrectas.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"-".join(glosa)))
+        #desocupo memoria
+        del listaDeDistractores
+        del listaDeSoluciones
+        del listaDeAlternativasValidas
+        del listaDeListaDeDistractores
+        conjuntosAlternativas=[]
+        for solucion in alternativasCorrectas:
+            #conjuntoTemporal=[]
+            #La solucion siempre sera la primera opcion
+            #conjuntoTemporal.append(solucion)
+            for conjuntoAlternativasDistractoras in list(itertools.combinations(alternativasDistractoras,cantidadAlternativas-1)):
+                #conjuntoTemporal+=conjuntoAlternativasDistractoras
+                #print conjuntoTemporal
+                #print "_________"
+                conjuntosAlternativas.append([solucion]+list(conjuntoAlternativasDistractoras))
+        return conjuntosAlternativas 
+    
     def barajaDefiniciones(self):
         return list(itertools.permutations(self.alternativas['terminos'].keys()))
+    

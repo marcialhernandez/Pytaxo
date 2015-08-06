@@ -420,24 +420,84 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='enunciadoIncompleto':
-        respuestas=list()
+        respuestas={}
+        distractores={}
+        idOrden={}
+        contadorPosOrden=0
+        contadorIDprovisorio=0
         presenciaBlank=False
         enunciadoIncompleto=list()
-        for subRaiz in raizXmlEntrada.iter('enunciado'):
-            for elem in subRaiz:
-                if elem.tag=='glosa':
-                    enunciadoIncompleto.append(elem.text.rstrip().lstrip())
-                if elem.tag=='blank':
-                    enunciadoIncompleto.append('_'*len(elem.text.rstrip().lstrip()))
-                    respuestas.append(elem.text.rstrip().lstrip())
-                    presenciaBlank=True
-        if presenciaBlank==False:
-            print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
-            exit()
+        idActual=""
+        for subRaiz in raizXmlEntrada.iterfind('enunciado'):
+            for parteEnunciado in subRaiz:
+                if parteEnunciado.tag=='glosa':
+                    enunciadoIncompleto.append(parteEnunciado.text.rstrip().lstrip())
+                if parteEnunciado.tag=='blank':
+                    #####
+                    try:
+                        if parteEnunciado.attrib["id"] in respuestas.keys():
+                            print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank con una ID duplicada"
+                            exit()  
+                        else:
+                            idActual=parteEnunciado.attrib["id"]
+                            idOrden[contadorIDprovisorio]=idActual
+                            contadorIDprovisorio+=1
+                            respuestas[idActual]=[]
+                    except:
+                            print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank sin ID"
+                            exit()
+                        ####
+                    largoCadenaBlank=0
+                    for textoBlank in parteEnunciado.iterfind('text'):
+                        largoBlank=len(textoBlank.text.rstrip().lstrip())
+                        respuestas[idActual].append({"glosa":textoBlank.text.rstrip().lstrip(),"tipo":"solucion"})
+                        presenciaBlank=True
+                        if largoBlank>largoCadenaBlank:
+                            largoCadenaBlank=largoBlank
+                    if presenciaBlank==False:
+                        print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
+                        exit()
+                    enunciadoIncompleto.append('_'*largoCadenaBlank)
+                    presenciaBlank=False         
         enunciado=' '.join(enunciadoIncompleto)
-        alternativaSolucion=list()
-        alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
-        conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion
+        for opcion in raizXmlEntrada.iterfind('opciones'):
+            
+            for alternativa in opcion.iterfind('alternativa'):
+                try:
+                    if not alternativa.attrib['id'] in respuestas.keys():
+                        print "Error X: El documento '"+nombreArchivo+"' presenta un distractor con una ID no coincidente con las secciones blank"
+                        exit()
+                    else:
+                        idActual=alternativa.attrib['id']
+                        distractores[idActual]=[]
+                except:
+                        print "Error X: El documento '"+nombreArchivo+"' presenta una seccion alternativa sin ID"
+                        exit()
+                glosaYComentario={}
+                for glosa in alternativa.iterfind('glosa'):
+                    comentarioMerged=""
+                    glosaYComentario["glosa"]=glosa.text.rstrip().lstrip()
+                    try:
+                        glosaYComentario["id"]=glosa.attrib["id"]
+                    except:
+                        print "Precaucion X: una glosa de  '"+nombreArchivo+"' no tiene id y se ha omitido"
+                        continue
+                    glosaYComentario["tipo"]='distractor'
+                    for comentario in glosa.iterfind('comentario'):
+                        comentarioMerged+=comentario.text.rstrip().lstrip()+' '
+                    glosaYComentario["comentario"]=comentarioMerged
+                    distractores[idActual].append(copy.copy(glosaYComentario))
+        conjuntoAlternativas={}
+        #respuestas["id"]=lista de glosas sinonimas
+        #distractores["id"]=lista de diccionarios tipo{"glosa":string,"comentario":string}
+        conjuntoAlternativas["respuestas"]=respuestas
+        conjuntoAlternativas["distractores"]=distractores
+        #tabla hash que indica el orden de aparicion de los blank sin importar la id
+        conjuntoAlternativas["idOrden"]=idOrden
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
+        #alternativaSolucion=list()
+        #alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
+        #conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion
     elif tipo=='definicionPareada':
         #Valores por default
         composicionDistractores="1+2"

@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="1" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" formatoSalida="quiz">
+<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="1" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none">
     <termino>
         Array
     </termino>

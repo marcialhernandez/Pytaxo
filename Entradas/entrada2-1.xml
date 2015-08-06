@@ -3,47 +3,68 @@
     <glosa>
       La funcion 
     </glosa>
-    <blank>
-      .split()
+    <blank id="1">
+      <text>.split()</text>
+      <text>.split()2</text>
     </blank>
         <glosa>
       retorna una lista de strings usando como delimitador su argumento.
     </glosa>
+    <blank id="2">
+      <text>SI1</text>
+      <text>.SI2</text>
+    </blank>
   </enunciado>
   <opciones>
-    <alternativa id="2" tipo="distractor">
-      <glosa>
+    <alternativa id="1" tipo="distractor">
+      <glosa id="1">
         .splitlines()
         <comentario>
           Retorna una lista de lineas en el string, lineas determinadas por los saltos de carro que aparezcan en el argumento 
         </comentario>
       </glosa>
-      <glosa>
+      <glosa id="2">
         .rstrip()
         <comentario>
           Retorna una copia del argumento, con los argumentos removidos por la derecha
         </comentario>
       </glosa>
-    </alternativa>
-    <alternativa id="3" tipo="distractor">
-      <glosa>
+      <glosa id="3">
         .strip()
         <comentario>
           Retorna una copia del string con los caracteres pasados como argumento removidos
         </comentario>
       </glosa>
-      <glosa>
+      <glosa id="4">
         .cut()
         <comentario>
           No existe
         </comentario>
       </glosa>
-    </alternativa>
-    <alternativa id="4" tipo="distractor">
-      <glosa>
+            <glosa id="5">
         .splitt()
         <comentario>
           es .split(), tiene una t demas
+        </comentario>
+      </glosa>
+    </alternativa>
+    <alternativa id="2" tipo="distractor">
+      <glosa id="6">
+        No1
+        <comentario>
+          Sin comentarios
+        </comentario>
+      </glosa>
+          <glosa id="7">
+        No2
+        <comentario>
+          Sin comentarios
+        </comentario>
+      </glosa>
+        <glosa id="8">
+        No3
+        <comentario>
+          Sin comentarios
         </comentario>
       </glosa>
     </alternativa>
