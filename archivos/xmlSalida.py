@@ -465,8 +465,8 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             for alternativa in opcion.iterfind('alternativa'):
                 try:
                     if not alternativa.attrib['id'] in respuestas.keys():
-                        print "Error X: El documento '"+nombreArchivo+"' presenta un distractor con una ID no coincidente con las secciones blank"
-                        exit()
+                        print "Error X: El documento '"+nombreArchivo+"' presenta un distractor con una ID no coincidente con las secciones blank y se ha omitido"
+                        continue
                     else:
                         idActual=alternativa.attrib['id']
                         distractores[idActual]=[]

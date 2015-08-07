@@ -159,7 +159,7 @@ class xmlEntrada:
         #Con idOrden, las listas 
         #Aseguro el orden a medida que se agregan las listas
         combinacionesListas=list(itertools.product([0, 1], repeat=len(self.alternativas["idOrden"].keys())))
-        del combinacionesListas[0] #elimina caso solo distractores
+        #del combinacionesListas[0] #elimina caso solo distractores
         del combinacionesListas[-1] #elimina caso solo soluciones
         
         for llave in range(len(self.alternativas["idOrden"].keys())):
@@ -192,7 +192,7 @@ class xmlEntrada:
                     contador+=1
                     pass
             listaDeListaDeDistractores.append(listaTemporal)
-        del listaTemporal
+        #del listaTemporal
         for lista in listaDeListaDeDistractores:
             #Se agrupan usando producto cartesiano, lo que no altera el orden
             for distractor in list(itertools.product(*lista)):

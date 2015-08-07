@@ -10,10 +10,6 @@
         <glosa>
       retorna una lista de strings usando como delimitador su argumento.
     </glosa>
-    <blank id="2">
-      <text>SI1</text>
-      <text>.SI2</text>
-    </blank>
   </enunciado>
   <opciones>
     <alternativa id="1" tipo="distractor">
