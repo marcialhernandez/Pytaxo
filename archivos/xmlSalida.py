@@ -18,7 +18,7 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import clases.alternativa as alternativa
+from clases import alternativa as ALT
 import clases.xmlEntrada as xmlEntrada
 import nombres, acceso, sys,hashlib, argparse, copy
 from xml.dom import minidom
@@ -423,6 +423,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         respuestas={}
         distractores={}
         idOrden={}
+        #spacer="-"
         contadorPosOrden=0
         contadorIDprovisorio=0
         presenciaBlank=False
@@ -538,7 +539,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 pozoPares=[]
                 pozoImpares=[]
                 for par in glosa.iter('par'):
-                    pozoPares.append(alternativa.alternativa(llaveTermino,'solucion',str(puntaje),par.text.rstrip()))
+                    pozoPares.append(ALT.alternativa(llaveTermino,'solucion',str(puntaje),par.text.rstrip()))
                 for inpar in glosa.iter('inpar'):
                     textoComentario=""
                     for comentario in inpar.iter('comentario'):
@@ -546,7 +547,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     #textoComentario=textoComentario.lstrip()
                     #agrego solo si existe el inpar
                     if bool(inpar.text.rstrip())==True:
-                        pozoImpares.append(alternativa.alternativa(llaveTermino,'distractor','0',inpar.text.rstrip(),comentario=textoComentario.rstrip()))
+                        pozoImpares.append(ALT.alternativa(llaveTermino,'distractor','0',inpar.text.rstrip(),comentario=textoComentario.rstrip()))
                 conjuntoTerminosPareados[definicion.rstrip()]=pozoPares
                 #No es necesario agregar una llave si no tiene impares
                 if len(pozoImpares)>0:
@@ -583,16 +584,16 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 if idAlternativa in conjuntoAlternativas.keys():
                     largoLista=len(conjuntoAlternativas[opcion.attrib['id']])
                     if tipoOpcion=="solucion":
-                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
+                        conjuntoAlternativas[opcion.attrib['id']].append(ALT.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
                     else:
-                        conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
+                        conjuntoAlternativas[opcion.attrib['id']].append(ALT.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=largoLista+1))
                 else:
                     conjuntoAlternativas[opcion.attrib['id']]=list()
                     try:
                         if opcion.attrib['tipo']=="solucion":
-                            conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
+                            conjuntoAlternativas[opcion.attrib['id']].append(ALT.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(puntaje),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1))
                         else:
-                            conjuntoAlternativas[opcion.attrib['id']].append(alternativa.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1)) 
+                            conjuntoAlternativas[opcion.attrib['id']].append(ALT.alternativa(opcion.attrib['id'],opcion.attrib['tipo'],str(0),glosaOpcion.text.rstrip(),comentario=comentarioAlternativa,numeracion=1)) 
                     except:
                         print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
                         exit()                    

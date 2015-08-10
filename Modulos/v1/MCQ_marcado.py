@@ -128,9 +128,9 @@ def retornaSignificadoSimbolo(simbolo,xmlEntradaObject,distractores,solucion):
         return list()
 
 def posiblesSolucionesYDistractoresConjunto(xmlEntradaObject,conjuntoTerminos):
-    salida=dict()
-    listaDeListaDeOpciones=list()
-    distractores=list()        
+    salida={}
+    listaDeListaDeOpciones=[]
+    distractores=[]  
     for cadaDefinicion in conjuntoTerminos:
         posiblesTerminos=list()
         for cadaTermino in xmlEntradaObject.alternativas['terminos'][cadaDefinicion]:
@@ -450,7 +450,7 @@ nombreCompilador="python"
 tipoPregunta='definicionPareada'
 listaXmlEntrada=list()
 #Limite experimental, lo ideal es que sea una entrada
-limiteGeneracion=1000
+limiteGeneracion=10
 
 # Almacenamiento usando el parser para este tipo de pregunta
 

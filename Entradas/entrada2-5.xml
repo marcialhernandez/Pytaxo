@@ -1,54 +1,53 @@
-<pregunta cantidadAlternativas="3" tipo="enunciadoIncompleto" idOrigenEntrada="2" puntaje="2">
+<pregunta cantidadAlternativas="4" tipo="enunciadoIncompleto" idOrigenEntrada="17" puntaje="2">
   <enunciado>
     <glosa>
-      Determine que alternativa satisface la ecuacion:
-      3 + 2 + 1
-    </glosa>
-    <blank id="1">
-      <text>( - )</text>
-    </blank>
-        <glosa>
-        5 + 4 % 2 - 1</glosa>
-        <blank id="2">
-      <text>( / )</text>
-    </blank>
-            <glosa>
-         4 + 6 = 7</glosa>
+Elija la alternativa correcta para que el siguiente Script
+muestre una lista con numeros enteros no divisibles por 5
+entre los numeros 34 y 50 (inclusivo).
+
+resultado=[]
+for numero in </glosa><blank id="1"><text>range(34, 51)</text></blank><glosa>
+:
+    if </glosa><blank id="2"><text>numero%5!=0</text></blank><glosa>
+:
+        resultado.append(str(numero))
+
+print ','.join(resultado)</glosa>
   </enunciado>
   <opciones>
     <alternativa id="1" tipo="distractor">
       <glosa id="1">
-        ( + ) 
+        range(33, 51)
         <comentario>
-        Incorrecto 
+          Incorrecto
          </comentario>
       </glosa>
       <glosa id="2">
-        ( * )
+        range(33, 50)
         <comentario>
         Incorrecto
         </comentario>
       </glosa>
       <glosa id="3">
-        ( / )
+        range(34, 50)
         <comentario>
         Incorrecto </comentario>
       </glosa>
     </alternativa>
     <alternativa id="2" tipo="distractor">
       <glosa id="6">
-        ( % )
+        numero%5=0
         <comentario>
         Incorrecto </comentario>
       </glosa>
           <glosa id="7">
-        ( * )
+        numero/5=0
         <comentario>
           Incorrecto
         </comentario>
       </glosa>
         <glosa id="8">
-        ( + ) 
+        numero/5!=0
         <comentario>
           Incorrecto
         </comentario>

@@ -1,0 +1,63 @@
+<pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="15" puntaje="2">
+	<!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+    -->
+	<codigo>
+		<python id="1">
+def raizCuadrada1(x):
+	return x**(1/2.0)
+			<nombreFuncionPrincipal>
+				raizCuadrada1
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="2">
+import math
+
+def raizCuadrada2(x):
+	return math.sqrt(x)
+			<nombreFuncionPrincipal>
+				raizCuadrada2
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="3">
+def raizCuadrada3(x):
+	return pow(x,.5)
+			<nombreFuncionPrincipal>
+				raizCuadrada3
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="4">
+def raizCuadrada4(x):
+	return x^(1/2.0)
+			<nombreFuncionPrincipal>
+				raizCuadrada4
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="5">
+import math
+
+def raizCuadrada5(x):
+	return sqrt(x)
+			<nombreFuncionPrincipal>
+				raizCuadrada5
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="6">
+def raizCuadrada6(x):
+	return pow(x,1/2)
+			<nombreFuncionPrincipal>
+				raizCuadrada6
+			</nombreFuncionPrincipal>
+		</python>
+		<entrada>
+			n=2
+		</entrada>
+		<comentario>
+			Calculo de la raiz cuadrada
+		</comentario>
+	</codigo>
+</pregunta>

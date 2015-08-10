@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="3" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
+<pregunta cantidadAlternativas="4" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
     <!--
     " :  &quot;
     ' :  &apos;
@@ -8,15 +8,17 @@
     -->
     <codigo>
         <python id="1">
-def fib2(n):
-    result = []
-    a, b = 0, 1
+def fibonacci(n):
+    resultado = []
+    a = 0
+    b = 1
     while b &lt; n:
-        result.append(b)
-        a, b = b, a+b
+        resultado.append(b)
+        a=b
+        b = a+b
     return result
             <nombreFuncionPrincipal>
-                fib2
+                fibonacci
             </nombreFuncionPrincipal>
             <lineaIterativa>
                 while b &lt; n:
@@ -33,9 +35,6 @@ def fib2(n):
             <cantidadCiclosConsulta>
                 6
             </cantidadCiclosConsulta>
-            <cantidadCiclosConsulta>
-                7
-            </cantidadCiclosConsulta>
             <entrada>
                 n=150
             </entrada>
@@ -47,23 +46,16 @@ def fib2(n):
             </comentario>
         </python>
 <python id="2">
-def permu(xs):
-    if xs:
-        r , h = [],[]
-        for x in xs:
-            if x not in h:
-                ts = xs[:]; ts.remove(x)
-                for p in permu(ts):
-                    r.append([x]+p)
-            h.append(x)
-        return r
+def inversor(entrada):
+    while len(entrada) > 0:
+        return entrada[-1]*2 + inversor(entrada[:-1])
     else:
-        return [[]]
+        return ""
             <nombreFuncionPrincipal>
-                permu
+                inversor
             </nombreFuncionPrincipal>
             <lineaIterativa>
-                for p in permu(ts):
+                while len(entrada) > 0:
             </lineaIterativa>
             <cantidadCiclosConsulta>
                 1
@@ -74,14 +66,23 @@ def permu(xs):
             <cantidadCiclosConsulta>
                 3
             </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                4
+            </cantidadCiclosConsulta>
+            <cantidadCiclosConsulta>
+                5
+            </cantidadCiclosConsulta>
             <entrada>
-                xs=[1,2,3]
+                entrada="profesor"
             </entrada>
             <entrada>
-                xs=[2,3]
+                entrada="fundamentos"
+            </entrada>
+            <entrada>
+                entrada="Hipotalamo"
             </entrada>
             <comentario>
-                Funcion que retorna la permutacion de una lista
+                Funcion que retorna el string de entrada de forma invertida 
             </comentario>
         </python>
     </codigo>

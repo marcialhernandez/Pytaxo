@@ -29,7 +29,7 @@ def funcionTest(dato):
 				valor=95
 			</entrada>
 			<comentario>
-				Funcion de Test, obtenida desde una pep de FCyP
+				Como no tiene valor de retorno, debiese retornar none.
 			</comentario>
 		</python>
 		<python id="2">
@@ -81,29 +81,68 @@ def calculaAck(m, n):
 				Calcula la funcion de Ackermann A(m, n)
 			</comentario>
 		</python>
-
-<python id="4">
-def calculaSen(x, order):
-    a = x
-    s = a
-    for i in range(1, order):
-        a *= -1 * x**2 / ((2 * i) * (2 * i + 1))
-        s += a
-    return s
+<python id="5">
+def confusionMatematica(x):
+    a=2**x*x**2
+    b=x/2+x/2.+x
+    
+    if a/2>b:
+        return 1
+    else:
+        return 0
 			<nombreFuncionPrincipal>
-				calculaSen
+				confusionMatematica
 			</nombreFuncionPrincipal>
 			<entrada>
-				x=0.4;order=5
+				x=1
 			</entrada>
 			<entrada>
-				x=0.3;order=4
+				x=-1
 			</entrada>
 			<entrada>
-				x=0.1;order=5
+				x=-2
+			</entrada>
+			<entrada>
+				x=0.5
+			</entrada>
+			<entrada>
+				x=2
 			</entrada>
 			<comentario>
-				Funcion que representa la serie de Taylor de order=order de Sen(x)
+				Funcion rara
+			</comentario>
+		</python>
+<python id="6">
+def confusionMatematica(x):
+    a=2**x*x**2
+    b=x/2+x/2.+x
+    x=b+x/2
+    a=a/x/.5
+
+    if a>x:
+        return 1
+    else:
+        return 0
+			<nombreFuncionPrincipal>
+				confusionMatematica
+			</nombreFuncionPrincipal>
+			<entrada>
+				x=1
+			</entrada>
+			<entrada>
+				x=-1
+			</entrada>
+			<entrada>
+				x=-2
+			</entrada>
+			<entrada>
+				x=0.5
+			</entrada>
+			<entrada>
+				x=2
+			</entrada>
+			<comentario>
+				Funcion rara
 			</comentario>
 		</python>
 	</codigo>
