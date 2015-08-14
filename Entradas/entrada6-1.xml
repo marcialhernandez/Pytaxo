@@ -5,74 +5,99 @@
     < :  &lt;
     > :  &gt;
     & :  &amp; 
+
+2. Utilizar estructuras de bifurcacion e iteracion.
+2.1. Hacer la traza de programas que usen estructuras de control respetando el ambito de las variables.
     -->
 <codigo>
 <python id="1">
-import math
+def eliminaCaracter (stringEntrada,posicion):
+    #Se convierte a una lista mutable
+    stringEntrada = list(stringEntrada)
+    
+    #Se elimina la posicion indicada
+    del stringEntrada[posicion]
+    
+    #Se unen los elementos de la lista formando un string
+    stringEntrada = "".join(stringEntrada)
+    
+    return stringEntrada
 
-def sieve(limite):
-    numerosPrimos = list(range(2,limite+1))
-    max = math.sqrt(limite)
-    num = 2
-    while num &lt; max:
-        i = num
-        while i &lt;= limite:
-            i += num
-            if i in numerosPrimos:
-                numerosPrimos.remove(i)
-        for j in numerosPrimos:
-            if j > num:
-                num = j
-                break           
-    return numerosPrimos
-<nombreFuncionPrincipal>sieve</nombreFuncionPrincipal>
-<lineaIterativa>while i &lt;= limite</lineaIterativa>
-<entrada>limite=8</entrada>
-<entrada>limite=12</entrada>
-<entrada>limite=14</entrada>
-<entrada>limite=15</entrada>
-<entrada>limite=18</entrada>
-<comentario>Funcion que retorna todos los numeros primos hasta n</comentario>
+def recorrePalabras( stringEntrada ):
+    contador=0
+    #Se obtiene largo de la palabra por cada iteracion
+    while contador &lt; len ( stringEntrada ) - 1 :
+        if stringEntrada[contador] == 'a' :
+            stringEntrada = eliminaCaracter (stringEntrada,contador) 
+            contador = contador + 2
+            if contador > len ( stringEntrada ) - 1:
+                contador = len ( stringEntrada ) - 1
+        elif stringEntrada[contador] == 'b' :
+            stringEntrada = eliminaCaracter (stringEntrada,contador) 
+            contador = contador - 1
+            if contador &lt; 0:
+                contador = 0
+        elif stringEntrada[contador] == 'c' :
+            stringEntrada = eliminaCaracter (stringEntrada,contador) 
+            contador = contador - 2
+            if contador &lt; 0 :
+                contador = 0
+        else:
+            contador = contador + 1
+    return "camino recorrido"
+<nombreFuncionPrincipal>recorrePalabras</nombreFuncionPrincipal>
+<lineaIterativa>while contador &lt; len ( stringEntrada ) - 1 :</lineaIterativa>
+<entrada>stringEntrada="azzazzzzzc"</entrada>
+<entrada>stringEntrada="afaabbbz"</entrada>
+<entrada>stringEntrada="abbabzzzz"</entrada>
+<comentario>Funcion que: 
+Adelanta 2 posiciones en caso que la letra sea 'a'
+Retrocede 1 posicion en caso que la letra sea 'b'
+Retrocede 2 posiciones en caso que la letra sea 'c'
+Adelanta 1 posicion en cualquier otro caso
+</comentario>
 </python>
 <python id="2">
 def consumeYProduce(stockInicial,stringEntrada):
-    productosProducidos=0
-    productosPorConsumir=0
-    productosDisponibles=stockInicial
-    posicionCinta=0
-    while posicionCinta!=len(stringEntrada):
+    productosProducidos = 0
+    productosPorConsumir = 0
+    productosDisponibles = stockInicial
+    posicionCinta = 0
+    while posicionCinta != len(stringEntrada) :
             
-        if productosPorConsumir>0 and productosDisponibles>0:
-            productosPorConsumir=productosPorConsumir-1
-            productosDisponibles=productosDisponibles-1
+        if productosPorConsumir > 0 and productosDisponibles > 0:
+            productosPorConsumir = productosPorConsumir - 1
+            productosDisponibles = productosDisponibles - 1
 
-        if stringEntrada[posicionCinta]=='c':
-            if productosDisponibles==0:
-                productosPorConsumir=productosPorConsumir+1
+        if stringEntrada[posicionCinta] == 'c':
+            if productosDisponibles == 0:
+                productosPorConsumir = productosPorConsumir + 1
             else:
-                productosDisponibles=productosDisponibles-1
-            #posicionCinta=posicionCinta+1
-        
+                productosDisponibles = productosDisponibles - 1        
         else:
+            productosDisponibles = productosDisponibles + 1
+            productosProducidos = productosProducidos + 1
 
-            productosDisponibles=productosDisponibles+1
-            productosProducidos=productosProducidos+1
-            #posicionCinta=posicionCinta+1   
-        posicionCinta=posicionCinta+1
+        posicionCinta = posicionCinta + 1
         
-        if posicionCinta==len(stringEntrada) and productosPorConsumir>0:
-            productosDisponibles=productosDisponibles+len(stringEntrada)/2+1
-            posicionCinta=0
+        if posicionCinta == len(stringEntrada) and productosPorConsumir > 0:
+            productosDisponibles = productosDisponibles + len(stringEntrada) / 2 + 1
+            posicionCinta = 0
                 
     return productosProducidos
 <nombreFuncionPrincipal>consumeYProduce</nombreFuncionPrincipal>
-<lineaIterativa>posicionCinta!=len(stringEntrada)</lineaIterativa>
+<lineaIterativa>while posicionCinta != len(stringEntrada) :</lineaIterativa>
 <entrada>stockInicial=0;stringEntrada="ppcc"</entrada>
 <entrada>stockInicial=0;stringEntrada="ppccc"</entrada>
 <entrada>stockInicial=1;stringEntrada="ppcccc"</entrada>
 <entrada>stockInicial=2;stringEntrada="ppcccc"</entrada>
 <entrada>stockInicial=0;stringEntrada="pccc"</entrada>
-<comentario>Funcion que itera sobre el string hasta que no tenga deuda</comentario>
+<comentario>Funcion que itera sobre el string hasta que no tenga deuda
+En caso que la letra sea c: consume 1. Si no hay stock, genera deuda
+En caso contrario, produce 1.
+Si al terminar de leer el string tiene deuda, se agrega un stock igual a
+la mitad del largo del string + 1
+</comentario>
 </python>
 </codigo>
 </pregunta>

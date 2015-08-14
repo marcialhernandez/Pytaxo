@@ -18,7 +18,7 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import itertools, hashlib, copy
+import itertools, hashlib, copy, textwrap
 from archivos import nombres
 from clases import alternativa
 
@@ -58,6 +58,8 @@ class xmlEntrada:
             #secuencial
             self.enunciado=kwargs['enunciado']
             self.id=hashlib.sha256(self.enunciado).hexdigest()
+            self.caracterResaltador=kwargs['caracterResaltador']
+            self.caracterSeparador=kwargs['caracterSeparador']
             #self.id=hashlib.sha256(self.enunciadoIncompleto).hexdigest()
             #Lista donde cada elemento son las respuestas del enunciado
             #ordenadas de forma secuencial
@@ -145,7 +147,7 @@ class xmlEntrada:
         #print len(listaDeAlternativasValidas)
         return listaDeAlternativasValidas
     
-    def agrupamientoEnunciadoIncompleto(self,cantidadAlternativas):
+    def agrupamientoEnunciadoIncompleto(self,cantidadAlternativas,caracterSeparador,caracterResaltador):
         if cantidadAlternativas<=1:
             return []
         distractores=[]
@@ -154,8 +156,6 @@ class xmlEntrada:
         listaDeAlternativasValidas=[]
         listaDeListaDeDistractores=[]
         #forma de invertir un diccionario : dict(zip(map.values(), map.keys()))
-        #print self.alternativas["respuestas"]
-        #print self.alternativas["distractores"]
         #Con idOrden, las listas 
         #Aseguro el orden a medida que se agregan las listas
         combinacionesListas=list(itertools.product([0, 1], repeat=len(self.alternativas["idOrden"].keys())))
@@ -218,8 +218,14 @@ class xmlEntrada:
                 else:
                     llave.append(str(opcion[0])+'.'+str(opcion[1]["id"]))
                     comentario.append(str(opcion[1]["comentario"]))
-                glosa.append(opcion[1]["glosa"])
-            alternativasDistractoras.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"-".join(glosa),comentario='-'.join(comentario)))
+                if caracterResaltador=="":
+                    glosa.append(opcion[1]["glosa"])
+                else:
+                    glosa.append(caracterResaltador+opcion[1]["glosa"]+caracterResaltador)
+            if caracterSeparador in ["/n","saltoCarro", "breakline"]:
+                alternativasDistractoras.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"<BR>".join(glosa),comentario='-'.join(comentario)))
+            else:
+                alternativasDistractoras.append(alternativa.alternativa("-".join(llave),tipo,puntaje,caracterSeparador.join(glosa),comentario='-'.join(comentario)))
         #Lista de alternativas solucion
         del distractores
         #for distractor in alternativasDistractoras:
@@ -233,9 +239,16 @@ class xmlEntrada:
             glosa=[]
             for opcion in solucion:
                 llave.append(str(opcion[0])+'.'+opcion[1]["glosa"])
-                glosa.append(opcion[1]["glosa"])
-            alternativasCorrectas.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"-".join(glosa)))
+                if caracterResaltador=="":
+                    glosa.append(opcion[1]["glosa"])
+                else:
+                    glosa.append(caracterResaltador+opcion[1]["glosa"]+caracterResaltador)
+            if caracterSeparador in ["/n","saltoCarro", "breakline"]:
+                alternativasCorrectas.append(alternativa.alternativa("-".join(llave),tipo,puntaje,"<BR>".join(glosa)))
+            else:   
+                alternativasCorrectas.append(alternativa.alternativa("-".join(llave),tipo,puntaje,caracterSeparador.join(glosa)))
         #desocupo memoria
+        #<br />
         del listaDeDistractores
         del listaDeSoluciones
         del listaDeAlternativasValidas

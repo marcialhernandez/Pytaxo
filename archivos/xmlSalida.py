@@ -427,12 +427,39 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         contadorPosOrden=0
         contadorIDprovisorio=0
         presenciaBlank=False
-        enunciadoIncompleto=list()
+        enunciadoIncompleto=[]
         idActual=""
+        banderaPrimeraGlosa=True
+        caracterEspaciador="@" #por cada caracter espaciador en el contenido, lo reemplazara por 4 espacios
+        caracterSeparador="-" #es aquel que separa las alternativas
+        caracterResaltador="" #es aquel que rodea las alternativas
+        largoBlank=15
+        ##Obtencion de parametros propios de modulo enunciadoIncompleto
+        try:
+            caracterResaltador=str(subRaiz.attrib['caracterResaltador'])
+        except:
+            caracterResaltador=""
+        try:
+            caracterSeparador=str(subRaiz.attrib['caracterSeparador'])
+        except:
+            caracterSeparador="-"
+        try:
+            caracterEspaciador=str(subRaiz.attrib['caracterEspaciador'])
+        except:
+            caracterEspaciador="@"
+        try:
+            largoBlank=int((subRaiz.attrib['largoBlank']))
+        except:
+            largoBlank=15
+        ############################################################
         for subRaiz in raizXmlEntrada.iterfind('enunciado'):
             for parteEnunciado in subRaiz:
                 if parteEnunciado.tag=='glosa':
-                    enunciadoIncompleto.append(parteEnunciado.text.rstrip().lstrip())
+                    if banderaPrimeraGlosa==True:
+                        enunciadoIncompleto.append(parteEnunciado.text.rstrip().lstrip())
+                        banderaPrimeraGlosa=False
+                    else:
+                        enunciadoIncompleto.append(parteEnunciado.text)
                 if parteEnunciado.tag=='blank':
                     #####
                     try:
@@ -448,19 +475,19 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                             print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank sin ID"
                             exit()
                         ####
-                    largoCadenaBlank=0
                     for textoBlank in parteEnunciado.iterfind('text'):
-                        largoBlank=len(textoBlank.text.rstrip().lstrip())
+                        #largoBlank=len(textoBlank.text.rstrip().lstrip())
                         respuestas[idActual].append({"glosa":textoBlank.text.rstrip().lstrip(),"tipo":"solucion"})
                         presenciaBlank=True
-                        if largoBlank>largoCadenaBlank:
-                            largoCadenaBlank=largoBlank
+                        #if largoBlank>largoCadenaBlank:
+                        #    largoCadenaBlank=largoBlank
                     if presenciaBlank==False:
                         print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
                         exit()
-                    enunciadoIncompleto.append('_'*largoCadenaBlank)
+                    enunciadoIncompleto.append('_'*largoBlank)
                     presenciaBlank=False         
         enunciado=' '.join(enunciadoIncompleto)
+        enunciado=enunciado.replace(caracterEspaciador,"&emsp;"*4)
         for opcion in raizXmlEntrada.iterfind('opciones'):
             
             for alternativa in opcion.iterfind('alternativa'):
@@ -495,7 +522,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         conjuntoAlternativas["distractores"]=distractores
         #tabla hash que indica el orden de aparicion de los blank sin importar la id
         conjuntoAlternativas["idOrden"]=idOrden
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada, caracterResaltador=caracterResaltador, caracterSeparador=caracterSeparador)
         #alternativaSolucion=list()
         #alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
         #conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion

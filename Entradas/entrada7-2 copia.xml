@@ -1,63 +1,74 @@
 <pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="15" puntaje="2">
 	<!--
-    " :  &quot;
-    ' :  &apos;
-    < :  &lt;
-    > :  &gt;
-    & :  &amp; 
+
+1.3. Distingue conceptos asociados a operaciones aritmeticas
+
+(expresion, operando, operador, variable, constante, funcion nativa,
+funcion importada, tipo de dato, alcance, etc.)
+
+Enunciado:
+
+Para calcular el roce de un carro en movimiento horizontal se usa la segunda ley de newton que es:
+
+fuerza Total = masa * aceleracion
+
+Para el caso del carro, esta es:
+
+fuerzaEmpujeHorizontal - roce = masa * aceleracion
+
+Indique las funciones que calculan correctamente el roce del carro si:
+
+@entrada.
     -->
 	<codigo>
 		<python id="1">
-def raizCuadrada1(x):
-	return x**(1/2.0)
+def masaPorAceleracion(masa , aceleracion):
+    return masa * aceleracion
+
+def roce(fuerzaEmpujeHorizontal , masa , aceleracion):
+    return fuerzaEmpujeHorizontal - masaPorAceleracion(masa, aceleracion)
 			<nombreFuncionPrincipal>
-				raizCuadrada1
+				roce
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="2">
-import math
-
-def raizCuadrada2(x):
-	return math.sqrt(x)
+def roce2(fuerzaEmpujeHorizontal , masa , aceleracion):
+    roce = fuerzaEmpujeHorizontal - roce - masa * aceleracion
+    return roce
 			<nombreFuncionPrincipal>
-				raizCuadrada2
+				roce2
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="3">
-def raizCuadrada3(x):
-	return pow(x,.5)
+def masaPorAceleracion(masa , aceleracion):
+    return masa * aceleracion
+
+def roce3(fuerzaEmpujeHorizontal , aceleracion, masa):
+    return fuerzaEmpujeHorizontal - masaPorAceleracion(aceleracion, masa)
 			<nombreFuncionPrincipal>
-				raizCuadrada3
+				roce3
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="4">
-def raizCuadrada4(x):
-	return x^(1/2.0)
+def roce4(fuerzaEmpujeHorizontal , masa , aceleracion):
+    return fuerzaEmpujeHorizontal - masa * aceleracion
 			<nombreFuncionPrincipal>
-				raizCuadrada4
-			</nombreFuncionPrincipal>
-		</python>
-		<python id="5">
-import math
-
-def raizCuadrada5(x):
-	return sqrt(x)
-			<nombreFuncionPrincipal>
-				raizCuadrada5
-			</nombreFuncionPrincipal>
-		</python>
-		<python id="6">
-def raizCuadrada6(x):
-	return pow(x,1/2)
-			<nombreFuncionPrincipal>
-				raizCuadrada6
+				roce4
 			</nombreFuncionPrincipal>
 		</python>
 		<entrada>
-			n=2
+			fuerzaEmpujeHorizontal=80;masa=25;aceleracion=0.5
+		</entrada>
+		<entrada>
+			fuerzaEmpujeHorizontal=70;masa=25;aceleracion=0.4
+		</entrada>
+		<entrada>
+			fuerzaEmpujeHorizontal=60;masa=20;aceleracion=0.3
+		</entrada>
+		<entrada>
+			fuerzaEmpujeHorizontal=80;masa=15;aceleracion=0.5
 		</entrada>
 		<comentario>
-			Calculo de la raiz cuadrada
 		</comentario>
 	</codigo>
 </pregunta>

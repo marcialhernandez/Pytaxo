@@ -114,9 +114,9 @@ def confusionMatematica(x):
 		</python>
 <python id="6">
 def confusionMatematica(x):
-    a=2**x*x**2
-    b=x/2+x/2.+x
-    x=b+x/2
+    a = 2 ** x * x ** 2
+    b = x / 2 + x / 2. + x
+    x= b + x / 2
     a=a/x/.5
 
     if a>x:

@@ -49,8 +49,10 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     for subRaizSalida in plantillaSalida.iter():
         if subRaizSalida.tag=='questiontext':
             for elem in subRaizSalida.iterfind('text'):
-                elem.text=xmlEntradaObject.enunciado
-    for conjuntoAlternativas in xmlEntradaObject.agrupamientoEnunciadoIncompleto(cantidadAlternativas):
+                #elem.text=xmlEntradaObject.enunciado
+                elem.append(ET.Comment((' --><![CDATA[' + ("<p>"+xmlEntradaObject.enunciado+"</p>").replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+
+    for conjuntoAlternativas in xmlEntradaObject.agrupamientoEnunciadoIncompleto(cantidadAlternativas,xmlEntradaObject.caracterSeparador,xmlEntradaObject.caracterResaltador):
         pass
         #Se concatena el texto de todas las alternativas
         glosasAlternativas=[]
@@ -63,7 +65,8 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
             opcion = ET.SubElement(plantillaSalida, 'answer')
             opcion.set('fraction',str(alternativa.puntaje))
             opcionText=ET.SubElement(opcion, 'text')
-            opcionText.text=alternativa.glosa
+            opcionText.append(ET.Comment((' --><![CDATA[' + ('<pre><code class="inline">'+alternativa.glosa+"</code></pre>").replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+            #opcionText.text=alternativa.glosa
             glosasAlternativas.append(alternativa.glosa)
             identificadorPregunta.append(alternativa.llave)
             feedback=ET.SubElement(opcion, 'feedback')

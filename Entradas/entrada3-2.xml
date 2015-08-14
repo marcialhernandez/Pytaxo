@@ -1,31 +1,37 @@
 <?xml version='1.0' encoding='utf-8'?>
 <pregunta puntaje="2" tipo="definicionPareada" idOrigenEntrada="9" cantidadAlternativas="5" composicionDistractores="1+3" ordenDistractores="alfabeticocreciente" ordenTerminos="alfabeticocreciente" cantidadCombinacionesDefiniciones="1" parcialScore="si">
+    <!--
+1.2. Distingue conceptos asociados a lenguajes de programacion 
+(errores sintacticos y semanticos, compiladores e interpretes, lenguajes de alto y bajo nivel, etc.)
+    -->
 <definiciones>
 <glosa id="1">La x de f(x) es
 <par>Parametro Formal</par>
 <inpar>Parametro Actual
 <comentario>Es el valor que toma x en tiempo de ejecucion</comentario></inpar>
 </glosa>
-<glosa id="2">Devuelve un valor ingresado por teclado
+<glosa id="2">Tipo de dato que evita la densidad del conjunto de los reales mediante la aproximacion
+<par>Numero de punto flotante</par>
+<inpar>Numero entero
+<comentario>No representa a todo el conjunto de los reales</comentario></inpar>
+<inpar>Entero largo (Long)
+<comentario>No representa a todo el conjunto de los reales</comentario></inpar>
+</glosa>
+<glosa id="3">Error sintactico
+<par>No escribir ':' despues de una condicion de la sentencia 'if'</par>
+<par>Escribir printf 'hola mundo' en vez de print 'hola mundo'</par>
+<inpar>Sumar un String con un numero
+<comentario>Error semantico</comentario></inpar>
+<inpar>Dividir un numero por cero
+<comentario>Error semantico</comentario></inpar>
+</glosa>
+<glosa id="4">Devuelve un valor ingresado por teclado
 <par>input()</par>
 <par>raw_input()</par>
 <inpar>scan()
 <comentario>No existe</comentario></inpar>
 <inpar>scan_input()
 <comentario>No existe</comentario></inpar>
-</glosa>
-<glosa id="3">La utilizacion de un simbolo, funcion o variable, con mas de un uso como
-<par>Sobrecarga</par>
-<inpar>SobrePeso
-<comentario>No existe</comentario></inpar>
-<inpar>Encapsulamiento
-<comentario>Separacion de funciones de scripts de forma independiente</comentario></inpar>
-</glosa>
-<glosa id="4">coleccion de datos (items) no necesariamente ordenados, donde los datos (valores) son recuperados a traves de una llave.
-<par>Tabla Hash</par>
-<par>Diccionario</par>
-<inpar>Lista
-<comentario>No es necesaria la llave para recuperar su valor</comentario></inpar>
 </glosa>
 <glosa id="5">Lenguaje de Alto nivel
 <par>Python</par>
@@ -34,14 +40,6 @@
 <comentario>Lenguaje de bajo nivel</comentario></inpar>
 <inpar>Ensamblador
 <comentario>Lenguaje de bajo nivel</comentario></inpar>
-</glosa>
-<glosa id="6">Dispositivo de entrada y Salida
-<par>Pantalla tactil</par>
-<par>Joystick vibrante</par>
-<inpar>Raton
-<comentario>Solo de entrada</comentario></inpar>
-<inpar>Impresora
-<comentario>Solo de salida</comentario></inpar>
 </glosa>
 </definiciones>
 </pregunta>

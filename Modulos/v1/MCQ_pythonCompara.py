@@ -118,7 +118,7 @@ def generaGlosaEntradas(listaEntradasBrutas):
         contador=0
         for entrada in listaEntradas:
             if contador==0:
-                glosaIntermedia+="las entradas "+entrada
+                glosaIntermedia+="las entradas son: "+entrada
                 contador+=1
             else:
                 if contador==cantidadEntradas-1:

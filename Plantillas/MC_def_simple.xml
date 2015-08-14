@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plantilla tipo="definicion" taxo="recordar">
 <enunciado>
-    <glosa>En el ambito informatico, ¿ que quiere decir el termino</glosa>
+    <glosa>Indique la alternativa que menciona la funcionalidad de la funcion operacion(a,b):
+    </glosa>
     <termino></termino>
-    <glosa>?</glosa>
 </enunciado>
 </plantilla>

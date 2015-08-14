@@ -8,23 +8,35 @@
     -->
     <codigo>
         <python id="1">
-def fibonacci(n):
-    resultado = []
-    a = 0
-    b = 1
-    while b &lt; n:
-        resultado.append(b)
-        a=b
-        b = a+b
-    return result
+def analizaPalabra(stringEntrada):
+    sumaNumeros = 0
+    letrasConsonantes = 0
+    cuentaArrobas = 0
+    cuentaCeros = 0
+    for caracter in stringEntrada:
+        if caracter.isdigit() == True:
+            if caracter != '0' :
+                sumaNumeros = sumaNumeros + int(caracter)
+                stringEntrada = stringEntrada + '0'
+            else:
+                cuentaCeros = cuentaCeros + 1
+        else:
+            if caracter in "aeiouAEIUO" :
+                sumaNumeros = sumaNumeros + 1
+                stringEntrada = stringEntrada + '@'
+            elif caracter != '@' :
+                letrasConsonantes = letrasConsonantes + 1
+            else:
+                cuentaArrobas = cuentaArrobas + 1
+    return 'sumaNumeros=' + str(sumaNumeros) + ' - consonantes=' + str(letrasConsonantes)
             <nombreFuncionPrincipal>
-                fibonacci
+                analizaPalabra
             </nombreFuncionPrincipal>
             <lineaIterativa>
-                while b &lt; n:
+                for caracter in stringEntrada:
             </lineaIterativa>
             <cantidadCiclosConsulta>
-                4
+                1
             </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
                 3
@@ -36,19 +48,20 @@ def fibonacci(n):
                 6
             </cantidadCiclosConsulta>
             <entrada>
-                n=150
+                stringEntrada="12345acvbfei"
             </entrada>
             <entrada>
-                n=250
+                stringEntrada="12923ac00vbfei@"
             </entrada>
             <comentario>
-                Retorna la lista de numeros de Fibonacci hasta n
+                Analiza el contenido del String de entrada y cambia el largo 
+                de este agregando '0' y '@' dependiendo del contenido.
             </comentario>
         </python>
 <python id="2">
-def inversor(entrada):
+def inversor (entrada) :
     while len(entrada) > 0:
-        return entrada[-1]*2 + inversor(entrada[:-1])
+        return entrada[-1] * 2 + inversor(entrada[:-1])
     else:
         return ""
             <nombreFuncionPrincipal>
