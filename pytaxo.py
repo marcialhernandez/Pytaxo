@@ -20,7 +20,9 @@ University of Santiago, Chile (Usach)"""
 
 import argparse
 import os, sys
+reload(sys)
 sys.path.insert(0, os.getcwd())
+sys.setdefaultencoding('utf8')
 import archivos.acceso as acceso
 import archivos.nombres as nombres
 from clases import item

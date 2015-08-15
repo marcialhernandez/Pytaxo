@@ -22,36 +22,37 @@ Indique las funciones que calculan correctamente el roce del carro si:
     -->
 	<codigo>
 		<python id="1">
-def masaPorAceleracion(masa , aceleracion):
+def masaPorAceleracion(masa, aceleracion):
     return masa * aceleracion
 
-def roce(fuerzaEmpujeHorizontal , masa , aceleracion):
+def roce(fuerzaEmpujeHorizontal, masa, aceleracion):
     return fuerzaEmpujeHorizontal - masaPorAceleracion(masa, aceleracion)
 			<nombreFuncionPrincipal>
 				roce
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="2">
-def roce2(fuerzaEmpujeHorizontal , masa , aceleracion):
-    roce = fuerzaEmpujeHorizontal - roce - masa * aceleracion
+def roce2(fuerzaEmpujeHorizontal, masa, aceleracion):
+    roce = fuerzaEmpujeHorizontal - masa * aceleracion
     return roce
 			<nombreFuncionPrincipal>
 				roce2
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="3">
-def masaPorAceleracion(masa , aceleracion):
+def masaPorAceleracion(masa, aceleracion):
     return masa * aceleracion
 
-def roce3(fuerzaEmpujeHorizontal , aceleracion, masa):
+def roce3(fuerzaEmpujeHorizontal, aceleracion, masa):
     return fuerzaEmpujeHorizontal - masaPorAceleracion(aceleracion, masa)
 			<nombreFuncionPrincipal>
 				roce3
 			</nombreFuncionPrincipal>
 		</python>
 		<python id="4">
-def roce4(fuerzaEmpujeHorizontal , masa , aceleracion):
-    return fuerzaEmpujeHorizontal - masa * aceleracion
+def roce4(fuerzaEmpujeHorizontal, masa, aceleracion):
+    roce = masa - fuerzaEmpujeHorizontal * aceleracion
+    return roce
 			<nombreFuncionPrincipal>
 				roce4
 			</nombreFuncionPrincipal>
@@ -61,12 +62,6 @@ def roce4(fuerzaEmpujeHorizontal , masa , aceleracion):
 		</entrada>
 		<entrada>
 			fuerzaEmpujeHorizontal=70;masa=25;aceleracion=0.4
-		</entrada>
-		<entrada>
-			fuerzaEmpujeHorizontal=60;masa=20;aceleracion=0.3
-		</entrada>
-		<entrada>
-			fuerzaEmpujeHorizontal=80;masa=15;aceleracion=0.5
 		</entrada>
 		<comentario>
 		</comentario>

@@ -22,6 +22,8 @@ from clases import alternativa as ALT
 import clases.xmlEntrada as xmlEntrada
 import nombres, acceso, sys,hashlib, argparse, copy
 from xml.dom import minidom
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 try:
     import xml.etree.cElementTree as ET
@@ -184,6 +186,7 @@ def analizadorComparacion(raizXmlEntrada):
     return listaCodigosPorEntrada, comentarios
 
 def analizadorIteracion(raizXmlEntrada):
+    posiblesEntradasHidden=["si","SI","True","true","1","TRUE","Si"]
     contadorIDprovisorio=0
     listaIDOcupadas=[]
     listaCodigosPython=list()
@@ -199,77 +202,96 @@ def analizadorIteracion(raizXmlEntrada):
     #aqui se crea el trazador de funciones en el mismo directorio temporal en donde se
     #pondran las demas funciones python
     #archivoTracer=acceso.make_traceFuntionsFile(contenido)
-    for subRaiz in raizXmlEntrada.iter("codigo"):
-        for codigoPython in subRaiz:
-            if codigoPython.tag=='python':
-                dicCodigoPython=dict()
-                dicCodigoPython["cantidadCiclosConsulta"]=list()
+    for subRaiz in raizXmlEntrada.iterfind("codigo"):
+        atributoHidden=False
+        for codigoPython in subRaiz.iterfind("python"):
+            dicCodigoPython=dict()
+            dicCodigoPython["cantidadCiclosConsulta"]=list()
+            ####Lo que se evalua
+            dicCodigoPython["codigoBruto"]=[]
+            ####Lo que se muestra
+            dicCodigoPython["codigoEnunciado"]=[]
+            for textoCodigo in codigoPython.iterfind("text"):
                 try:
-                    if not codigoPython.attrib["id"] in listaIDOcupadas:
-                        dicCodigoPython["id"]=codigoPython.attrib['id']
-                        listaIDOcupadas.append(dicCodigoPython["id"])
+                    if textoCodigo.attrib['hidden'] in posiblesEntradasHidden:
+                        atributoHidden=True
                     else:
-                        temp=""
-                        dicCodigoPython["id"]=codigoPython.attrib['id']
-                        while dicCodigoPython["id"] in listaIDOcupadas:
-                            temp=dicCodigoPython["id"]
-                            dicCodigoPython["id"]="D_"+dicCodigoPython["id"]
-                        print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+dicCodigoPython["id"]
-                        listaIDOcupadas.append(dicCodigoPython["id"])   
+                        atributoHidden=False
                 except:
-                    dicCodigoPython["id"]="null_"+str(contadorIDprovisorio)
-                    print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+dicCodigoPython["id"]
+                    atributoHidden=False
+                if atributoHidden==True:
+                    dicCodigoPython["codigoBruto"].append(textoCodigo.text.rstrip().lstrip())
+                else:
+                    dicCodigoPython["codigoBruto"].append(textoCodigo.text.rstrip().lstrip())
+                    dicCodigoPython["codigoEnunciado"].append(textoCodigo.text.rstrip().lstrip())
+            dicCodigoPython["codigoBruto"]="\n\n".join(dicCodigoPython["codigoBruto"])
+            dicCodigoPython["codigoEnunciado"]="\n\n".join(dicCodigoPython["codigoEnunciado"])
+            try:
+                if not codigoPython.attrib["id"] in listaIDOcupadas:
+                    dicCodigoPython["id"]=codigoPython.attrib['id']
                     listaIDOcupadas.append(dicCodigoPython["id"])
-                    contadorIDprovisorio+=1
-                dicCodigoPython["entradas"]=list()
-                dicCodigoPython["entradasBruto"]=list()
-                comentariosCodigo=""
-                dicCodigoPython["cantidadCiclosConsulta"]=list()
-                for subRaizCodigo in codigoPython:
-                    if subRaizCodigo.tag=='nombreFuncionPrincipal':
-                        dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text.rstrip().lstrip()
-                    elif subRaizCodigo.tag=='entrada':
-                        dicCodigoPython["entradasBruto"].append(subRaizCodigo.text.rstrip().lstrip())
-                        listaValores=list()
-                        try:
-                            entradaParseada=subRaizCodigo.text.split(';')
-                        except:
-                            print "Error 10: Una o mas entradas son invalidas en una de las entradas de la funciones Python adjuntas"
-                            entradaParseada=""
-                        for entradaTemp in entradaParseada:
-                            listaValores.append(entradaTemp.split('=')[-1])
-                        listaValores=','.join(listaValores)
-                        dicCodigoPython["entradas"].append(listaValores)
-                #No se valida si es numero la entrada
-                    elif subRaizCodigo.tag=='cantidadCiclosConsulta':
-                        dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text.rstrip().lstrip())
-                    elif subRaizCodigo.tag=='lineaIterativa':
-                        dicCodigoPython["lineaIterativa"]=subRaizCodigo.text.rstrip().lstrip()
-                    elif subRaizCodigo.tag=='comentario':
-                        comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text.rstrip().lstrip()
-                stringFuncionEntrada=list()
-                dicCodigoPython["codigo"]=list()
-                for entrada in dicCodigoPython["entradas"]:
+                else:
+                    temp=""
+                    dicCodigoPython["id"]=codigoPython.attrib['id']
+                    while dicCodigoPython["id"] in listaIDOcupadas:
+                        temp=dicCodigoPython["id"]
+                        dicCodigoPython["id"]="D_"+dicCodigoPython["id"]
+                    print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+dicCodigoPython["id"]
+                    listaIDOcupadas.append(dicCodigoPython["id"])   
+            except:
+                dicCodigoPython["id"]="null_"+str(contadorIDprovisorio)
+                print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+dicCodigoPython["id"]
+                listaIDOcupadas.append(dicCodigoPython["id"])
+                contadorIDprovisorio+=1
+            dicCodigoPython["entradas"]=list()
+            dicCodigoPython["entradasBruto"]=list()
+            comentariosCodigo=""
+            dicCodigoPython["cantidadCiclosConsulta"]=list()
+            for subRaizCodigo in codigoPython:
+                if subRaizCodigo.tag=='nombreFuncionPrincipal':
+                    dicCodigoPython["nombreFuncionPrincipal"]=subRaizCodigo.text.rstrip().lstrip()
+                elif subRaizCodigo.tag=='entrada':
+                    dicCodigoPython["entradasBruto"].append(subRaizCodigo.text.rstrip().lstrip())
+                    listaValores=list()
                     try:
-                        funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                        entradaParseada=subRaizCodigo.text.split(';')
                     except:
-                        print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
-                        exit()
-                    stringFuncionEntrada.append(funcionEntrada)
-                    codigoPyConEntrada=acceso.make_tempPython2(codigoPython.text.rstrip().lstrip(), funcionTracer, testEstandar, funcionEntrada)
-                    dicCodigoPython["codigo"].append(codigoPyConEntrada)
-                dicCodigoPython["codigoBruto"]=codigoPython.text.rstrip().lstrip()
-                if len(str(dicCodigoPython["codigoBruto"]))<5:
-                    print "Error 12: Una o mas entradas no contienen codigo python adjunto y se han omitido"
-                    continue
-                dicCodigoPython["comentarios"]=comentariosCodigo
-                #Lista de diccionarios que contiene info del codigo python incrustado
-                #cada diccionario contiene:
-                #"codigo": archivo temporal con codigo python,
-                #"entrada": lista con las entradas que se quieren ingresar al codigo
-                #"comentario": string que tiene concatenado todos los comentarios
-                #print dicCodigoPython
-                listaCodigosPython.append(dicCodigoPython)
+                        print "Error 10: Una o mas entradas son invalidas en una de las entradas de la funciones Python adjuntas"
+                        entradaParseada=""
+                    for entradaTemp in entradaParseada:
+                        listaValores.append(entradaTemp.split('=')[-1])
+                    listaValores=','.join(listaValores)
+                    dicCodigoPython["entradas"].append(listaValores)
+            #No se valida si es numero la entrada
+                elif subRaizCodigo.tag=='cantidadCiclosConsulta':
+                    dicCodigoPython["cantidadCiclosConsulta"].append(subRaizCodigo.text.rstrip().lstrip())
+                elif subRaizCodigo.tag=='lineaIterativa':
+                    dicCodigoPython["lineaIterativa"]=subRaizCodigo.text.rstrip().lstrip()
+                elif subRaizCodigo.tag=='comentario':
+                    comentariosCodigo=comentariosCodigo+" "+subRaizCodigo.text.rstrip().lstrip()
+            stringFuncionEntrada=list()
+            dicCodigoPython["codigo"]=list()
+            for entrada in dicCodigoPython["entradas"]:
+                try:
+                    funcionEntrada=dicCodigoPython["nombreFuncionPrincipal"]+'('+entrada+')'
+                except:
+                    print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
+                    exit()
+                stringFuncionEntrada.append(funcionEntrada)
+                codigoPyConEntrada=acceso.make_tempPython2(dicCodigoPython["codigoBruto"], funcionTracer, testEstandar, funcionEntrada)
+                dicCodigoPython["codigo"].append(codigoPyConEntrada)
+            #dicCodigoPython["codigoBruto"]=codigoPython.text.rstrip().lstrip()
+            if len(str(dicCodigoPython["codigoBruto"]))<5:
+                print "Error 12: Una o mas entradas no contienen codigo python adjunto y se han omitido"
+                continue
+            dicCodigoPython["comentarios"]=comentariosCodigo
+            #Lista de diccionarios que contiene info del codigo python incrustado
+            #cada diccionario contiene:
+            #"codigo": archivo temporal con codigo python,
+            #"entrada": lista con las entradas que se quieren ingresar al codigo
+            #"comentario": string que tiene concatenado todos los comentarios
+            #print dicCodigoPython
+            listaCodigosPython.append(dicCodigoPython)
     #Para eliminar el archivo temporal
     #os.unlink(dicCodigoPython["codigo"].name) 
     return listaCodigosPython

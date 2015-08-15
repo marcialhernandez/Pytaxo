@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plantilla tipo="pythonIterativoInvertido" taxo="comprender">
 <enunciado>
-    <glosa>Indique cuantas iteraciones realiza la linea "@iteracion" de la funcion @funcionPrincipal con @entrada</glosa>
+    <glosa>Indique cuantas iteraciones realiza la línea "@iteracion" de la función @funcionPrincipal con @entrada</glosa>
 </enunciado>
 </plantilla>

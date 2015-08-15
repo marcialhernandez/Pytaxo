@@ -8,6 +8,7 @@
     -->
     <codigo>
         <python id="1">
+<text>
 def analizaPalabra(stringEntrada):
     sumaNumeros = 0
     letrasConsonantes = 0
@@ -28,7 +29,7 @@ def analizaPalabra(stringEntrada):
                 letrasConsonantes = letrasConsonantes + 1
             else:
                 cuentaArrobas = cuentaArrobas + 1
-    return 'sumaNumeros=' + str(sumaNumeros) + ' - consonantes=' + str(letrasConsonantes)
+    return 'sumaNumeros=' + str(sumaNumeros) + ' - consonantes=' + str(letrasConsonantes)</text>
             <nombreFuncionPrincipal>
                 analizaPalabra
             </nombreFuncionPrincipal>
@@ -36,16 +37,10 @@ def analizaPalabra(stringEntrada):
                 for caracter in stringEntrada:
             </lineaIterativa>
             <cantidadCiclosConsulta>
-                1
-            </cantidadCiclosConsulta>
-            <cantidadCiclosConsulta>
                 3
             </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
-                5
-            </cantidadCiclosConsulta>
-            <cantidadCiclosConsulta>
-                6
+                4
             </cantidadCiclosConsulta>
             <entrada>
                 stringEntrada="12345acvbfei"
@@ -54,31 +49,45 @@ def analizaPalabra(stringEntrada):
                 stringEntrada="12923ac00vbfei@"
             </entrada>
             <comentario>
-                Analiza el contenido del String de entrada y cambia el largo 
-                de este agregando '0' y '@' dependiendo del contenido.
+                Analiza el contenido del String de entrada.
+                Si es un número:
+                    En caso que sea distinto de 0, se acumula el valor a la variable 'sumaNumeros', y
+                    se agrega un '0' al final del String de entrada.
+                    En caso contrario, se acumula el valor de la variable 'cuentaCeros'
+                En caso contrario:
+                    Si el caracter es una vocal:
+                        Se suma uno a la variable 'sumaNumeros', se agrega un arroba al final del
+                        String de entrada.
+                    En caso que sea distinto de una vocal y distinto de '@', se suma uno a la variable 
+                    'letrasConsonantes'
+                    En caso que sea un arroba, se suma uno a la variable 'cuentaArrobas'
             </comentario>
         </python>
 <python id="2">
-def inversor (entrada) :
-    while len(entrada) > 0:
-        return entrada[-1] * 2 + inversor(entrada[:-1])
+    <text hidden="si">
+def stringSinUltimoCaracter(stringEntrada):
+    return stringEntrada[:-1]
+
+def ultimoCaracter(stringEntrada):
+    return stringEntrada[-1]
+    </text>
+    <text>
+"""Considere que existen las funciones:
+    ultimoCaracter(stringEntrada), que retorna el ultimo caracter de su argumento
+    stringSinUltimoCaracter(stringEntrada), que retorna el mismo string de entrada
+    sin su ultimo caracter"""
+
+def inversor(stringEntrada):
+    while len(stringEntrada) > 0:
+        return ultimoCaracter(stringEntrada) * 2 + inversor( stringSinUltimoCaracter(stringEntrada) )
     else:
-        return ""
+        return ""</text>
             <nombreFuncionPrincipal>
                 inversor
             </nombreFuncionPrincipal>
             <lineaIterativa>
-                while len(entrada) > 0:
+                while len(stringEntrada) > 0:
             </lineaIterativa>
-            <cantidadCiclosConsulta>
-                1
-            </cantidadCiclosConsulta>
-            <cantidadCiclosConsulta>
-                2
-            </cantidadCiclosConsulta>
-            <cantidadCiclosConsulta>
-                3
-            </cantidadCiclosConsulta>
             <cantidadCiclosConsulta>
                 4
             </cantidadCiclosConsulta>
@@ -95,7 +104,9 @@ def inversor (entrada) :
                 entrada="Hipotalamo"
             </entrada>
             <comentario>
-                Funcion que retorna el string de entrada de forma invertida 
+                Función que retorna el string de entrada de forma invertida, 
+                multiplicando por dos cada caracter.
+                Por ejemplo, si la entrada es 'tu', la salida es 'uutt'
             </comentario>
         </python>
     </codigo>

@@ -269,7 +269,7 @@ def agrupamientoPareado(xmlEntradaObject,solucion,distractores,cantidadAlternati
 #             print elem.tipo           
 
 def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantidadAlternativas,banderaEstado,directorioSalida, total,enunciado,raiz,formato,estilo,limiteGeneracion,taxo): #Se tiene que pasar una copia de subraizSalida si se quiere utilizar con hebras
-    contador=0
+    cantidadGenerada=0
     conjuntoDefinicionesEnunciado=""
     contadorDefiniciones=0
     for definicion in conjuntoDefiniciones:
@@ -359,10 +359,10 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                     xmlSalida.escribePlantilla2(directorioSalida,xmlEntradaObject.tipo,id, plantillaSalida,'xml',formato,estilo,merge=raiz)
             else:
                 print ET.tostring(plantillaSalida, 'utf-8', method="xml")
-            contador+=1
+            cantidadGenerada+=1
             contadorLimite+=1
     #Condicion de carrera
-    total.incrementar(contador)
+    total.incrementar(cantidadGenerada)
     #Descomentar para validar funcionamiento
     #print threading.currentThread().getName()+' '+str(total.valor)
     return 0

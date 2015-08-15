@@ -6,51 +6,80 @@
     > :  &gt;
     & :  &amp; 
 
-2. Definir tipos de datos compuestos para dar una solucio al enunciado de un problema considerando
+2. Definir tipos de datos compuestos para dar una solucion al enunciado de un problema considerando
 una estrategia de solucion dada
     -->
   <enunciado>
     <glosa>
-Ordene el siguiente codigo de tal forma que retorne el producto total
-de todos los numeros pares entre las entradas 'limiteInferior' y
+Ordene el siguiente código de tal forma que retorne el producto total
+de todos los números pares entre las entradas 'limiteInferior' y
 'limiteSuperior'.
 
 def multiplicador(limiteInferior,limiteSuperior):
-@</glosa><blank id="1"><text>if (limiteSuperior &lt; limiteInferior):</text></blank><glosa>
-
-@@</glosa><blank id="2"><text>return 1</text></blank><glosa>
-
+@if (</glosa><blank id="1"><text>limiteSuperior &lt; limiteInferior</text></blank><glosa>):
+@@return</glosa><blank id="2"><text>1</text></blank><glosa>
 @</glosa><blank id="3"><text>else:</text></blank><glosa>
-
-@@</glosa><blank id="4"><text>return limiteSuperior * multiplicador(limiteInferior,limiteSuperior - 2)</text></blank><glosa>
+@@return limiteSuperior * </glosa><blank id="4"><text>multiplicador(limiteInferior,limiteSuperior - 2)</text></blank><glosa>
 </glosa>
   </enunciado>
   <opciones>
     <alternativa id="1" tipo="distractor">
       <glosa id="1">
-        else:
+        limiteSuperior > limiteInferior
+        <comentario>
+          Incorrecto
+         </comentario>
+      </glosa>
+      <glosa id="2">
+        limiteSuperior == limiteInferior
+        <comentario>
+          Incorrecto
+         </comentario>
+      </glosa>
+      <glosa id="3">
+        limiteSuperior != limiteInferior
         <comentario>
           Incorrecto
          </comentario>
       </glosa>
     </alternativa>
     <alternativa id="2" tipo="distractor">
+      <glosa id="4">
+        multiplicador(limiteInferior,limiteSuperior - 1)
+        <comentario>
+        Incorrecto </comentario>
+      </glosa>
+      <glosa id="5">
+        limiteSuperior
+        <comentario>
+        Incorrecto </comentario>
+      </glosa>
       <glosa id="6">
-        return limiteSuperior * multiplicador(limiteInferior,limiteSuperior - 2)
+        2
         <comentario>
         Incorrecto </comentario>
       </glosa>
     </alternativa>
         <alternativa id="3" tipo="distractor">
-      <glosa id="6">
-        if (limiteSuperior &lt; limiteInferior):
+      <glosa id="7">
+        if:
+        <comentario>
+        Incorrecto </comentario>
+      </glosa>
+      <glosa id="8">
+        elif:
         <comentario>
         Incorrecto </comentario>
       </glosa>
     </alternativa>
     <alternativa id="4" tipo="distractor">
-      <glosa id="6">
-        return 1
+      <glosa id="9">
+        multiplicador(limiteInferior,limiteSuperior - 1)
+        <comentario>
+        Incorrecto </comentario>
+      </glosa>
+      <glosa id="10">
+        multiplicador(limiteInferior-2,limiteSuperior)
         <comentario>
         Incorrecto </comentario>
       </glosa>

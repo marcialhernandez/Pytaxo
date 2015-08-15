@@ -128,6 +128,8 @@ def make_traceFuntionsFile(datos):
 def make_tempPython(datos, funcionTracer,testEstandar):
     fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
     try:
+        fd.write("#!/usr/bin/env python"+"\n"+"# -*- coding: utf-8 -*-"+"\n")
+        fd.write("import sys"+"\n"+"reload(sys)"+"\n"+"sys.setdefaultencoding('utf8')"+"\n")
         fd.write(funcionTracer)
         fd.write("\n\n")
         fd.write(datos)
@@ -144,6 +146,8 @@ def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
     
     fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
     try:
+        fd.write("#!/usr/bin/env python"+"\n"+"# -*- coding: utf-8 -*-"+"\n")
+        fd.write("import sys"+"\n"+"reload(sys)"+"\n"+"sys.setdefaultencoding('utf8')"+"\n")
         fd.write(funcionTracer)
         fd.write("\n\n")
         fd.write(datos)
