@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="4" tipo="pythonTraza" idOrigenEntrada="4" puntaje="2" cantidadCodigo="2">
+<pregunta cantidadAlternativas="4" tipo="pythonTraza" idOrigenEntrada="4" puntaje="2" cantidadCodigo="2" link="1">
     <!--
     " :  &quot;
     ' :  &apos;
@@ -8,141 +8,78 @@
     -->
 	<codigo>
 		<python id="1">
-def functionSuma(dato1,dato2):
-    return dato1+dato2
+def functionSuma(dato1, dato2):
+    return dato1 + dato2
     
 def funcionTest(dato):
     x=0
     z=0
-    while dato >0:
-        x=dato -dato/3
-        dato=dato/4
-        print "a"
-        z=functionSuma(x,z)
+    while dato > 0:
+        x = dato - dato / 3
+        dato = dato / 4
+        z = functionSuma(x, z)
 			<nombreFuncionPrincipal>
 				funcionTest
 			</nombreFuncionPrincipal>
 			<entrada>
-				valor=127
+				valor = 127
 			</entrada>
 			<entrada>
-				valor=95
+				valor = 95
 			</entrada>
 			<comentario>
-				Como no tiene valor de retorno, debiese retornar none.
+				Como no tiene valor de retorno, debiese retornar None.
 			</comentario>
 		</python>
 		<python id="2">
 def calculaAck(m, n):
     if m == 0:
-        return n+1
+        return n + 1
     if n == 0:
-        return calculaAck(m-1, 1)
-    return calculaAck(m-1, calculAck(m, n-1))
+        return calculaAck(m - 1, 1)
+    return calculaAck(m - 1, calculaAck(m, n - 1))
 			<nombreFuncionPrincipal>
 				calculaAck
 			</nombreFuncionPrincipal>
 			<entrada>
-				m=2;n=2
+				m = 2;n = 2
 			</entrada>
 						<entrada>
-				m=3;n=4
+				m = 1;n = 2
 			</entrada>
 						<entrada>
-				m=4;n=3
+				m = 2;n = 1
+			</entrada>
+			<entrada>
+				m = 1;n = 1
 			</entrada>
 			<comentario>
-				Calcula la funcion de Ackermann A(m, n), lamentablemente tiene un error y deberia parar la ejecucion tal y como se muestra en la siguiente traza:
+				Calcula la función de Ackermann A(m, n)
 			</comentario>
 		</python>
-		<python id="3">
-def calculaAck(m, n):
-    if m == 0:
-        return n+1
-    if n == 0:
-        return calculaAck(m-1, 1)
-    return calculaAck(m-1, calculaAck(m, n-1))
+<python id="3">
+def multiplicadorMatricial(x):
+	total = 0
+	for lista in x:
+		fila = 1
+		for numero in lista:
+			fila = numero * fila
+		total = total + fila
+	return total
 			<nombreFuncionPrincipal>
-				calculaAck
+				multiplicadorMatricial
 			</nombreFuncionPrincipal>
 			<entrada>
-				m=2;n=2
-			</entrada>
-						<entrada>
-				m=1;n=2
-			</entrada>
-						<entrada>
-				m=2;n=1
+				x = [[1, 2, 3], [4, 5], [6, 0]]
 			</entrada>
 			<entrada>
-				m=1;n=1
+				x = [[1, 2, -1], [4, 5, 10], [6, 0, 1]]
+			</entrada>
+			<entrada>
+				x = [["a", "b"], ["c"], ["d", "e"]]
 			</entrada>
 			<comentario>
-				Calcula la funcion de Ackermann A(m, n)
-			</comentario>
-		</python>
-<python id="5">
-def confusionMatematica(x):
-    a=2**x*x**2
-    b=x/2+x/2.+x
-    
-    if a/2>b:
-        return 1
-    else:
-        return 0
-			<nombreFuncionPrincipal>
-				confusionMatematica
-			</nombreFuncionPrincipal>
-			<entrada>
-				x=1
-			</entrada>
-			<entrada>
-				x=-1
-			</entrada>
-			<entrada>
-				x=-2
-			</entrada>
-			<entrada>
-				x=0.5
-			</entrada>
-			<entrada>
-				x=2
-			</entrada>
-			<comentario>
-				Funcion rara
-			</comentario>
-		</python>
-<python id="6">
-def confusionMatematica(x):
-    a = 2 ** x * x ** 2
-    b = x / 2 + x / 2. + x
-    x= b + x / 2
-    a=a/x/.5
-
-    if a>x:
-        return 1
-    else:
-        return 0
-			<nombreFuncionPrincipal>
-				confusionMatematica
-			</nombreFuncionPrincipal>
-			<entrada>
-				x=1
-			</entrada>
-			<entrada>
-				x=-1
-			</entrada>
-			<entrada>
-				x=-2
-			</entrada>
-			<entrada>
-				x=0.5
-			</entrada>
-			<entrada>
-				x=2
-			</entrada>
-			<comentario>
-				Funcion rara
+				Función que multiplica el contenido de cada lista, y suma cada producto generado.
 			</comentario>
 		</python>
 	</codigo>

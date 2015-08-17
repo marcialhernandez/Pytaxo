@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plantilla tipo="pythonIterativo" taxo="comprender">
+<plantilla tipo="pythonIterativo" taxo="comprender" id="1">
 <enunciado>
-    <glosa>Indique cual es el estado de memoria de la sentencia iterativa "@iteracion" de la funcion @funcionPrincipal con @entrada, cuando realiza @numIteraciones</glosa>
+    <glosa>Indique cual es el estado de memoria de la sentencia iterativa "@iteracion" de la función @funcionPrincipal con @entrada, cuando realiza @numIteraciones</glosa>
 </enunciado>
 </plantilla>

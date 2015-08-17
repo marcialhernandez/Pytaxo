@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="1" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none">
+<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="1" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" link="1">
     <!--
     " :  &quot;
     ' :  &apos;
@@ -6,7 +6,10 @@
     > :  &gt;
     & :  &amp; 
     -->
-<termino>def zero (n):
+<termino>
+    <text>operacion(a,b) </text>
+    <codigo>
+def zero (n):
     return n == 0
 
 def sucesor(n):
@@ -16,14 +19,13 @@ def predecesor(n):
     if not zero(n):
         return n - 1
     else:
-        exit()
+        return 0
     
 def operacion(a,b):
     if zero(a):
         return b
     else:
-        return operacion( predecesor(a), sucesor(b) ) 
-
+        return operacion( predecesor(a), sucesor(b) ) </codigo>
     </termino>
     <opciones>
         <alternativa id="1" tipo="solucion">

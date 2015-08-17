@@ -26,7 +26,7 @@ class xmlEntrada:
     #atributos estaticos
     
     #atributos de la clase
-    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,**kwargs):
+    def __init__(self,nombre,tipo,puntaje,alternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,**kwargs):
         #Atributos en comun
         self.nombre=nombre
         self.tipo=tipo
@@ -37,6 +37,7 @@ class xmlEntrada:
         self.penalty=penalty
         self.answernumbering=answernumbering
         self.id="NULL"
+        self.link=link
         if 'idOrigenEntrada' in kwargs.keys():
             self.idOrigenEntrada=kwargs['idOrigenEntrada']
         else:
@@ -44,6 +45,7 @@ class xmlEntrada:
         #Atributos solo de preguntas tipo Definicion
         if self.tipo=="definicion":
             self.termino=kwargs['termino']
+            self.codigo=kwargs['codigo']
             self.id=hashlib.sha256(self.termino).hexdigest()
             #Lista de alternativas de la forma [distractor,{'ponderacion':ponderacion}]
         elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo" or self.tipo=="pythonIterativoInvertido") and "codigos" in kwargs.keys():
@@ -268,3 +270,15 @@ class xmlEntrada:
     def barajaDefiniciones(self):
         return list(itertools.permutations(self.alternativas['terminos'].keys()))
     
+    def linkPlantilla(self,plantillaObject):
+        #Si la plantilla de entrada no tiene ID valida, entonces no se utiliza
+        if plantillaObject.id in ["sinID",""]:
+            return False
+        #Si no tiene elementos, entonces se empareja con la plantilla actual
+        if len(self.link)==0:
+            return True
+        #Si la id de la plantilla es parte de los posibles linkeamientos de la entrada Actual
+        if plantillaObject.id in self.link:
+            return True
+        else:
+            return False

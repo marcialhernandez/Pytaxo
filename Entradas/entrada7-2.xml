@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="15" puntaje="2">
+<pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="15" puntaje="2" link="1">
 	<!--
 
 1.3. Distingue conceptos asociados a operaciones aritmeticas
@@ -57,10 +57,10 @@ def roce4(fuerzaEmpujeHorizontal, masa, aceleracion):
 			</nombreFuncionPrincipal>
 		</python>
 		<entrada>
-			fuerzaEmpujeHorizontal=60;masa=20;aceleracion=0.3
+			fuerzaEmpujeHorizontal = 60;masa = 20;aceleracion = 0.3
 		</entrada>
 		<entrada>
-			fuerzaEmpujeHorizontal=80;masa=15;aceleracion=0.5
+			fuerzaEmpujeHorizontal = 80;masa = 15;aceleracion = 0.5
 		</entrada>
 		<comentario>
 		</comentario>

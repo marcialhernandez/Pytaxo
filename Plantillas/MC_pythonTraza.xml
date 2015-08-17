@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plantilla tipo="pythonTraza" taxo="aplicar">
+<plantilla tipo="pythonTraza" taxo="aplicar" id="1">
 <enunciado>
-    <glosa>Escriba la traza de la funcion @nombreFuncion.</glosa>
+    <glosa>Escriba la traza de la función @nombreFuncion con @entrada</glosa>
 </enunciado>
 </plantilla>

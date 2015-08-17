@@ -383,7 +383,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     cantidadAlternativas=0
     conjuntoAlternativas=dict()
     comentarioAlternativa=""
-    termino="" #Para el tipo pregunta definicion
+    definicion={} #Para el tipo pregunta definicion
+    definicion["termino"]=[]
+    definicion["codigo"]=[]
+    link=[]
     enunciado="" #Para el tipo pregunta enunciadoIncompleto
     shuffleanswers=""
     penalty=""
@@ -426,20 +429,43 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 answernumbering="abc"
         except:
             answernumbering="abc"
+        try:
+            link=str(subRaiz.attrib['link'])
+            if ";" in link:
+                link=link.split(";")
+            elif "," in link:
+                link=link.split(",")
+            elif "+" in link:
+                link=link.split("+")
+            elif "-" in link:
+                link=link.split("-")
+            else:
+                if link in [None,""]:
+                    link=[]
+                else:
+                    pass
+        except:
+            link=[]
     if tipo=='definicion':
-        for subRaiz in raizXmlEntrada.iter('termino'):
-            termino=subRaiz.text.rstrip().lstrip()
+        for subRaiz in raizXmlEntrada.iterfind('termino'):
+            for trozoEnunciado in subRaiz.iter():
+                if trozoEnunciado.tag=="text":
+                    definicion["termino"].append(trozoEnunciado.text.rstrip().lstrip())
+                elif trozoEnunciado.tag=="codigo":
+                    definicion["codigo"].append(trozoEnunciado.text.rstrip().lstrip())
+        definicion["termino"]=" ".join(definicion["termino"])
+        definicion["codigo"]="\n\n".join(definicion["codigo"])
     elif tipo=='pythonCompara':
         listaCodigosPorEntrada, comentarios=analizadorComparacion(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='pythonIterativo' or tipo=='pythonIterativoInvertido':
         listaCodigosPython=analizadorIteracion(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='pythonTraza':
         listaCodigosPython=analizadorTraza(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
 
     elif tipo=='enunciadoIncompleto':
         respuestas={}
@@ -544,7 +570,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         conjuntoAlternativas["distractores"]=distractores
         #tabla hash que indica el orden de aparicion de los blank sin importar la id
         conjuntoAlternativas["idOrden"]=idOrden
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada, caracterResaltador=caracterResaltador, caracterSeparador=caracterSeparador)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada, caracterResaltador=caracterResaltador, caracterSeparador=caracterSeparador)
         #alternativaSolucion=list()
         #alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
         #conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion
@@ -605,7 +631,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
             conjuntoAlternativas['distractores']=conjuntoTerminosImpares
         #Se puede retornar antes el de definicion pareada, pues no presenta seccion opciones, sino una seccion completa de definiciones con sus pares e impares
         #Ademas este tipo de pregunta tiene mas atributos
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,termino=termino,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada,parcialScore=parcialScore)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,enunciado=enunciado,composicionDistractores=composicionDistractores,criterioOrdenDistractores=criterioOrdenDistractores,ordenTerminos=ordenTerminos,cantidadCombinacionesDefiniciones=cantidadCombinacionesDefiniciones, idOrigenEntrada=idOrigenEntrada,parcialScore=parcialScore)
             #print conjuntoAlternativas['terminos'].keys()
     #En la pregunta tipo definicion pareada la arquitectura del conjunto de alternativas cambia
     #ahora es {'terminos':{'definicion':lista de alternativas (las diferentes definiciones)}}
@@ -646,7 +672,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     except:
                         print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
                         exit()                    
-    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,termino=termino,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
+    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,termino=definicion["termino"],codigo=definicion["codigo"],enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
 
 #Funcion que analiza argumentos ingresados por comando al ejecutar la funcion
 #Retorna la cantidad de alternativas ingresada por el usuario, en caso que no

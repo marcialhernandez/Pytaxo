@@ -378,6 +378,7 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
 def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
     validaPlantilla=False
     taxonomia=""
+    id=""
     plantillasValidas=list()
     for archivoPlantilla in nombres.especificDirectoryNames(nombreDirectorioPlantillas):
         nombreDirectorioArchivoPlantilla=nombres.directorioReal(nombreDirectorioPlantillas+"/"+archivoPlantilla)
@@ -386,16 +387,23 @@ def recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
         for subRaiz in arbolXmlPlantillaEntrada.iter('plantilla'):
             if subRaiz.attrib['tipo']==tipoPregunta:
                 validaPlantilla=True
-                taxonomia=subRaiz.attrib['taxo']
+                try:
+                    taxonomia=subRaiz.attrib['taxo']
+                except:
+                    taxonomia="sinTaxonomia"
+                try:
+                    id=subRaiz.attrib['id']
+                except:
+                    id="sinID"
                      
         if validaPlantilla==True:
             enunciado=""
             for subRaiz in arbolXmlPlantillaEntrada.iter():
                 if subRaiz.tag=='glosa':
-                    enunciado=enunciado+subRaiz.text
+                    enunciado=enunciado+subRaiz.text.rstrip().lstrip()
                 if subRaiz.tag=='termino':
                     enunciado=enunciado+' @termino'
-            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),taxo=taxonomia))
+            plantillasValidas.append(plantilla.plantilla(tipoPregunta,enunciado.rstrip(),id,taxo=taxonomia))
             validaPlantilla=False
     return plantillasValidas
 
@@ -410,6 +418,8 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     for plantilla in recogePlantillas(nombreDirectorioPlantillas,tipoPregunta):
+        if xmlEntradaObject.linkPlantilla(plantilla)==False:
+            continue
         plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
         plantillaSalida.set('tipo',xmlEntradaObject.tipo)
         plantillaSalida.set('id',xmlEntradaObject.id)

@@ -1,8 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plantilla tipo="definicion" taxo="recordar">
+<plantilla tipo="definicion" taxo="recordar" id="1">
 <enunciado>
-    <glosa>Indique la alternativa que menciona la funcionalidad de la funcion operacion(a,b):
+    <glosa>
+Indique la alternativa que menciona la funcionalidad de la función @termino si:
+
+@codigo
     </glosa>
-    <termino></termino>
 </enunciado>
 </plantilla>

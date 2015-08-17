@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plantilla tipo="definicionPareada" taxo="recordar">
+<plantilla tipo="definicionPareada" taxo="recordar" id="1">
 <enunciado>
     <glosa>Indique la alternativa que agrupa las siguientes definiciones a sus respectivos términos</glosa>
 </enunciado>

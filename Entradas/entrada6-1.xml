@@ -1,4 +1,4 @@
-<pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6" cantidadAlternativas="4">
+<pregunta puntaje="2" tipo="pythonIterativoInvertido" idOrigenEntrada="6" cantidadAlternativas="4" link="1">
         <!--
     " :  &quot;
     ' :  &apos;
@@ -56,9 +56,9 @@ def recorrePalabras(stringEntrada):
 </text>
 <nombreFuncionPrincipal>recorrePalabras</nombreFuncionPrincipal>
 <lineaIterativa>while posicion &lt; len (stringEntrada) - 1:</lineaIterativa>
-<entrada>stringEntrada="azzazzzzzc"</entrada>
-<entrada>stringEntrada="afaabbbz"</entrada>
-<entrada>stringEntrada="abbabzzzz"</entrada>
+<entrada>stringEntrada = "azzazzzzzc"</entrada>
+<entrada>stringEntrada = "afaabbbz"</entrada>
+<entrada>stringEntrada = "abbabzzzz"</entrada>
 <comentario>Funcion que: 
 Adelanta 2 posiciones en caso que la letra sea 'a'
 Retrocede 1 posicion en caso que la letra sea 'b'
@@ -98,11 +98,11 @@ def consumeYProduce(stockInicial, stringEntrada):
 </text>
 <nombreFuncionPrincipal>consumeYProduce</nombreFuncionPrincipal>
 <lineaIterativa>while posicion != len(stringEntrada):</lineaIterativa>
-<entrada>stockInicial=0;stringEntrada="ppcc"</entrada>
-<entrada>stockInicial=0;stringEntrada="ppccc"</entrada>
-<entrada>stockInicial=1;stringEntrada="ppcccc"</entrada>
-<entrada>stockInicial=2;stringEntrada="ppcccc"</entrada>
-<entrada>stockInicial=0;stringEntrada="pccc"</entrada>
+<entrada>stockInicial = 0;stringEntrada = "ppcc"</entrada>
+<entrada>stockInicial = 0;stringEntrada = "ppccc"</entrada>
+<entrada>stockInicial = 1;stringEntrada = "ppcccc"</entrada>
+<entrada>stockInicial = 2;stringEntrada = "ppcccc"</entrada>
+<entrada>stockInicial = 0;stringEntrada = "pccc"</entrada>
 <comentario>Funcion que itera sobre el string hasta que no tenga deuda
 En caso que la letra sea c: consume 1. Si no hay stock, genera deuda
 En caso contrario, produce 1.

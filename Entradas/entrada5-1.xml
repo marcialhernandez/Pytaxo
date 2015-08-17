@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="4" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4">
+<pregunta cantidadAlternativas="4" tipo="pythonIterativo" idOrigenEntrada="5" puntaje="4" link="1">
     <!--
     " :  &quot;
     ' :  &apos;
@@ -43,10 +43,10 @@ def analizaPalabra(stringEntrada):
                 4
             </cantidadCiclosConsulta>
             <entrada>
-                stringEntrada="12345acvbfei"
+                stringEntrada = "12345acvbfei"
             </entrada>
             <entrada>
-                stringEntrada="12923ac00vbfei@"
+                stringEntrada = "12923ac00vbfei@"
             </entrada>
             <comentario>
                 Analiza el contenido del String de entrada.
@@ -95,13 +95,13 @@ def inversor(stringEntrada):
                 5
             </cantidadCiclosConsulta>
             <entrada>
-                entrada="profesor"
+                entrada = "profesor"
             </entrada>
             <entrada>
-                entrada="fundamentos"
+                entrada = "fundamentos"
             </entrada>
             <entrada>
-                entrada="Hipotalamo"
+                entrada = "Hipotalamo"
             </entrada>
             <comentario>
                 Función que retorna el string de entrada de forma invertida, 
