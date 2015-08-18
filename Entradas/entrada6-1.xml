@@ -25,11 +25,9 @@ def eliminaCaracter(stringEntrada, posicion):
     
     return stringEntrada</text>
 <text>
-"""
-Considere que existe una función llamada "eliminaCaracter(stringEntrada, posicion)"
-Donde el primer argumento es el String a modificar
-Y su segundo argumento es un número entero que indica la 
-posición del caracter a eliminar """
+
+#Considere que existe una función llamada "eliminaCaracter(stringEntrada, posicion)"
+#Donde el primer argumento es el String a modificar y su segundo argumento es un número entero que indica la  posición del caracter a eliminar
 
 def recorrePalabras(stringEntrada):
     posicion = 0

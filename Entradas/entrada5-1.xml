@@ -72,10 +72,9 @@ def ultimoCaracter(stringEntrada):
     return stringEntrada[-1]
     </text>
     <text>
-"""Considere que existen las funciones:
-    ultimoCaracter(stringEntrada), que retorna el ultimo caracter de su argumento
-    stringSinUltimoCaracter(stringEntrada), que retorna el mismo string de entrada
-    sin su ultimo caracter"""
+#Considere que existen las funciones:
+#ultimoCaracter(stringEntrada), que retorna el ultimo caracter de su argumento
+#stringSinUltimoCaracter(stringEntrada), que retorna el mismo string de entrada sin su último caracter
 
 def inversor(stringEntrada):
     while len(stringEntrada) > 0:
