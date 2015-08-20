@@ -419,12 +419,13 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         idXmlSalida=incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,copy.copy(plantilla.enunciado[:]),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
                         
                         if banderaEstado==True:
-                            id=xmlEntradaObject.idOrigenEntrada+'-'+idXmlSalida
+                            id= xmlEntradaObject.idItem(plantilla,tipoPregunta,idXmlSalida)
+                            #id=xmlEntradaObject.idOrigenEntrada+'-'+idXmlSalida
                             plantillaSalida.set('id',id)
                             for elem in plantillaSalida.getchildren():
                                 if elem.tag=='name':
                                     for elem2 in elem.iterfind('text'):
-                                        elem2.text=plantilla.taxo+"-"+id
+                                        elem2.text=id
                             if raiz=='quiz':
                                 quiz = ET.Element('quiz')
                                 quiz.append(plantillaSalida)

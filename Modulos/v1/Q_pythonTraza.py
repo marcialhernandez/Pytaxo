@@ -242,12 +242,13 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                 streamTraza=estandarizaLineas(streamTraza,codigoPython["nombreFuncionPrincipal"])#Pasa las lineas a formato String
                 idXmlSalida=incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,plantilla.enunciado[:],mergeLineas(streamTraza),answerFeedbackText)
                 if banderaEstado==True:
-                    id=str(xmlEntradaObject.idOrigenEntrada)+"."+idXmlSalida
+                    #id=str(xmlEntradaObject.idOrigenEntrada)+"."+idXmlSalida
+                    id= xmlEntradaObject.idItem(plantilla,tipoPregunta,idXmlSalida)
                     plantillaSalida.set('id',id)
                     for elem in plantillaSalida.getchildren():
                         if elem.tag=='name':
                             for elem2 in elem.iterfind('text'):
-                                elem2.text=plantilla.taxo+"-"+id
+                                elem2.text=id
                     if raiz=='quiz':
                         quiz = ET.Element('quiz')
                         quiz.append(plantillaSalida)

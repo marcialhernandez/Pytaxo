@@ -29,12 +29,20 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 
+def remueveCaracterNoPermitido(stringEntrada):
+    caracteresNoPermitidos=["*","|","\\",":",'"',"<",">","?","/"]
+    listaEntrada=list(stringEntrada)
+    for caracter in listaEntrada:
+        if caracter in caracteresNoPermitidos:
+            del caracter
+    return "".join(listaEntrada)
+
 #Funcion que crea una nueva plantilla que corresponde a este tipo de pregunta
 #añadiendo los datos obtenidos desde la entrada de
 #su mismo tipo, luego una vez completada la pregunta, se imprime
 #por pantalla para que la informacion pueda ser recogida por el programa
 #principal
-def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas,raiz,formato,estilo,taxo, **kwuargs): #,xmlEntradaObject):
+def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas,raiz,formato,estilo,taxo,tipoPregunta, **kwuargs): #,xmlEntradaObject):
     plantillaSalida=xmlSalida.plantillaGenericaSalida(xmlEntradaObject.puntaje,xmlEntradaObject.shuffleanswers,xmlEntradaObject.penalty,xmlEntradaObject.answernumbering)
     contador=0
     banderaEstado=False
@@ -83,8 +91,10 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         identificadorItem=hashlib.sha256("".join(glosasAlternativas)).hexdigest()
         if banderaEstado==True:
             contador+=1
-            id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+"|".join(identificadorPregunta)
-            nombreArchivo.text=taxo+"-"+id
+            #tipoPregunta+"_"+plantillaObject.taxo+"_"+plantillaObject.id+"_"+self.idOrigenEntrada+"_"+identificadorAlternativas
+            id =tipoPregunta+"_"+taxo+"_"+xmlEntradaObject.idOrigenEntrada+"_"+"+".join(identificadorPregunta)
+            #id= xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+"|".join(identificadorPregunta)
+            nombreArchivo.text=id
             if raiz=='quiz':
                 quiz = ET.Element('quiz')
                 quiz.append(plantillaSalida)
@@ -121,7 +131,7 @@ if nombres.validaExistenciaArchivo(nombreDirectorioEntradas)==True:
     listaXmlEntrada=xmlSalida.lecturaXmls(nombreDirectorioEntradas, tipoPregunta)
 
 for cadaXmlEntrada in listaXmlEntrada:
-    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,taxo,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
+    retornaPlantilla(nombreDirectorioPlantillas, cadaXmlEntrada, cadaXmlEntrada.cantidadAlternativas,raiz,formato,estilo,taxo,tipoPregunta,directorioSalida=nombreDirectorioSalidas+'/'+tipoPregunta)
 
 if raiz=='merge':
     xmlSalida.mergeOperation(nombreDirectorioSalidas+'/'+tipoPregunta,tipoPregunta,'xml','close',formato,estilo)

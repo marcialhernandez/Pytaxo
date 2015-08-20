@@ -22,10 +22,10 @@ def funcionTest(dato):
 				funcionTest
 			</nombreFuncionPrincipal>
 			<entrada>
-				valor = 127
+				dato = 127
 			</entrada>
 			<entrada>
-				valor = 95
+				dato = 95
 			</entrada>
 			<comentario>
 				Como no tiene valor de retorno, debiese retornar None.

@@ -90,14 +90,17 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                         if '@termino' in elem.text:
                             elem.text=elem.text.replace('@termino',xmlEntradaObject.termino)
                         if '@codigo' in elem.text:
-                            elem.text=elem.text.replace('@codigo',xmlEntradaObject.codigo)
+                            elem.text=elem.text.replace('@codigo',xmlEntradaObject.codigo.replace(xmlEntradaObject.caracterEspaciador,"&emsp;"*4))
+                        
                         
         for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
             contador+=1
             identificadorItem,identificadorAlternativas=xmlSalida.incrustaAlternativasXml(plantillaSalida, conjuntoAlternativas)
             if banderaEstado==True:
-                idItem=xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas
-                nombreArchivo.text=plantilla.taxo+"-"+idItem
+                idItem= xmlEntradaObject.idItem(plantilla,tipoPregunta,identificadorAlternativas)
+                #idItem=xmlEntradaObject.idOrigenEntrada+"-"+identificadorItem+' '+identificadorAlternativas
+                #nombreArchivo.text=plantilla.taxo+"-"+idItem
+                nombreArchivo.text=idItem
                 if raiz=='quiz':
                     quiz = ET.Element('quiz')
                     quiz.append(plantillaSalida)

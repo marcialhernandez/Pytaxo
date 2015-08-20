@@ -386,6 +386,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     definicion={} #Para el tipo pregunta definicion
     definicion["termino"]=[]
     definicion["codigo"]=[]
+    caracterEspaciador="@" #por cada caracter espaciador en el contenido, lo reemplazara por 4 espacios  
     link=[]
     enunciado="" #Para el tipo pregunta enunciadoIncompleto
     shuffleanswers=""
@@ -446,7 +447,11 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     pass
         except:
             link=[]
-    if tipo=='definicion':
+    if tipo=='definicion':      
+        try:
+            caracterEspaciador=str(subRaiz.attrib['caracterEspaciador'])
+        except:
+            caracterEspaciador="@"
         for subRaiz in raizXmlEntrada.iterfind('termino'):
             for trozoEnunciado in subRaiz.iter():
                 if trozoEnunciado.tag=="text":
@@ -478,7 +483,6 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         enunciadoIncompleto=[]
         idActual=""
         banderaPrimeraGlosa=True
-        caracterEspaciador="@" #por cada caracter espaciador en el contenido, lo reemplazara por 4 espacios
         caracterSeparador="-" #es aquel que separa las alternativas
         caracterResaltador="" #es aquel que rodea las alternativas
         largoBlank=15
@@ -672,7 +676,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     except:
                         print "Error1: El atributo tipo contiene un nombre distinto de 'solucion' o 'distractor'"
                         exit()                    
-    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,termino=definicion["termino"],codigo=definicion["codigo"],enunciado=enunciado, idOrigenEntrada=idOrigenEntrada)
+    return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,termino=definicion["termino"],codigo=definicion["codigo"],enunciado=enunciado, idOrigenEntrada=idOrigenEntrada, caracterEspaciador=caracterEspaciador )
 
 #Funcion que analiza argumentos ingresados por comando al ejecutar la funcion
 #Retorna la cantidad de alternativas ingresada por el usuario, en caso que no

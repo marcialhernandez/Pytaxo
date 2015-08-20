@@ -44,6 +44,7 @@ class xmlEntrada:
             self.idOrigenEntrada="NULL"
         #Atributos solo de preguntas tipo Definicion
         if self.tipo=="definicion":
+            self.caracterEspaciador=kwargs['caracterEspaciador']
             self.termino=kwargs['termino']
             self.codigo=kwargs['codigo']
             self.id=hashlib.sha256(self.termino).hexdigest()
@@ -282,3 +283,7 @@ class xmlEntrada:
             return True
         else:
             return False
+    
+    def idItem(self,plantillaObject,tipoPregunta,identificadorAlternativas):
+        #tipoPregunta_taxonomia_idPLantillaEsqueletica_idXmlEntrada_identificadorAlternativas
+        return tipoPregunta+"_"+plantillaObject.taxo+"_"+plantillaObject.id+"_"+self.idOrigenEntrada+"_"+identificadorAlternativas

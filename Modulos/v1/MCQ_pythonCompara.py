@@ -379,11 +379,12 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     idAlternativas+=agregaAlternativa(plantillaSalida,alternativaSolucion)
                     #Genero el xml
                     contador+=1
-                    id=xmlEntradaObject.idOrigenEntrada+"-"+idItem+" "+idAlternativas
+                    id=xmlEntradaObject.idItem(plantilla,tipoPregunta,idAlternativas)
+                    #id=xmlEntradaObject.idOrigenEntrada+"-"+idItem+" "+idAlternativas
                     for elem in plantillaSalida.getchildren():
                         if elem.tag=='name':
                             for elem2 in elem.iterfind('text'):
-                                elem2.text=plantilla.taxo+"-"+id
+                                elem2.text=id
                     if raiz=='quiz':
                         quiz = ET.Element('quiz')
                         quiz.append(plantillaSalida)

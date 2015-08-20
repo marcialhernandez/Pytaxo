@@ -94,13 +94,13 @@ def inversor(stringEntrada):
                 5
             </cantidadCiclosConsulta>
             <entrada>
-                entrada = "profesor"
+                stringEntrada = "profesor"
             </entrada>
             <entrada>
-                entrada = "fundamentos"
+                stringEntrada = "fundamentos"
             </entrada>
             <entrada>
-                entrada = "Hipotalamo"
+                stringEntrada = "Hipotalamo"
             </entrada>
             <comentario>
                 Función que retorna el string de entrada de forma invertida, 

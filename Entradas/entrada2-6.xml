@@ -12,7 +12,7 @@ una estrategia de solucion dada
   <enunciado>
     <glosa>
 Elija y ordene correctamente de tal forma que retorne el producto total
-de todos los numeros pares entre las entradas 'limiteInferior' y
+de todos los números pares entre las entradas 'limiteInferior' y
 'limiteSuperior'.
 
 def multiplicador(limiteInferior,limiteSuperior):
