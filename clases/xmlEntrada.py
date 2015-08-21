@@ -217,9 +217,9 @@ class xmlEntrada:
             for opcion in distractor:
                 if opcion[1]["tipo"]=='solucion':
                     puntaje+=fraccionPuntajePorSolucion
-                    llave.append(str(opcion[0])+'.'+opcion[1]["glosa"])
+                    llave.append("S."+str(opcion[0])+'.'+opcion[1]["glosa"])
                 else:
-                    llave.append(str(opcion[0])+'.'+str(opcion[1]["id"]))
+                    llave.append("D."+str(opcion[0])+'.'+str(opcion[1]["id"]))
                     comentario.append(str(opcion[1]["comentario"]))
                 if caracterResaltador=="":
                     glosa.append(opcion[1]["glosa"])
@@ -241,7 +241,7 @@ class xmlEntrada:
             puntaje=100 #sera puesto como fraccion de forma inmediata
             glosa=[]
             for opcion in solucion:
-                llave.append(str(opcion[0])+'.'+opcion[1]["glosa"])
+                llave.append("S."+str(opcion[0])+'.'+opcion[1]["glosa"])
                 if caracterResaltador=="":
                     glosa.append(opcion[1]["glosa"])
                 else:

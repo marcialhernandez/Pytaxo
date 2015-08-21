@@ -34,16 +34,19 @@ class alternativa:
             self.comentario=kwargs['comentario']
     
     def identificador(self):
-        if 'numeracion' != None:
-            if self.tipo=='solucion':
-                return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'Num'+str(self.numeracion)+' '
-            else:
-                return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'F'+str(self.llave)+'Num'+str(self.numeracion)+' '
-        #alternativa tipo S/D (distractor/solucion) = F llave (refiere a que alternativa) + N numeracion (refiere a que sinonimo)
-        else: #Caso Terminos pareados
-            if self.tipo=='solucion':
-                return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'F'+str(self.llave)+' '
-            
+
+        if self.numeracion != None:
+            return 'alt'+str(self.tipo[0]).upper()+'.'+str(self.llave)+"-"+str(self.numeracion)
+        else:
+            return 'alt'+str(self.tipo[0]).upper()+'.'+str(self.llave)
+#             if self.tipo=='solucion':
+#                 return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'Num'+str(self.numeracion)+' '
+#             else:
+#                 return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'F'+str(self.llave)+'Num'+str(self.numeracion)+' '
+#         #alternativa tipo S/D (distractor/solucion) = F llave (refiere a que alternativa) + N numeracion (refiere a que sinonimo)
+#         else: #Caso Terminos pareados
+#             if self.tipo=='solucion':
+#                 return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'F'+str(self.llave)+' '
     
     def imprimeAlternativa(self):
         return str(self.glosa)+' ' #str(self.llave)+' '+str(self.tipo)+' '+str(self.puntaje)+' ' +str(self.glosa)

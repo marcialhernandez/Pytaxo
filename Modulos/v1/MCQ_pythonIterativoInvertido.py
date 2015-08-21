@@ -146,12 +146,13 @@ def agregaAlternativaIteracion(ETObject,alternativaObject):
     seccionAlternativa.set('id', alternativaObject.llave)
     seccionAlternativa.set('tipo',alternativaObject.tipo)
     seccionAlternativa.set('puntaje',str(alternativaObject.puntaje))
+    seccionAlternativaFeedbackText.text=alternativaObject.glosa
     if alternativaObject.tipo=="solucion":
         seccionAlternativa.set('fraction',"100")
+        return "s."+alternativaObject.llave
     else:
         seccionAlternativa.set('fraction',"0")
-    seccionAlternativaFeedbackText.text=alternativaObject.glosa
-    return alternativaObject.llave
+        return "d."+alternativaObject.llave
 
 def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
     listaTrazasLineaIterativa=list()
@@ -189,7 +190,7 @@ def ejecutaPyTemporal(archivoTemporal):
 #incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,copy.copy(plantilla.enunciado[:]),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:])
 def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa):
     idXmlSalida=""
-    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
+    idEntradaBruta=str(hashlib.sha256(codigoPython["codigoEnunciado"][contadorEntradasBruto]).hexdigest())
     idXmlSalida=str(codigoPython["id"])+'-'+idEntradaBruta+'-'+numerosIteracion
     enunciado=enunciado.replace("@iteracion",codigoPython["lineaIterativa"])
     enunciado=enunciado.replace("@entrada",generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))

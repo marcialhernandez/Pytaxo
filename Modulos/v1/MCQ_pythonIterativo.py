@@ -88,12 +88,13 @@ def agregaAlternativaIteracion(ETObject,dicIteracion,tipo,puntaje):
     seccionAlternativaText.text=str(mergeKeyValue(dicIteracion.values()[0]))
     seccionAlternativa.set('id',str(dicIteracion.keys()[0]))
     seccionAlternativa.set('tipo',tipo)
+    seccionAlternativa.set('puntaje',puntaje)
     if tipo=="solucion":
         seccionAlternativa.set('fraction',"100")
+        return "s."+str(dicIteracion.keys()[0])
     else:
         seccionAlternativa.set('fraction',"0")
-    seccionAlternativa.set('puntaje',puntaje)
-    return str(dicIteracion.keys()[0])
+        return "d."+str(dicIteracion.keys()[0])
 
 #Reparar pues mal funciona para ciclos infinitos
 def buscaIteracionAAnalizar(datoStreamTraza,lineaIterativa):
@@ -129,7 +130,7 @@ def ejecutaPyTemporal(archivoTemporal):
 #incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,copy.copy(plantilla.enunciado),numerosIteracion.rstrip("+"),listaTrazasLineaIterativa[:],cantidadCiclosConsulta)
 def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,numerosIteracion,listaTrazasLineaIterativa, actualCantidadCiclosConsulta):
     idXmlSalida=""
-    idEntradaBruta=str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())
+    idEntradaBruta=str(hashlib.sha256(codigoPython["codigoEnunciado"][contadorEntradasBruto]).hexdigest())
     plantillaSalida.set('entradas', codigoPython["entradasBruto"][contadorEntradasBruto])
     plantillaSalida.set('combinacionAlternativas', numerosIteracion)
     idXmlSalida=idEntradaBruta+'+'+numerosIteracion

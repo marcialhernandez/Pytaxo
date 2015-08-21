@@ -55,13 +55,13 @@ def comprimeAlternativas(MatrizAlternativas):
 #Convierte lista de alternativas en una alternativa
 ##(Debido a que cada alternativa es realidad un grupo de terminos que tambien son alternativas)
 def comprimeAlternativasSingle(listaAlternativas):
-    llave=''
+    llave=[]
     tipo=''
     puntaje=0
     glosa=''
     comentarios=''
     for cadaAlternativa in listaAlternativas:
-        llave+=cadaAlternativa.llave
+        llave.append(cadaAlternativa.llave)
         if cadaAlternativa.tipo not in tipo:
             tipo+=cadaAlternativa.tipo+' '
         puntaje+=int(cadaAlternativa.puntaje)
@@ -75,7 +75,7 @@ def comprimeAlternativasSingle(listaAlternativas):
                 comentarios+='"Sin comentario"'+' '
     if 'solucion' in tipo and 'distractor' in tipo:
         tipo='distractor'
-    return alternativa.alternativa(llave,tipo.rstrip(),float(puntaje)/len(listaAlternativas),glosa.rstrip(),comentario=comentarios.rstrip())
+    return alternativa.alternativa("_".join(llave),tipo.rstrip(),float(puntaje)/len(listaAlternativas),glosa.rstrip(),comentario=comentarios.rstrip())
         
 #No preserva el orden y no admite datos tipo list() como por ejemplo matrices  
 def quitaDuplicados(seq):
@@ -313,7 +313,7 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                 if elem.tag=='answer':
                     plantillaSalida.remove(elem)
             glosasAlternativas=""
-            idAlternativas=""
+            idAlternativas=[]
             for cadaTermino in cadaConjunto:
                 subRaizAlternativa=ET.SubElement(plantillaSalida,'answer')
                 subRaizAlternativaText=ET.SubElement(subRaizAlternativa,'text')
@@ -332,12 +332,14 @@ def procesoPareador(conjuntoDefiniciones,plantillaSalida,xmlEntradaObject,cantid
                 subRaizComentario=ET.SubElement(subRaizAlternativa,'feedback')
                 subRaizComentarioText=ET.SubElement(subRaizComentario,'text')
                 subRaizComentarioText.text=cadaTermino.comentario
-                for terminoAlternativa in cadaTermino.glosa.split(" "):
+                idAlternativas.append(cadaTermino.identificador())
+                #for terminoAlternativa in cadaTermino.glosa.split(" "):
                 #El primer y ultimo string de cada termino
-                    idAlternativas+=terminoAlternativa[1]+terminoAlternativa[-2]+"|"
-                idAlternativas.rstrip("|")
-                idAlternativas+="_"
-            idAlternativas.rstrip("_")
+                #    idAlternativas+=terminoAlternativa[1]+terminoAlternativa[-2]+"|"
+                #idAlternativas.rstrip("|")
+                #idAlternativas+="_"
+            #idAlternativas.rstrip("_")
+            idAlternativas="+".join(idAlternativas)
             ordenamientoDiferente+=1 
             if banderaEstado==True:
                 #tipoPregunta+"_"+plantillaObject.taxo+"_"+plantillaObject.id+"_"+self.idOrigenEntrada+"_"+identificadorAlternativas

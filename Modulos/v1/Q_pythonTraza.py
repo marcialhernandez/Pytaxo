@@ -70,7 +70,7 @@ def ejecutaPyTemporal(archivoTemporal):
 #plantillaSalida: Es la plantilla estandar en donde se guarda toda la info en el xml de salida
 #codigoPython: diccionario que contiene toda la info del codigo examinado obtenido desde la entrada xml
 def incluyeInfo(codigoPython,plantillaSalida,contadorEntradasBruto,enunciado,streamTraza,seccionRetroalimentacion):
-    idXmlSalida=codigoPython["id"]+'+'+str(hashlib.sha256(codigoPython["entradasBruto"][contadorEntradasBruto]).hexdigest())+'+'+codigoPython["entradasBruto"][contadorEntradasBruto]
+    idXmlSalida=codigoPython["id"]+'+'+str(hashlib.sha256(codigoPython["codigoBruto"][contadorEntradasBruto]).hexdigest())+'+'+codigoPython["entradasBruto"][contadorEntradasBruto]
     #segundaParteEnunciado="Con "+generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]).rstrip().lstrip()+"."
     enunciado=enunciado.replace("@nombreFuncion", codigoPython["nombreFuncionPrincipal"]).rstrip().lstrip()
     enunciado=enunciado.replace("@entrada", generaGlosaEntradas(codigoPython["entradasBruto"][contadorEntradasBruto]))

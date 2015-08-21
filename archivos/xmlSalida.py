@@ -617,16 +617,20 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                     listaIDs.append(llaveTermino)
                 pozoPares=[]
                 pozoImpares=[]
+                contAltSinonima=0
                 for par in glosa.iter('par'):
-                    pozoPares.append(ALT.alternativa(llaveTermino,'solucion',str(puntaje),par.text.rstrip()))
+                    contAltSinonima=contAltSinonima+1
+                    pozoPares.append(ALT.alternativa(glosa.attrib['id']+str(contAltSinonima),'solucion',str(puntaje),par.text.rstrip()))
+                contAltSinonima=0
                 for inpar in glosa.iter('inpar'):
-                    textoComentario=""
+                    textoComentario=[]
+                    contAltSinonima=contAltSinonima+1
                     for comentario in inpar.iter('comentario'):
-                        textoComentario=textoComentario+' '+comentario.text.rstrip().lstrip()
+                        textoComentario.append(comentario.text.rstrip())
                     #textoComentario=textoComentario.lstrip()
                     #agrego solo si existe el inpar
                     if bool(inpar.text.rstrip())==True:
-                        pozoImpares.append(ALT.alternativa(llaveTermino,'distractor','0',inpar.text.rstrip(),comentario=textoComentario.rstrip()))
+                        pozoImpares.append(ALT.alternativa(glosa.attrib['id']+str(contAltSinonima),'distractor','0',inpar.text.rstrip(),comentario=" ".join(textoComentario)))
                 conjuntoTerminosPareados[definicion.rstrip()]=pozoPares
                 #No es necesario agregar una llave si no tiene impares
                 if len(pozoImpares)>0:

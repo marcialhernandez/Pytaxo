@@ -166,13 +166,14 @@ def agregaAlternativa(ETObject,alternativaObject):
     seccionAlternativa.set('id', alternativaObject.llave)
     seccionAlternativa.set('tipo',alternativaObject.tipo)
     seccionAlternativa.set('puntaje',str(alternativaObject.puntaje))
-    if alternativaObject.tipo=="solucion":
-        seccionAlternativa.set('fraction',"100")
-    else:
-        seccionAlternativa.set('fraction',"0")
     if hasattr(alternativaObject, 'comentario'):
         seccionAlternativaFeedbackText.text=alternativaObject.glosa
-    return alternativaObject.llave
+    if alternativaObject.tipo=="solucion":
+        seccionAlternativa.set('fraction',"100")
+        return "s."+alternativaObject.llave
+    else:
+        seccionAlternativa.set('fraction',"0")
+        return "d."+alternativaObject.llave
 
 def mergeLineas(listaLineasTraza):
     traza=""
