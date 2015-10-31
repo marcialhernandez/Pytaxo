@@ -86,12 +86,17 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         for subRaizSalida in plantillaSalida.iter():
                 if subRaizSalida.tag=='questiontext':
                     for elem in subRaizSalida.iterfind('text'):
-                        elem.text=plantilla.enunciado
-                        if '@termino' in elem.text:
-                            elem.text=elem.text.replace('@termino',xmlEntradaObject.termino)
-                        if '@codigo' in elem.text:
-                            elem.text=elem.text.replace('@codigo',xmlEntradaObject.codigo.replace(xmlEntradaObject.caracterEspaciador,"&emsp;"*4))
-                        
+                        banderaCodigo=False
+                        if '@codigo' in plantilla.enunciado:
+                            banderaCodigo=True
+                            plantilla.enunciado=plantilla.enunciado.split('@codigo')
+                            plantilla.enunciado='<pre style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+plantilla.enunciado[0]+'</pre><BR><pre id="python" class="prettyprint linenums">'+xmlEntradaObject.codigo+'</pre><BR><p style="font-family:Tahoma, Geneva, sans-serif;font-size:length"><pre style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+plantilla.enunciado[1]+'</pre>'
+                        if '@termino' in plantilla.enunciado:
+                            if banderaCodigo==True:
+                                plantilla.enunciado=plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)
+                            else:
+                                plantilla.enunciado='<pre style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+plantilla.enunciado.replace('@termino',xmlEntradaObject.termino)+'</pre>'
+                    elem.append(ET.Comment((' --><![CDATA[' + ('<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?skin=sons-of-obsidian"></script>'+plantilla.enunciado).replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
                         
         for conjuntoAlternativas in xmlEntradaObject.agrupamientoAlternativas2(cantidadAlternativas):
             contador+=1

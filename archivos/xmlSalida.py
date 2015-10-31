@@ -459,7 +459,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
                 elif trozoEnunciado.tag=="codigo":
                     definicion["codigo"].append(trozoEnunciado.text.rstrip().lstrip())
         definicion["termino"]=" ".join(definicion["termino"])
-        definicion["codigo"]="\n\n".join(definicion["codigo"])
+        definicion["codigo"]="".join(definicion["codigo"])
     elif tipo=='pythonCompara':
         listaCodigosPorEntrada, comentarios=analizadorComparacion(raizXmlEntrada)
         return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPorEntrada,comentarios=comentarios,idOrigenEntrada=idOrigenEntrada)
@@ -480,7 +480,6 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         contadorPosOrden=0
         contadorIDprovisorio=0
         presenciaBlank=False
-        enunciadoIncompleto=[]
         idActual=""
         banderaPrimeraGlosa=True
         caracterSeparador="-" #es aquel que separa las alternativas
@@ -504,42 +503,55 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         except:
             largoBlank=15
         ############################################################
+        partesEnunciado=[]
         for subRaiz in raizXmlEntrada.iterfind('enunciado'):
-            for parteEnunciado in subRaiz:
-                if parteEnunciado.tag=='glosa':
-                    if banderaPrimeraGlosa==True:
-                        enunciadoIncompleto.append(parteEnunciado.text.rstrip().lstrip())
-                        banderaPrimeraGlosa=False
-                    else:
-                        enunciadoIncompleto.append(parteEnunciado.text)
-                if parteEnunciado.tag=='blank':
-                    #####
-                    try:
-                        if parteEnunciado.attrib["id"] in respuestas.keys():
-                            print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank con una ID duplicada"
-                            exit()  
+            for subseccion in subRaiz.iterfind('text'):
+                enunciado={}
+                enunciadoIncompleto=[]
+                for parteEnunciado in subseccion:
+                    if parteEnunciado.tag=='glosa':
+                        if banderaPrimeraGlosa==True:
+                            enunciadoIncompleto.append(parteEnunciado.text.rstrip().lstrip())
+                            banderaPrimeraGlosa=False
                         else:
-                            idActual=parteEnunciado.attrib["id"]
-                            idOrden[contadorIDprovisorio]=idActual
-                            contadorIDprovisorio+=1
-                            respuestas[idActual]=[]
-                    except:
-                            print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank sin ID"
+                            enunciadoIncompleto.append(parteEnunciado.text)
+                    if parteEnunciado.tag=='blank':
+                        #####
+                        try:
+                            if parteEnunciado.attrib["id"] in respuestas.keys():
+                                print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank con una ID duplicada"
+                                exit()  
+                            else:
+                                idActual=parteEnunciado.attrib["id"]
+                                idOrden[contadorIDprovisorio]=idActual
+                                contadorIDprovisorio+=1
+                                respuestas[idActual]=[]
+                        except:
+                                print "Error X: El documento '"+nombreArchivo+"' presenta una seccion blank sin ID"
+                                exit()
+                            ####
+                        for textoBlank in parteEnunciado.iterfind('text'):
+                            #largoBlank=len(textoBlank.text.rstrip().lstrip())
+                            respuestas[idActual].append({"glosa":textoBlank.text.rstrip().lstrip(),"tipo":"solucion"})
+                            presenciaBlank=True
+                            #if largoBlank>largoCadenaBlank:
+                            #    largoCadenaBlank=largoBlank
+                        if presenciaBlank==False:
+                            print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
                             exit()
-                        ####
-                    for textoBlank in parteEnunciado.iterfind('text'):
-                        #largoBlank=len(textoBlank.text.rstrip().lstrip())
-                        respuestas[idActual].append({"glosa":textoBlank.text.rstrip().lstrip(),"tipo":"solucion"})
-                        presenciaBlank=True
-                        #if largoBlank>largoCadenaBlank:
-                        #    largoCadenaBlank=largoBlank
-                    if presenciaBlank==False:
-                        print "Error 3: El documento '"+nombreArchivo+"' no presenta terminos en el tag 'blank' que representan las alternativas solucion del item"
-                        exit()
-                    enunciadoIncompleto.append('_'*largoBlank)
-                    presenciaBlank=False         
-        enunciado=' '.join(enunciadoIncompleto)
-        enunciado=enunciado.replace(caracterEspaciador,"&emsp;"*4)
+                        enunciadoIncompleto.append('_'*largoBlank)
+                        presenciaBlank=False         
+                enunciado["text"]=' '.join(enunciadoIncompleto)
+                enunciado["text"]=enunciado["text"].replace(caracterEspaciador,"&emsp;"*4)
+                try:
+                    if subseccion.attrib["code"] =="true":
+                        enunciado["tipo"]="code"
+                    else:
+                        enunciado["tipo"]="text"
+                except:
+                    enunciado["tipo"]="text"
+                partesEnunciado.append(enunciado)
+        print partesEnunciado
         for opcion in raizXmlEntrada.iterfind('opciones'):
             
             for alternativa in opcion.iterfind('alternativa'):
@@ -574,7 +586,7 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         conjuntoAlternativas["distractores"]=distractores
         #tabla hash que indica el orden de aparicion de los blank sin importar la id
         conjuntoAlternativas["idOrden"]=idOrden
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,enunciado=enunciado, idOrigenEntrada=idOrigenEntrada, caracterResaltador=caracterResaltador, caracterSeparador=caracterSeparador)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,enunciado=partesEnunciado, idOrigenEntrada=idOrigenEntrada, caracterResaltador=caracterResaltador, caracterSeparador=caracterSeparador)
         #alternativaSolucion=list()
         #alternativaSolucion.append(alternativa.alternativa(hashlib.sha256('solucion').hexdigest(),'solucion',str(puntaje),'-'.join(respuestas),comentario='Alternativa Correcta',numeracion=1))
         #conjuntoAlternativas[alternativaSolucion[0].llave]=alternativaSolucion

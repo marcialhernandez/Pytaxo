@@ -47,18 +47,25 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
     contador=0
     banderaEstado=False
     nombreArchivo=""
+    enunciado=""
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
     plantillaSalida.set('tipo',xmlEntradaObject.tipo)
     plantillaSalida.set('id',xmlEntradaObject.id)
     plantillaSalida.set('idOrigenEntrada',xmlEntradaObject.idOrigenEntrada)
+    for parteEnunciado in xmlEntradaObject.enunciado:
+        if parteEnunciado["tipo"]=="text":
+            enunciado+='<body style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+parteEnunciado["text"]+'</body><BR>'
+        else:
+            enunciado+='<pre id="python" class="prettyprint linenums">'+parteEnunciado["text"]+'</pre>'
     for elem in plantillaSalida.iterfind('name/text'):
             nombreArchivo=elem
     for subRaizSalida in plantillaSalida.iter():
         if subRaizSalida.tag=='questiontext':
             for elem in subRaizSalida.iterfind('text'):
                 #elem.text=xmlEntradaObject.enunciado
-                elem.append(ET.Comment((' --><![CDATA[' + ("<p>"+xmlEntradaObject.enunciado+"</p>").replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+                
+                elem.append(ET.Comment((' --><![CDATA[' + ('<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?skin=sons-of-obsidian"></script>'+enunciado).replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
 
     for conjuntoAlternativas in xmlEntradaObject.agrupamientoEnunciadoIncompleto(cantidadAlternativas,xmlEntradaObject.caracterSeparador,xmlEntradaObject.caracterResaltador):
         pass

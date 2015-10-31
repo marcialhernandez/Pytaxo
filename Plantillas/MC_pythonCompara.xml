@@ -2,15 +2,11 @@
 <plantilla tipo="pythonCompara" taxo="aplicar" id="1">
 <enunciado>
     <glosa>
-Para calcular el roce de un carro en movimiento horizontal se usa la segunda ley de newton que es:
+Para calcular el roce de un carro en movimiento horizontal se usa la segunda ley de Newton que es:
 
-fuerza Total = masa * aceleracion
+Fuerza Total = Masa * Aceleracion
 
-Para el caso del carro, esta es:
-
-fuerzaEmpujeHorizontal - roce = masa * aceleracion
-
-Indique las funciones que calculan correctamente el roce del carro si:
+Para el caso del carro, esta es, fuerzaEmpujeHorizontal - roce = masa * aceleracion. Indique las funciones que calculan correctamente el roce del carro si:
 
 @entrada.</glosa>
 </enunciado>

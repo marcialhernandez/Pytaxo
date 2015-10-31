@@ -60,7 +60,7 @@ class xmlEntrada:
             #Lista donde cada elemento es parte del enunciado ordenado de forma
             #secuencial
             self.enunciado=kwargs['enunciado']
-            self.id=hashlib.sha256(self.enunciado).hexdigest()
+            #self.id=hashlib.sha256(self.enunciado).hexdigest()
             self.caracterResaltador=kwargs['caracterResaltador']
             self.caracterSeparador=kwargs['caracterSeparador']
             #self.id=hashlib.sha256(self.enunciadoIncompleto).hexdigest()
@@ -279,7 +279,7 @@ class xmlEntrada:
         if len(self.link)==0:
             return True
         #Si la id de la plantilla es parte de los posibles linkeamientos de la entrada Actual
-        if plantillaObject.id in self.link:
+        if plantillaObject.id == self.link:
             return True
         else:
             return False

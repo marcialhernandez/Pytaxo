@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plantilla tipo="definicion" taxo="recordar" id="22">
+<enunciado>
+    <glosa>
+Cuales de los siguientes componentes pertenecen a la arquitectura @termino?
+
+A. Memoria
+B. Unidad Aritmética de Control
+C. Unidad Aritmética Lógica
+D. Dispositivos I/O
+E. Dispositivos Físicos
+    </glosa>
+</enunciado>
+</plantilla>

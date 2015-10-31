@@ -1,0 +1,69 @@
+<pregunta cantidadAlternativas="4" tipo="definicion" idOrigenEntrada="13" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" link="21">
+    <termino>
+        <codigo>
+3 + 2 ** ( 3 + 1 ) % 3
+        </codigo>
+    </termino>
+    <opciones>
+        <alternativa id="1" tipo="solucion">
+            <glosa>
+                4
+                <comentario>
+                    alternativa correcta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="2" tipo="distractor">
+            <glosa>
+                5
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="3" tipo="distractor">
+            <glosa>
+                6
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="4" tipo="distractor">
+            <glosa>
+                11
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="5" tipo="distractor">
+            <glosa>
+                12
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="6" tipo="distractor">
+            <glosa>
+                18
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="7" tipo="distractor">
+            <glosa>
+                19
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="8" tipo="distractor">
+            <glosa>
+                1
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+    </opciones>
+</pregunta>

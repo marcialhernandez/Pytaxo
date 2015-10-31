@@ -1,0 +1,69 @@
+<pregunta cantidadAlternativas="4" tipo="pythonCompara" idOrigenEntrada="15" puntaje="2" link="1">
+	<!--
+
+1.3. Distingue conceptos asociados a operaciones aritmeticas
+
+(expresion, operando, operador, variable, constante, funcion nativa,
+funcion importada, tipo de dato, alcance, etc.)
+
+Enunciado:
+
+Para calcular el roce de un carro en movimiento horizontal se usa la segunda ley de newton que es:
+
+fuerza Total = masa * aceleracion
+
+Para el caso del carro, esta es:
+
+fuerzaEmpujeHorizontal - roce = masa * aceleracion
+
+Indique las funciones que calculan correctamente el roce del carro si:
+
+@entrada.
+    -->
+	<codigo>
+		<python id="1">
+def masaPorAceleracion(masa, aceleracion):
+    return masa * aceleracion
+
+def roce(fuerzaEmpujeHorizontal, masa, aceleracion):
+    return fuerzaEmpujeHorizontal - masaPorAceleracion(masa, aceleracion)
+			<nombreFuncionPrincipal>
+				roce
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="2">
+def roce2(fuerzaEmpujeHorizontal, masa, aceleracion):
+    roce = fuerzaEmpujeHorizontal - masa * aceleracion
+    return roce
+			<nombreFuncionPrincipal>
+				roce2
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="3">
+def masaPorAceleracion(masa, aceleracion):
+    return masa * aceleracion
+
+def roce3(fuerzaEmpujeHorizontal, aceleracion, masa):
+    return fuerzaEmpujeHorizontal - masaPorAceleracion(aceleracion, masa)
+			<nombreFuncionPrincipal>
+				roce3
+			</nombreFuncionPrincipal>
+		</python>
+		<python id="4">
+def roce4(fuerzaEmpujeHorizontal, masa, aceleracion):
+    roce = masa - fuerzaEmpujeHorizontal * aceleracion
+    return roce
+			<nombreFuncionPrincipal>
+				roce4
+			</nombreFuncionPrincipal>
+		</python>
+		<entrada>
+			fuerzaEmpujeHorizontal = 80;masa = 25;aceleracion=0.5
+		</entrada>
+		<entrada>
+			fuerzaEmpujeHorizontal = 70;masa = 25;aceleracion = 0.4
+		</entrada>
+		<comentario>
+		</comentario>
+	</codigo>
+</pregunta>

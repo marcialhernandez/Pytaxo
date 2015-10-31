@@ -1,0 +1,50 @@
+<pregunta cantidadAlternativas="3" tipo="definicion" idOrigenEntrada="13" puntaje="2" shuffleanswers="1" penalty="0" answernumbering="none" link="20">
+    <termino>
+        <text>x</text>
+        <codigo>
+n = 4
+m = 7
+x = m / n
+        </codigo>
+    </termino>
+    <opciones>
+        <alternativa id="1" tipo="solucion">
+            <glosa>
+                int
+                <comentario>
+                    alternativa correcta
+                </comentario>
+            </glosa>
+            <glosa>
+                long
+                <comentario>
+                    alternativa correcta
+                </comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="2" tipo="distractor">
+            <glosa>
+                float
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="3" tipo="distractor">
+            <glosa>
+                real
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+            <glosa>
+                decimal
+                <comentario>alternativa incorrecta</comentario>
+            </glosa>
+        </alternativa>
+        <alternativa id="4" tipo="distractor">
+            <glosa>
+                double
+                <comentario>
+                    alternativa incorrecta
+                </comentario>
+            </glosa>
+        </alternativa>
+    </opciones>
+</pregunta>
