@@ -18,11 +18,61 @@ Copyright (C)
 @date: 16/6/2015
 University of Santiago, Chile (Usach)"""
 
-import argparse
+import argparse,re
 import subprocess, stat, os, tempfile
 import clases.entrada as entrada
 import clases.item as item
 from nombres import obtieneNombreArchivo
+from itertools import product,chain,combinations
+
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+def powerSetAll(iterable):
+    lista=list(powerset(iterable))
+    del lista[0]
+    listaResultado=[]
+    for elemento in lista:
+        listaResultado.append(list(elemento))
+    return listaResultado
+
+def remplazoCombinatorial(stringEntrada, from_char, to_char):
+    options = [(fragmentoStringEntrada,) if fragmentoStringEntrada != from_char else (from_char, to_char) for fragmentoStringEntrada in re.split("("+from_char+")", stringEntrada)]
+    return (list(''.join(o) for o in product(*options)))
+
+#{x:y}
+def remplazoCombinatorialDict(stringEntrada, dictObject):
+    options = [(fragmentoStringEntrada,) if fragmentoStringEntrada not in dictObject.keys() else (fragmentoStringEntrada, dictObject[fragmentoStringEntrada]) for fragmentoStringEntrada in re.split("("+'|'.join(dictObject.keys())+")", stringEntrada)]
+    return (list(''.join(o) for o in product(*options)))
+
+def union(a, b):
+    """ return the union of two lists """
+    return list(set(a) | set(b))
+    
+def generaCondicion(turnoCondicion):
+    if turnoCondicion==0:
+        return {"!=":"==","==":"!="}
+    else:
+        return {"<":">",">":"<"}
+
+def generaCondiciones(stringEntrada):
+    listaTotalCondiciones=[]
+    listaCondiciones0=remplazoCombinatorialDict(stringEntrada,generaCondicion(0))
+    listaCondiciones1=remplazoCombinatorialDict(stringEntrada,generaCondicion(1))
+    
+    for condicion in listaCondiciones0:
+        listaTotalCondiciones=union(listaTotalCondiciones,remplazoCombinatorialDict(condicion,generaCondicion(1)))
+        
+    for condicion in listaCondiciones1:
+        listaTotalCondiciones=union(listaTotalCondiciones,remplazoCombinatorialDict(condicion,generaCondicion(0)))
+    
+    listaCondicionesPreliminares=union(listaCondiciones0,listaCondiciones1)
+    
+    listaTotalCondiciones=union(listaTotalCondiciones,listaCondicionesPreliminares)
+    #print listaTotalCondiciones
+    return listaTotalCondiciones
 
 def parserAtributos(parser):
     parser.add_argument('-r', required=False,
@@ -164,6 +214,89 @@ def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
     finally:
         fd.close()
     return fd
+
+def make_tempPython2(datos, funcionTracer,testEstandar,funcionEntrada):
+    
+    fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
+    try:
+        fd.write("#!/usr/bin/env python"+"\n"+"# -*- coding: utf-8 -*-"+"\n")
+        fd.write("import sys"+"\n"+"reload(sys)"+"\n"+"sys.setdefaultencoding('utf8')"+"\n")
+        fd.write(funcionTracer)
+        fd.write("\n\n")
+        fd.write(datos)
+        fd.write("\n\n")
+        for linea in testEstandar:
+            if "funcion(x)" in linea:
+                linea='    '+funcionEntrada+'\n'
+                fd.write(linea)
+            else:
+                fd.write(linea)
+        fd.write("\n\n")
+        #No me combiene dejar el puntero al principio, pues seguire agregando informacion en un futuro
+        #fd.seek(0)
+    finally:
+        fd.close()
+    return fd
+
+def make_tempPython3(datos, funcionTracer,testEstandar,funcionEntrada,condicion,nuevaCondicion):
+    fd = tempfile.NamedTemporaryFile(mode='w+b',suffix='.py', delete=False)
+    try:
+        datos2=""
+        fd.write("#!/usr/bin/env python"+"\n"+"# -*- coding: utf-8 -*-"+"\n")
+        fd.write("import sys"+"\n"+"reload(sys)"+"\n"+"sys.setdefaultencoding('utf8')"+"\n")
+        fd.write(funcionTracer)
+        fd.write("\n\n")
+        for posicionCondicion in range(len(condicion)):
+            #print condicion[posicionCondicion]+" switch "+nuevaCondicion[posicionCondicion]
+            datos2=datos.replace(condicion[posicionCondicion],nuevaCondicion[posicionCondicion])
+        fd.write(datos2)
+        fd.write("\n\n")
+        for linea in testEstandar:
+            if "funcion(x)" in linea:
+                linea='    '+funcionEntrada+'\n'
+                fd.write(linea)
+            else:
+                fd.write(linea)
+        fd.write("\n\n")
+        #print (funcionEntrada)
+        #No me combiene dejar el puntero al principio, pues seguire agregando informacion en un futuro
+        #fd.seek(0)
+    finally:
+        fd.close()
+    return fd
+
+def make_tempPythonConcidicionado(datos, funcionTracer,testEstandar,funcionEntrada,condicion):
+    #Genero todas las agrupaciones de diferentes condiciones
+    #Si las condiciones son [A,B] queda [[A],[B].[A,B]]
+    combinacionDeCondiciones=powerSetAll(condicion)
+    
+    #{condicion:[reemplazos disponibles]}
+    #listaCondiciones=[]
+    
+    #Para cada grupo de condiciones
+    #for cadaCombinacionCondiciones in combinacionDeCondiciones:
+        
+    #Creo un diccionario de condiciones
+    diccionarioCondiciones={}
+    diccionarioGruposCombinados={}
+    #Cada condicion tendra asociada diferentes combinaciones 
+    for cadaCondicion in condicion:
+        #variaciones logicas
+        diccionarioCondiciones[cadaCondicion]=generaCondiciones(cadaCondicion)
+    variantesLogicos=list(product(*diccionarioCondiciones.values()))
+    #print variantesLogicos
+    
+    #En variantesLogicos se guardan todas las combinaciones
+    #De todas las variantes logicas de las condiciones de entrada
+    #Del mismo tamaño que la condicion inicial
+    archivosTemporales=[]
+    
+    for cadaGrupoCondicion in variantesLogicos:
+        archivosTemporales.append({"condicion":cadaGrupoCondicion,"archivo":make_tempPython3(datos, funcionTracer,testEstandar,funcionEntrada,condicion,cadaGrupoCondicion)})
+    
+    #print archivosTemporales
+    return archivosTemporales
+
 
 def cleanup(filename):
     os.unlink(filename)

@@ -52,7 +52,7 @@ class xmlEntrada:
         elif (self.tipo=="pythonTraza" or self.tipo=="pythonIterativo" or self.tipo=="pythonIterativoInvertido") and "codigos" in kwargs.keys():
             self.codigos=kwargs['codigos']
 
-        elif self.tipo=="pythonCompara":
+        elif self.tipo=="pythonCompara" or self.tipo=="condicionalesPython":
             self.codigos=kwargs['codigos']
             self.comentarios=kwargs['comentarios']
 

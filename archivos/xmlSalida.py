@@ -185,6 +185,90 @@ def analizadorComparacion(raizXmlEntrada):
     #print listaCodigosPorEntrada
     return listaCodigosPorEntrada, comentarios
 
+def analizadorCondicion(raizXmlEntrada):
+    contadorIDprovisorio=0
+    archivo=open("Modulos/v1/traceFuntions.py", "r")
+    funcionTracer = archivo.read()
+    archivo.close()
+    archivo=open("Modulos/v1/testEstandar.py", "r+")
+    testEstandar=list()
+    for linea in archivo:
+        testEstandar.append(linea)
+    archivo.close()
+    listaCodigos=[]
+    listaCondiciones=[]
+    listaEntradas=[]
+    comentarios=[]
+    listaIDOcupadas=[]
+    for subRaiz in raizXmlEntrada.iter("codigo"):
+        for seccion in subRaiz:
+            #Cada codigo incrustado y su informacion se agrega a la listaCodigos
+            if seccion.tag=='python':
+                codigo={}
+                try:
+                    if not seccion.attrib['id'] in listaIDOcupadas:
+                        codigo["id"]=seccion.attrib['id']
+                        listaIDOcupadas.append(codigo["id"])
+                    else:
+                        temp=""
+                        codigo["id"]=seccion.attrib['id']
+                        while codigo["id"] in listaIDOcupadas:
+                            temp=codigo["id"]
+                            codigo["id"]="D_"+codigo["id"]
+                        print "Precaucion 4: La id '"+temp+"' ya esta ocupada y se ha asignado ID="+codigo["id"]                    
+                        listaIDOcupadas.append(codigo["id"])
+                except:
+                    codigo["id"]="null_"+str(contadorIDprovisorio)
+                    print "Precaucion 3: un codigo carece de Id y se ha asignado ID="+codigo["id"]
+                    listaIDOcupadas.append(codigo["id"])
+                    contadorIDprovisorio+=1
+                codigo["codigoBruto"]=seccion.text.rstrip().lstrip()
+                for subSeccion in seccion:
+                    if subSeccion.tag=='nombreFuncionPrincipal':
+                        codigo["nombreFuncionPrincipal"]=subSeccion.text.rstrip().lstrip()
+                listaCodigos.append(codigo)
+            #Cada entrada para los codigos y agrega a la listaDeEntradas
+            if seccion.tag=='entrada':
+                entrada={}
+                entrada["entradaBruta"]=seccion.text.rstrip().lstrip()
+                listaValores=[]
+                for entradaTemp in entrada["entradaBruta"].split(';'):
+                    listaValores.append(entradaTemp.split('=')[-1])
+                listaValores=','.join(listaValores)
+                entrada["entrada"]=listaValores
+                listaEntradas.append(entrada)
+            if seccion.tag=='lineaCondicion':
+                listaCondiciones.append(seccion.text.rstrip().lstrip())
+                
+            if seccion.tag=='comentario':
+                comentarios.append(seccion.text.rstrip().lstrip())
+    comentarios='\n'.join(comentarios)
+    listaCodigosPorEntrada=[]
+    #Luego para cada entrada
+    for codigoPorEntrada in listaEntradas:
+        codigoPorEntrada["infoCodigo"]=""
+        codigoPorEntrada["codigosCondicionales"]=[]
+        codigoPorEntrada["funcionEntrada"]=""
+        #Se genera un archivo temporal con cada codigo y la entrada actual
+        for infoCodigo in listaCodigos:
+            try:
+                codigoPorEntrada["funcionEntrada"]=infoCodigo["nombreFuncionPrincipal"]+'('+codigoPorEntrada["entrada"]+')'
+            except:
+                print "Error 6: una o mas funciones no especifican el nombre de su funcion principal"
+                exit()
+            #El siguiente print muestra las funciones evaluadas disponibles por entrada y codigo
+            #print codigoPorEntrada["funcionEntrada"]
+            #codigo["codigosCondicionales"]=acceso.make_tempPythonConcidicionado(codigo["codigoBruto"], funcionTracer,testEstandar,codigoPorEntrada["funcionEntrada"][:],listaCondiciones)
+            codigoPorEntrada["codigosCondicionales"].append(acceso.make_tempPythonConcidicionado(infoCodigo["codigoBruto"], funcionTracer,testEstandar,codigoPorEntrada["funcionEntrada"][:],listaCondiciones))
+            codigoPorEntrada["infoCodigo"]=infoCodigo
+        #Resultando en un codigoPorEntrada de la forma {entradaActual:Lista de archivos temporales con la entrada actual evaluada}
+        #Ajuste pues queda con una lista demas
+        codigoPorEntrada["codigosCondicionales"]=codigoPorEntrada["codigosCondicionales"][0]
+        listaCodigosPorEntrada.append(codigoPorEntrada)
+    #print listaCodigosPorEntrada
+    
+    return listaCodigosPorEntrada, comentarios
+
 def analizadorIteracion(raizXmlEntrada):
     posiblesEntradasHidden=["si","SI","True","true","1","TRUE","Si"]
     contadorIDprovisorio=0
@@ -471,6 +555,10 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
     elif tipo=='pythonTraza':
         listaCodigosPython=analizadorTraza(raizXmlEntrada)
         return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
+    
+    elif tipo=='condicionalesPython':
+        listaCodigosPorEntrada, comentarios=analizadorCondicion(raizXmlEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPorEntrada,idOrigenEntrada=idOrigenEntrada,comentarios=comentarios)
 
     elif tipo=='enunciadoIncompleto':
         respuestas={}

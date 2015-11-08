@@ -49,4 +49,4 @@ class alternativa:
 #                 return 'alt'+'Tipo'+str(self.tipo[0]).upper()+'='+'F'+str(self.llave)+' '
     
     def imprimeAlternativa(self):
-        return str(self.glosa)+' ' #str(self.llave)+' '+str(self.tipo)+' '+str(self.puntaje)+' ' +str(self.glosa)
+        return str(self.glosa)+' '+str(self.tipo)+' '+str(self.puntaje) #str(self.llave)+' '+str(self.tipo)+' '+str(self.puntaje)+' ' +str(self.glosa)

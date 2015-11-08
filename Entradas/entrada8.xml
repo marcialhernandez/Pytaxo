@@ -1,0 +1,38 @@
+<pregunta cantidadAlternativas="3" tipo="condicionalesPython" idOrigenEntrada="15" puntaje="2" link="1">
+  <!--
+    " :  &quot;
+    ' :  &apos;
+    < :  &lt;
+    > :  &gt;
+    & :  &amp; 
+
+2. Utilizar estructuras de bifurcacion e iteracion.
+2.1. Hacer la traza de programas que usen estructuras de control respetando el ambito de las variables.
+    -->
+	<codigo>
+		<python id="1">
+def condicion(a,b):
+	if (a!=b) or (a&lt;b):
+	    m = a*b
+	if (a&gt;b):
+	    m = a-b
+	else:
+		m = m*b
+	return m
+			<nombreFuncionPrincipal>
+				condicion
+			</nombreFuncionPrincipal>
+		</python>
+		<entrada>
+			a = 5; b = 6
+		</entrada>
+		<entrada>
+			a = 4; b = 6
+		</entrada>
+		<lineaCondicion>
+			if (a!=b) or (a&lt;b)
+		</lineaCondicion>
+		<comentario>
+		</comentario>
+	</codigo>
+</pregunta>
