@@ -162,12 +162,13 @@ def agregaAlternativa(ETObject,alternativaObject):
     seccionAlternativaText=ET.SubElement(seccionAlternativa,'text')
     seccionAlternativaFeedback=ET.SubElement(seccionAlternativa,'feedback')
     seccionAlternativaFeedbackText=ET.SubElement(seccionAlternativaFeedback,'text')
-    seccionAlternativaText.text=alternativaObject.glosa
+    seccionAlternativaText.append(ET.Comment((' --><![CDATA[' + ('<body style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+alternativaObject.glosa.replace("<","&lt;").replace("'None'","'None' (que significa que nunca fue asignado)")+'</body><BR>').replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+    #seccionAlternativaText.text=alternativaObject.glosa
     seccionAlternativa.set('id', alternativaObject.llave)
     seccionAlternativa.set('tipo',alternativaObject.tipo)
     seccionAlternativa.set('puntaje',str(alternativaObject.puntaje))
     if hasattr(alternativaObject, 'comentario'):
-        seccionAlternativaFeedbackText.text=alternativaObject.glosa
+        seccionAlternativaFeedbackText.text="Resultado Alternativa: "+str(alternativaObject.comentario)
     if alternativaObject.tipo=="solucion":
         seccionAlternativa.set('fraction',"100")
         return "s."+alternativaObject.llave
@@ -308,14 +309,13 @@ def unificaAlternativaSolucion(listaAlternativaObject,puntaje):
     else:
         nuevaLlave=listaAlternativaObject[0].llave+"_"+listaAlternativaObject[1].llave
         nuevaGlosa=str(listaAlternativaObject[0].glosa)+" y "+str(listaAlternativaObject[1].glosa)
-        nuevoComentario=str(listaAlternativaObject[0].comentario)+" y "+str(listaAlternativaObject[1].comentario)
+        nuevoComentario=str(listaAlternativaObject[0].comentario)
         return alternativa.alternativa(nuevaLlave,"solucion",puntaje,nuevaGlosa,comentario=nuevoComentario)
 
 def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlternativas, tipoPregunta,raiz,formato,estilo, **kwuargs): #,xmlEntradaObject):
     #Cuenta la cantidad de items generados
     contador=0
     banderaEstado=False
-    enunciado=""
     cantidadFuncionesAComparar=3 #Siempre son 3, pues si fuesen 2 no se generarian alternativas suficientes
     if 'directorioSalida' in kwuargs.keys():
         banderaEstado=True #Indica si se debe imprimir o no el estado de la cantidad de salidas
@@ -328,6 +328,8 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
         plantillaSalida.set('taxonomia',plantilla.taxo)
         print ("todoOK")
         for entrada in xmlEntradaObject.codigos:
+            #print entrada["entradaBruta"]
+            
             #Se evalua cada codigo con la entrada actual
             for codigoCondicionalAsociado in entrada["codigosCondicionales"]:
                 streamTraza=obtieneTraza(ejecutaPyTemporal(codigoCondicionalAsociado["archivo"]))
@@ -343,9 +345,11 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     continue
                 solucionesModeladas.append(entrada["codigosCondicionales"][pivoteSolucion]["retorno"])
                 soluciones=[]
+                soluciones2=[]
                 distractores=[]
+                distractores2=[]
                 #soluciones.append(entrada["codigosCondicionales"][pivoteSolucion])
-                soluciones.append(alternativa.alternativa("temp","solucion",xmlEntradaObject.puntaje,list(entrada["codigosCondicionales"][pivoteSolucion]["condicion"]),comentario=entrada["codigosCondicionales"][pivoteSolucion]["retorno"]))
+                soluciones.append(alternativa.alternativa("temp","solucion",xmlEntradaObject.puntaje,str(list(entrada["codigosCondicionales"][pivoteSolucion]["condicion"])),comentario=entrada["codigosCondicionales"][pivoteSolucion]["retorno"]))
                 #print "solucion",soluciones[0]["retorno"]
                 #print "___________"
                 #print "distractores...."
@@ -354,18 +358,20 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                     if cinta!=pivoteSolucion and soluciones[0].comentario!=entrada["codigosCondicionales"][cinta]["retorno"]:
                         #alternativa.alternativa(idAlternativa,"distractor",0,enunciadoAlternativa,comentario=comentarioAlternativa))
                         #distractores.append([entrada["codigosCondicionales"][cinta]])
-                        distractores.append(alternativa.alternativa("temp","distractor",0,list(entrada["codigosCondicionales"][cinta]["condicion"]),comentario=entrada["codigosCondicionales"][cinta]["retorno"]))
+                        distractores.append(alternativa.alternativa("temp","distractor",0,str(list(entrada["codigosCondicionales"][cinta]["condicion"])),comentario=entrada["codigosCondicionales"][cinta]["retorno"]))
                     elif cinta!=pivoteSolucion and soluciones[0].comentario==entrada["codigosCondicionales"][cinta]["retorno"]:
-                        soluciones.append(alternativa.alternativa("temp","solucion",xmlEntradaObject.puntaje,list(entrada["codigosCondicionales"][cinta]["condicion"]),comentario=entrada["codigosCondicionales"][cinta]["retorno"]))
+                        soluciones.append(alternativa.alternativa("temp","solucion",xmlEntradaObject.puntaje,str(list(entrada["codigosCondicionales"][cinta]["condicion"])),comentario=entrada["codigosCondicionales"][cinta]["retorno"]))
                 
                 for element in list(itertools.product(soluciones, distractores)):
-                    distractores.append(unificaAlternativaDistractora(element))
+                    distractores2.append(unificaAlternativaDistractora(element))
 #                     pass
 #                 for alternativaD in distractores:
 #                     print alternativaD.imprimeAlternativa()
 #                 print "AAAAAAAAAAAAA"
                 for element in list(itertools.combinations(soluciones, 2)):
-                    soluciones.append(unificaAlternativaSolucion(element,xmlEntradaObject.puntaje))
+                    soluciones2.append(unificaAlternativaSolucion(element,xmlEntradaObject.puntaje))
+                soluciones=acceso.union(soluciones,soluciones2)
+                distractores=acceso.union(distractores,distractores2)
                 pozoDistractores=[]    
                 for grupoAlternativasDistractoras in list(itertools.combinations(distractores, cantidadAlternativas)):
                     pozoDistractores.append(list(grupoAlternativasDistractoras))
@@ -374,50 +380,51 @@ def retornaPlantilla(nombreDirectorioPlantillas,xmlEntradaObject,cantidadAlterna
                 
                 for cadaAlternativaSolucion in soluciones:
                     
-                    #Generar el enunciado tomando el codigo (estimulo) desde la vista
-                    #Agregar la alternativa solucion al apartado de alternativas
+                    #Se agrega enunciado
+                    enunciado=plantilla.enunciado[:].replace("@termino","'"+xmlEntradaObject.terminoAPreguntar+"'")
+                    enunciado=enunciado.replace("@valor","'"+str(cadaAlternativaSolucion.comentario)+"'")
+                    enunciado=enunciado.replace("@entrada",generaGlosaEntradas(entrada["entradaBruta"]))
+                    enunciadoTexto='<body style="font-family:Tahoma, Geneva, sans-serif;font-size:length" >'+enunciado+'</body><BR>'
+                    enunciadoCodigo='<pre id="python" class="prettyprint linenums">'+xmlEntradaObject.seccionCondicionIncompleto.replace("<","&lt;")+'</pre>'
+                 
+                    for subRaizSalida in plantillaSalida.iter():
+                        if subRaizSalida.tag=='questiontext':
+                            for elem in subRaizSalida.iterfind('text'):
+                                    
+                                for elem3 in elem.getchildren():
+                                    elem.remove(elem3)
+                                #elem.text=xmlEntradaObject.enunciado
+                                elem.append(ET.Comment((' --><![CDATA[' + ('<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?skin=sons-of-obsidian"></script>'+enunciadoTexto+enunciadoCodigo).replace(']]>', ']]]]><![CDATA[>')) + ']]><!-- '))
+                    
+                    idAlternativas=""
                     for cadaGrupoDistractores in pozoDistractores:
                         
-    
+                        for elem in plantillaSalida.getchildren():
+                            if elem.tag=='answer':
+                                plantillaSalida.remove(elem)
+                        #Se agregan los distractores al xml
+                        idAlternativas+=agregaAlternativa(plantillaSalida,cadaAlternativaSolucion)
+                        
                         for cadaDistractor in cadaGrupoDistractores:
                             #Agregar cada distractor al apartado de alternativas
-                            pass
-
-#                 pozoDistractores=[]
-#                 #Para grupo de largo=cantidadAlternativas
-#                 for grupoAlternativasDistractoras in distractores:
-#                     grupoFormatoAlternativa=[]
-#                     #Para cada alternativa del grupo
-#                     for alternativaDistractora in list(element):
-#                         banderaDosSecuencias=0
-#                         enunciadoAlternativa=""
-#                         comentarioAlternativa=""
-#                         idAlternativa="temp"
-#                         #Para cada elemento de la alternativa, pues una alternativa puede contener 2 secuencias
-#                         for element in alternativaDistractora:
-#                             print element
-# #                             banderaDosSecuencias+=1
-# #                             if banderaDosSecuencias>=2:
-# #                                 enunciadoAlternativa+=" y "+str(element["condicion"])
-# #                                 comentarioAlternativa+=" y "+str(element["retorno"])
-# #                             else:
-# #                                 enunciadoAlternativa+=str(element["condicion"])
-# #                                 comentarioAlternativa+=str(element["retorno"])
-#                         grupoFormatoAlternativa.append(alternativa.alternativa(idAlternativa,"distractor",0,enunciadoAlternativa,comentario=comentarioAlternativa))
-#                         #Se lleva a formato alternativa
-#                 #print pozoDistractores
-#                 #print "AAAAAAA"
-                
-                
-
-#                  
-#                  pass
-#                     streamTraza=obtieneTraza(ejecutaPyTemporal(codigoAsociado["codigo"]))
-#                     if len(streamTraza)>0:
-#                         codigoAsociado["retorno"]=streamTraza[-1]['retorno']
-#                     else:
-#                         print "Error 5: La funcion '"+codigoAsociado["nombreFuncionPrincipal"]+"' no admite la entrada '"+entrada["entrada"]+"'"
-#                         del codigoAsociado
+                            idAlternativas+=agregaAlternativa(plantillaSalida,cadaDistractor)
+                        
+                    contador+=1
+                    #id=xmlEntradaObject.idItem(plantilla,tipoPregunta,idAlternativas)
+                    #id=xmlEntradaObject.idOrigenEntrada+"-"+idItem+" "+idAlternativas
+                    for elem in plantillaSalida.getchildren():
+                        if elem.tag=='name':
+                            for elem2 in elem.iterfind('text'):
+                                elem2.text=tipoPregunta+"_"+plantilla.taxo+"_"+xmlEntradaObject.idOrigenEntrada+"_Pregunta numero "+str(contador)
+                    if raiz=='quiz':
+                        quiz = ET.Element('quiz')
+                        quiz.append(plantillaSalida)
+#                         xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,quiz,'xml',formato,estilo,merge=raiz)
+                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,"Pregunta numero "+str(contador),quiz,'xml',formato,estilo,merge=raiz)
+                    else:
+                        #xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,id,plantillaSalida,'xml',formato,estilo,merge=raiz)
+                        xmlSalida.escribePlantilla2(kwuargs['directorioSalida'],xmlEntradaObject.tipo,"Pregunta numero "+str(contador),plantillaSalida,'xml',formato,estilo,merge=raiz)
+    print xmlEntradaObject.idOrigenEntrada+"->"+str(contador)+' Creados'
 #                         
 #         for entrada in xmlEntradaObject.codigos:
 #            #Aqui es donde se empiezan a crear las formas de los diferentes tipos de preguntas

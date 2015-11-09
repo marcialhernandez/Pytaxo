@@ -200,6 +200,12 @@ def analizadorCondicion(raizXmlEntrada):
     listaEntradas=[]
     comentarios=[]
     listaIDOcupadas=[]
+    #seccionCondicion
+    codigoCondicion=""
+    #seccionCondicionIncompleto
+    codigoCondicionIncompleto=""
+    #terminoAPreguntar
+    terminoRetorno=""
     for subRaiz in raizXmlEntrada.iter("codigo"):
         for seccion in subRaiz:
             #Cada codigo incrustado y su informacion se agrega a la listaCodigos
@@ -223,6 +229,12 @@ def analizadorCondicion(raizXmlEntrada):
                     listaIDOcupadas.append(codigo["id"])
                     contadorIDprovisorio+=1
                 codigo["codigoBruto"]=seccion.text.rstrip().lstrip()
+                codigoCondicion=codigo["codigoBruto"][:].replace("\t\t","@@@@@@@")
+                temp=codigoCondicion.split("\t")
+                codigoCondicion="".join(temp[1:])
+                codigoCondicion=codigoCondicion.replace("return", "print")
+                codigoCondicion=codigoCondicion.replace("@@@@@@@","\t")
+                terminoRetorno=str(temp[-1]).replace("return","").rstrip().lstrip()
                 for subSeccion in seccion:
                     if subSeccion.tag=='nombreFuncionPrincipal':
                         codigo["nombreFuncionPrincipal"]=subSeccion.text.rstrip().lstrip()
@@ -245,6 +257,9 @@ def analizadorCondicion(raizXmlEntrada):
     comentarios='\n'.join(comentarios)
     listaCodigosPorEntrada=[]
     #Luego para cada entrada
+    codigoCondicionIncompleto=codigoCondicion[:]
+    for cadaCondicion in listaCondiciones:
+        codigoCondicionIncompleto=codigoCondicionIncompleto.replace(cadaCondicion, "___________")
     for codigoPorEntrada in listaEntradas:
         codigoPorEntrada["infoCodigo"]=""
         codigoPorEntrada["codigosCondicionales"]=[]
@@ -267,7 +282,7 @@ def analizadorCondicion(raizXmlEntrada):
         listaCodigosPorEntrada.append(codigoPorEntrada)
     #print listaCodigosPorEntrada
     
-    return listaCodigosPorEntrada, comentarios
+    return listaCodigosPorEntrada, comentarios, codigoCondicion, codigoCondicionIncompleto, terminoRetorno
 
 def analizadorIteracion(raizXmlEntrada):
     posiblesEntradasHidden=["si","SI","True","true","1","TRUE","Si"]
@@ -557,8 +572,8 @@ def preguntaParser(raizXmlEntrada,nombreArchivo):
         return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPython,idOrigenEntrada=idOrigenEntrada)
     
     elif tipo=='condicionalesPython':
-        listaCodigosPorEntrada, comentarios=analizadorCondicion(raizXmlEntrada)
-        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPorEntrada,idOrigenEntrada=idOrigenEntrada,comentarios=comentarios)
+        listaCodigosPorEntrada, comentarios, codigoCondicion, codigoCondicionIncompleto, terminoRetorno=analizadorCondicion(raizXmlEntrada)
+        return xmlEntrada.xmlEntrada(nombreArchivo,tipo,puntaje,conjuntoAlternativas,cantidadAlternativas,shuffleanswers,penalty,answernumbering,link,codigos=listaCodigosPorEntrada,idOrigenEntrada=idOrigenEntrada,comentarios=comentarios,terminoAPreguntar=terminoRetorno,seccionCondicionIncompleto=codigoCondicionIncompleto,seccionCondicion=codigoCondicion)
 
     elif tipo=='enunciadoIncompleto':
         respuestas={}

@@ -2,6 +2,6 @@
 <plantilla tipo="condicionalesPython" taxo="aplicar" id="1">
 <enunciado>
     <glosa>
-TESTESTESTESTEST</glosa>
+Mencione que condición/es hacen que la variable @termino imprima el valor @valor si @entrada</glosa>
 </enunciado>
 </plantilla>

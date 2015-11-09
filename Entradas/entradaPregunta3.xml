@@ -1,4 +1,4 @@
-<pregunta cantidadAlternativas="3" tipo="condicionalesPython" idOrigenEntrada="15" puntaje="2" link="1">
+<pregunta cantidadAlternativas="3" tipo="condicionalesPython" idOrigenEntrada="17" puntaje="2" link="1">
   <!--
     " :  &quot;
     ' :  &apos;
@@ -11,26 +11,36 @@
     -->
 	<codigo>
 		<python id="1">
-def condicion(a,b):
-	if (a!=b) or (a&lt;b):
-	    m = a*b
-	if (a&gt;b):
-	    m = a-b
+def condicion(a,b,c,d):
+	m=10
+	if (a&lt;b) or (c&lt;d):
+	    m = m+c-b
+	if (a&lt;d) or (c&lt;a):
+		m = m+a
 	else:
-		m = m*b
+		m = m+a*d
 	return m
 			<nombreFuncionPrincipal>
 				condicion
 			</nombreFuncionPrincipal>
 		</python>
 		<entrada>
-			a = 5; b = 6
+			a = 5; b = 6; c = 5; d = 6
 		</entrada>
 		<entrada>
-			a = 4; b = 6
+			a = 4; b = 7; c = 7; d = 2
+		</entrada>
+		<entrada>
+			a = 2; b = 1; c = 2; d =1
+		</entrada>
+		<entrada>
+			a = 19; b = 20; c = 17; d = 5
+		</entrada>
+		<entrada>
+			a = 9; b = 7; c = 30; d = 3
 		</entrada>
 		<lineaCondicion>
-			if (a!=b) or (a&lt;b)
+			if (a&lt;d) or (c&lt;a)
 		</lineaCondicion>
 		<comentario>
 		</comentario>
